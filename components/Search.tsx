@@ -69,6 +69,7 @@ const Search = () => {
     await setDoc(doc(db, "chats", user!.uid), {
       [combinedId]: {
         friendInfo: {
+          uid2: user!.uid,
           uid: friend?.uid,
           displayName: friend?.displayName,
           photoURL: friend?.photoURL,
@@ -80,6 +81,7 @@ const Search = () => {
     await setDoc(doc(db, "chats", friend!.uid), {
       [combinedId]: {
         friendInfo: {
+          uid2: friend!.uid,
           uid: user?.uid,
           displayName: user?.displayName,
           photoURL: user?.photoURL,

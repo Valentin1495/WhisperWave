@@ -20,7 +20,7 @@ const Chats = () => {
   }, [db, user?.uid]);
 
   return (
-    <div className="pb-3">
+    <div className="pb-3 overflow-auto scrollbar-hide">
       {chats &&
         Object.entries(chats)
           .sort((a, b) => b[1].date - a[1].date)

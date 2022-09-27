@@ -1,7 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { auth } from "../firebase";
-
-const user = auth.currentUser;
+import { createSlice } from "@reduxjs/toolkit";
 
 interface friendType {
   uid: string;
@@ -11,7 +8,7 @@ interface friendType {
 
 export interface ChatState {
   friend: friendType;
-  chatId: string | null;
+  chatId: string | undefined;
 }
 
 const initialState: ChatState = {
@@ -25,12 +22,10 @@ export const chatSlice = createSlice({
   reducers: {
     changeFriend: (state, action) => {
       state.friend = action.payload;
-      if (user !== null && user.uid > action.payload.uid) {
-        state.chatId = user.uid + action.payload.uid;
-      }
-      if (user !== null && user.uid < action.payload.uid) {
-        state.chatId = action.payload.uid + user.uid;
-      }
+      state.chatId =
+        action.payload.uid > action.payload.uid2
+          ? action.payload.uid + action.payload.uid2
+          : action.payload.uid2 + action.payload.uid;
     },
   },
 });

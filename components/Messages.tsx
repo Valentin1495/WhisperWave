@@ -1,7 +1,7 @@
 import { doc, FieldValue, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import { RootState } from "../store";
 import Message from "./Message";
 
@@ -28,9 +28,8 @@ const Messages = () => {
     }
   }, [db, chatId]);
 
-  console.log(messages);
   return (
-    <div className="bg-[#ddddf7] h-[calc(100%-160px)]">
+    <div className="bg-[#ddddf7] h-[calc(100%-160px)] overflow-auto scrollbar-hide">
       {messages.map((message) => (
         <Message msg={message} key={message.id} />
       ))}
