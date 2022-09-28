@@ -4,6 +4,7 @@ interface friendType {
   uid: string;
   displayName: string;
   photoURL: string;
+  email: string;
 }
 
 export interface ChatState {
@@ -12,7 +13,7 @@ export interface ChatState {
 }
 
 const initialState: ChatState = {
-  friend: { uid: "", displayName: "", photoURL: "" },
+  friend: { uid: "", displayName: "", photoURL: "", email: "" },
   chatId: "",
 };
 

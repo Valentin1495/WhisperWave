@@ -20,26 +20,26 @@ const Navbar = () => {
           <img
             src={user?.photoURL}
             alt="Profile Picture"
-            className="w-12 h-12 rounded-full object-cover mx-auto md:mx-0 cursor-pointer"
+            className="w-12 h-12 rounded-full object-cover cursor-pointer"
             onClick={signout}
           />
         ) : (
           <UserCircleIcon
             onClick={signout}
-            className="h-12 -ml-1 mx-auto md:mx-0 cursor-pointer"
+            className="h-12 -ml-1 cursor-pointer"
           />
         )}
 
-        <span className="md:inline hidden text-lg text-white truncate ml-1.5">
+        <span className="text-lg text-[#ddddf7] truncate ml-1.5">
           {user?.displayName}
         </span>
       </div>
 
       <button
         onClick={signout}
-        className="hidden md:inline-block bg-[#5d5b8d] rounded-full p-1 cursor-pointer"
+        className="bg-[#5d5b8d] rounded-full p-1 cursor-pointer"
       >
-        <ArrowRightOnRectangleIcon className="h-5 w-5 text-white" />
+        <ArrowRightOnRectangleIcon className="h-5 w-5 text-[#ddddf7]" />
       </button>
     </div>
   );

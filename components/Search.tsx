@@ -71,6 +71,7 @@ const Search = () => {
         friendInfo: {
           uid2: user!.uid,
           uid: friend?.uid,
+          email: user?.email,
           displayName: friend?.displayName,
           photoURL: friend?.photoURL,
         },
@@ -83,6 +84,7 @@ const Search = () => {
         friendInfo: {
           uid2: friend!.uid,
           uid: user?.uid,
+          email: user?.email,
           displayName: user?.displayName,
           photoURL: user?.photoURL,
         },
@@ -96,13 +98,13 @@ const Search = () => {
 
   return (
     <div>
-      <div className="hidden md:flex items-center justify-start gap-x-3 px-4 text-lg my-3">
-        <ChatBubbleBottomCenterTextIcon className="h-6 w-6 text-input" />
+      <div className="flex items-center justify-start gap-x-3 px-4 text-lg my-3">
+        <ChatBubbleBottomCenterTextIcon className="h-5 w-5 text-gray-300" />
         <input
           type="text"
           placeholder="START A NEW CHAT"
-          className="bg-transparent outline-none placeholder-input 
-          placeholder:text-base text-white w-3/4"
+          className="bg-transparent outline-none placeholder-gray-300
+          placeholder:text-sm text-white w-3/4"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={enter}

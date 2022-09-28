@@ -35,11 +35,11 @@ const Chats = () => {
                 alt="pic"
                 className="rounded-full h-12 w-12"
               />
-              <div className="text-white">
-                <span className="text-lg">
+              <div>
+                <span className="text-white text-lg">
                   {chat[1].friendInfo?.displayName}
                 </span>
-                <p className="text-sm">{chat[1].lastMessage}</p>
+                <p className="text-sm text-gray-300">{chat[1].lastMessage}</p>
               </div>
             </div>
           ))}
