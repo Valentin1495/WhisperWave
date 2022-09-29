@@ -96,14 +96,29 @@ const Search = () => {
     setFriend(undefined);
   };
 
+  const startChat = () => {
+    const input = prompt(
+      "Please enter an email address for the user you wish to chat with"
+    );
+
+    if (!input) return;
+
+    setEmail(input);
+
+    isValid(email) && searchFriend();
+  };
+
   return (
     <div>
-      <div className="flex items-center justify-start gap-x-3 px-4 text-lg my-3">
-        <ChatBubbleBottomCenterTextIcon className="h-5 w-5 text-gray-300" />
+      <div className="px-4 text-lg my-3">
+        <ChatBubbleBottomCenterTextIcon
+          onClick={startChat}
+          className="cursor-pointer h-8 w-8 mx-auto sm:hidden text-gray-300"
+        />
         <input
           type="text"
           placeholder="START A NEW CHAT"
-          className="bg-transparent outline-none placeholder-gray-300
+          className="hidden sm:inline-block bg-transparent outline-none placeholder-gray-300
           placeholder:text-sm text-white w-3/4"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

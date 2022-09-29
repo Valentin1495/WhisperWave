@@ -13,7 +13,7 @@ const Chat = () => {
   );
 
   return (
-    <div className="basis-2/3">
+    <div className="basis-4/5 sm:basis-2/3">
       <div className="bg-[#5d5b8d] text-gray-300 h-20 text-center leading-[80px]">
         {friendEmail && friendName ? `${friendName} ( ${friendEmail} )` : ""}
       </div>
