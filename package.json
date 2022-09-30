@@ -20,6 +20,7 @@
     "react-redux": "^8.0.2",
     "react-spinners": "^0.13.4",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "timeago-react": "^3.0.5",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

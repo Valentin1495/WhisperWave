@@ -3,17 +3,11 @@ import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { useDispatch } from "react-redux";
 import { changeFriend } from "../slices/chatSlice";
-import { signOut } from "firebase/auth";
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 
 const Chats = () => {
   const [chats, setChats] = useState<DocumentData>();
   const user = auth.currentUser;
   const dispatch = useDispatch();
-
-  const signout = () => {
-    signOut(auth);
-  };
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "chats", user!.uid), (snapshot) =>
@@ -26,7 +20,7 @@ const Chats = () => {
   }, [db, user?.uid]);
 
   return (
-    <div className="pb-3 overflow-auto scrollbar-hide relative">
+    <div className="pb-3 overflow-auto scrollbar-hide">
       {chats &&
         Object.entries(chats)
           .sort((a, b) => b[1].date - a[1].date)

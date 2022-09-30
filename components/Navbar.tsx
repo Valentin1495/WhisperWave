@@ -12,7 +12,6 @@ const Navbar = () => {
   };
 
   const user = auth.currentUser;
-  // const [mdScreen, setMdScreen] = useState
   return (
     <div className="h-20 flex items-center bg-[#2f2d52] px-3">
       <div className="flex items-center flex-1 justify-center sm:justify-start">

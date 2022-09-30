@@ -1,11 +1,12 @@
-import { FieldValue } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import React from "react";
 import { useSelector } from "react-redux";
+import TimeAgo from "timeago-react";
 import { auth } from "../firebase";
 import { RootState } from "../store";
 
 interface msgType {
-  date: FieldValue;
+  date: Timestamp;
   id: string;
   image?: string;
   senderId: string;
@@ -24,14 +25,12 @@ const Message = ({ msg }: { msg: msgType }) => {
         msg.senderId === user?.uid && "flex-row-reverse"
       }`}
     >
-      <div>
-        <img
-          src={msg.senderId === user?.uid ? user.photoURL! : friendPhoto}
-          alt="profile picture"
-          className="w-10 h-10 rounded-full object-cover"
-        />
-        <span className="text-gray-500 font-light">just now</span>
-      </div>
+      <img
+        src={msg.senderId === user?.uid ? user.photoURL! : friendPhoto}
+        alt="profile picture"
+        className="w-10 h-10 rounded-full object-cover"
+      />
+
       <div
         className={`max-w-[80%] gap-y-2.5 flex flex-col ${
           msg.senderId === user?.uid && "items-end"
@@ -46,12 +45,24 @@ const Message = ({ msg }: { msg: msgType }) => {
         >
           {msg.text}
         </p>
+        {/* {msg.senderId === user?.uid && ( */}
+        <TimeAgo
+          datetime={msg.date.toDate()}
+          className="text-gray-500 font-light text-sm"
+        />
+        {/* )} */}
         {msg.image && (
-          <img
-            src={msg.image}
-            alt="message image"
-            className="w-1/2 rounded-md"
-          />
+          <>
+            <img
+              src={msg.image}
+              alt="message image"
+              className="w-1/2 rounded-md"
+            />
+            <TimeAgo
+              datetime={msg.date.toDate()}
+              className="text-gray-500 font-light text-sm"
+            />
+          </>
         )}
       </div>
     </div>

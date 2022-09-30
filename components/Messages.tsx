@@ -1,12 +1,12 @@
-import { doc, FieldValue, onSnapshot } from "firebase/firestore";
+import { doc, FieldValue, onSnapshot, Timestamp } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 import { RootState } from "../store";
 import Message from "./Message";
 
 interface msgType {
-  date: FieldValue;
+  date: Timestamp;
   id: string;
   image?: string;
   senderId: string;
