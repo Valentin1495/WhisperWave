@@ -30,9 +30,8 @@ const Messages = () => {
 
   return (
     <div className="bg-[#ddddf7] h-[calc(100%-160px)] overflow-auto scrollbar-hide">
-      {messages.map((message) => (
-        <Message msg={message} key={message.id} />
-      ))}
+      {messages &&
+        messages.map((message) => <Message msg={message} key={message.id} />)}
     </div>
   );
 };

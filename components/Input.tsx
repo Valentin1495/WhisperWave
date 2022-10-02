@@ -84,7 +84,8 @@ const Input = () => {
       </label>
       <button
         type="submit"
-        className="bg-[#8da4f1] text-white px-2 py-1 rounded-sm"
+        className="bg-[#8da4f1] text-white px-2 py-1 rounded-sm disabled:cursor-not-allowed disabled:hover:opacity-80"
+        disabled={!text.trim() && !img}
       >
         Send
       </button>

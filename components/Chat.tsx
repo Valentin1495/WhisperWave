@@ -3,6 +3,10 @@ import Input from "./Input";
 import Messages from "./Messages";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
+import TimeAgo from "timeago-react";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { deleteDoc, doc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 const Chat = () => {
   const friendName = useSelector(
@@ -12,10 +16,40 @@ const Chat = () => {
     (state: RootState) => state.chat.friend.email
   );
 
+  const lastActive = useSelector(
+    (state: RootState) => state.chat.friend.lastActive
+  );
+
+  const chatId = useSelector((state: RootState) => state.chat.chatId);
+
+  const user = auth.currentUser;
+
+  const deleteChat = async () => {
+    await deleteDoc(doc(db, "chats", user!.uid, chatId!));
+    await deleteDoc(doc(db, "messages", chatId!));
+  };
+
   return (
     <div className="basis-4/5 sm:basis-2/3">
-      <div className="bg-[#5d5b8d] text-gray-300 h-20 text-center leading-[80px]">
-        {friendEmail && friendName ? `${friendName} ( ${friendEmail} )` : ""}
+      <div className="bg-[#5d5b8d] text-gray-300 h-20 flex items-center px-3">
+        {friendEmail && friendName && lastActive ? (
+          <div className="flex items-center w-full">
+            <div className="flex-1">
+              <h3>
+                {friendName} ( {friendEmail} )
+              </h3>
+              <span>
+                Last active: <TimeAgo datetime={lastActive} />
+              </span>
+            </div>
+            <TrashIcon
+              onClick={deleteChat}
+              className="h-6 w-6 cursor-pointer"
+            />
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <Messages />
       <Input />

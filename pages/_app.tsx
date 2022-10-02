@@ -22,6 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           displayName: user?.displayName,
           photoURL: user?.photoURL,
           uid: user?.uid,
+          lastActive: new Date().toString(),
         };
         setDoc(doc(db, "users", user?.uid), userData);
 

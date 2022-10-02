@@ -13,11 +13,14 @@ import {
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import * as EmailValidator from "email-validator";
+import { useDispatch } from "react-redux";
+import { changeFriend } from "../slices/chatSlice";
 
 const Search = () => {
   const [email, setEmail] = useState("");
   const [friend, setFriend] = useState<DocumentData>();
   const user = auth.currentUser;
+  const dispatch = useDispatch();
   const combinedId =
     user!.uid > friend?.uid ? user?.uid + friend?.uid : friend?.uid + user?.uid;
 
@@ -63,12 +66,25 @@ const Search = () => {
     }
   };
 
+  const startChat = () => {
+    const input = prompt(
+      "Please enter an email address for the user you wish to chat with"
+    );
+
+    if (!input) return;
+
+    setEmail(input);
+
+    isValid(email) && searchFriend();
+  };
+
   const addFriend = async () => {
     await setDoc(doc(db, "messages", combinedId), { messages: [] });
 
     await setDoc(doc(db, "chats", user!.uid), {
       [combinedId]: {
         friendInfo: {
+          lastActive: friend?.lastActive,
           uid2: user!.uid,
           uid: friend?.uid,
           email: user?.email,
@@ -94,18 +110,10 @@ const Search = () => {
 
     setEmail("");
     setFriend(undefined);
-  };
 
-  const startChat = () => {
-    const input = prompt(
-      "Please enter an email address for the user you wish to chat with"
-    );
-
-    if (!input) return;
-
-    setEmail(input);
-
-    isValid(email) && searchFriend();
+    const friendInfo = await getDoc(doc(db, "chats", friend!.uid));
+    // () => dispatch(changeFriend())
+    console.log(friendInfo);
   };
 
   return (
@@ -117,9 +125,9 @@ const Search = () => {
         />
         <input
           type="text"
-          placeholder="START A NEW CHAT"
+          placeholder="Find a User"
           className="hidden sm:inline-block bg-transparent outline-none placeholder-gray-300
-          placeholder:text-sm text-white w-3/4"
+          placeholder:text-sm text-white w-full"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={enter}
