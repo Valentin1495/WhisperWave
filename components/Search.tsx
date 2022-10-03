@@ -81,39 +81,51 @@ const Search = () => {
   const addFriend = async () => {
     await setDoc(doc(db, "messages", combinedId), { messages: [] });
 
-    await setDoc(doc(db, "chats", user!.uid), {
-      [combinedId]: {
-        friendInfo: {
-          lastActive: friend?.lastActive,
-          uid2: user!.uid,
-          uid: friend?.uid,
-          email: user?.email,
-          displayName: friend?.displayName,
-          photoURL: friend?.photoURL,
+    await setDoc(
+      doc(db, "chats", user!.uid),
+      {
+        [combinedId]: {
+          friendInfo: {
+            lastActive: friend?.lastActive,
+            uid2: user!.uid,
+            uid: friend?.uid,
+            email: friend?.email,
+            displayName: friend?.displayName,
+            photoURL: friend?.photoURL,
+          },
+          date: serverTimestamp(),
         },
-        date: serverTimestamp(),
       },
-    });
+      {
+        merge: true,
+      }
+    );
 
-    await setDoc(doc(db, "chats", friend!.uid), {
-      [combinedId]: {
-        friendInfo: {
-          uid2: friend!.uid,
-          uid: user?.uid,
-          email: user?.email,
-          displayName: user?.displayName,
-          photoURL: user?.photoURL,
+    await setDoc(
+      doc(db, "chats", friend!.uid),
+      {
+        [combinedId]: {
+          friendInfo: {
+            uid2: friend!.uid,
+            uid: user?.uid,
+            email: user?.email,
+            displayName: user?.displayName,
+            photoURL: user?.photoURL,
+          },
+          date: serverTimestamp(),
         },
-        date: serverTimestamp(),
       },
-    });
+      {
+        merge: true,
+      }
+    );
 
     setEmail("");
     setFriend(undefined);
 
-    const friendInfo = await getDoc(doc(db, "chats", friend!.uid));
-    // () => dispatch(changeFriend())
-    console.log(friendInfo);
+    const mate = await getDoc(doc(db, "chats", user!.uid));
+
+    dispatch(changeFriend(mate.data()![combinedId].friendInfo));
   };
 
   return (
@@ -125,7 +137,7 @@ const Search = () => {
         />
         <input
           type="text"
-          placeholder="Find a User"
+          placeholder="Find Your Friends"
           className="hidden sm:inline-block bg-transparent outline-none placeholder-gray-300
           placeholder:text-sm text-white w-full"
           value={email}

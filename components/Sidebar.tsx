@@ -1,5 +1,5 @@
 import React from "react";
-import Chats from "./Chats";
+import Friends from "./Friends";
 import Navbar from "./Navbar";
 import Search from "./Search";
 
@@ -8,7 +8,7 @@ const Sidebar = () => {
     <div className="basis-1/5 sm:basis-1/3 bg-[#3e3c61]">
       <Navbar />
       <Search />
-      <Chats />
+      <Friends />
     </div>
   );
 };

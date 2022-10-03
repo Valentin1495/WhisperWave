@@ -4,7 +4,7 @@ import { auth, db } from "../firebase";
 import { useDispatch } from "react-redux";
 import { changeFriend } from "../slices/chatSlice";
 
-const Chats = () => {
+const Friends = () => {
   const [chats, setChats] = useState<DocumentData>();
   const user = auth.currentUser;
   const dispatch = useDispatch();
@@ -52,4 +52,4 @@ const Chats = () => {
   );
 };
 
-export default Chats;
+export default Friends;
