@@ -10,7 +10,6 @@ import {
   deleteField,
   doc,
   DocumentData,
-  getDoc,
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";

@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
+import moment from "moment";
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { start } from "repl";
 import TimeAgo from "timeago-react";
 import { auth } from "../firebase";
 import { RootState } from "../store";
@@ -19,18 +19,18 @@ const Message = ({ msg }: { msg: msgType }) => {
   const friendPhoto = useSelector(
     (state: RootState) => state.chat.friend.photoURL
   );
-  const msgRef = useRef<HTMLDivElement>(null);
+  const msgRef = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
-    msgRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [msg]);
+  // useEffect(() => {
+  //   msgRef.current?.complete &&
+  //     msgRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [msg]);
 
   return (
     <div
       className={`flex gap-5 mb-5 p-2.5 ${
         msg.senderId === user?.uid && "flex-row-reverse"
       }`}
-      ref={msgRef}
     >
       <img
         src={msg.senderId === user?.uid ? user.photoURL! : friendPhoto}
@@ -56,10 +56,9 @@ const Message = ({ msg }: { msg: msgType }) => {
             </p>
 
             {!msg.image && (
-              <TimeAgo
-                datetime={msg.date.toDate()}
-                className="text-gray-500 font-light text-xs"
-              />
+              <span className="text-gray-500 font-light text-xs">
+                {moment(msg.date.toDate()).format("LLL")}
+              </span>
             )}
           </>
         )}
@@ -69,11 +68,16 @@ const Message = ({ msg }: { msg: msgType }) => {
               src={msg.image}
               alt="message image"
               className="w-1/2 rounded-md"
+              ref={msgRef}
+              // onLoad={() =>
+              //   msgRef.current?.scrollIntoView({
+              //     behavior: "smooth",
+              //   })
+              // }
             />
-            <TimeAgo
-              datetime={msg.date.toDate()}
-              className="text-gray-500 font-light text-sm"
-            />
+            <span className="text-gray-500 font-light text-xs">
+              {moment(msg.date.toDate()).format("LLL")}
+            </span>
           </>
         )}
       </div>

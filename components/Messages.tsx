@@ -1,4 +1,4 @@
-import { doc, FieldValue, onSnapshot, Timestamp } from "firebase/firestore";
+import { doc, onSnapshot, Timestamp } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { db } from "../firebase";

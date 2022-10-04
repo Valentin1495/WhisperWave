@@ -2,8 +2,46 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Chat from "../components/Chat";
 import Sidebar from "../components/Sidebar";
+import Signin from "../components/Signin";
+import { auth, db } from "../firebase";
+import Loading from "../components/Loading";
+import { useEffect, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { setDate } from "../slices/dateSlice";
+import { useDispatch } from "react-redux";
 
 const Home: NextPage = () => {
+  const [loading, setLoading] = useState(true);
+  const [isLoggedin, setIsLoggedin] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setLoading(false);
+      if (user) {
+        const userData = {
+          email: user?.email,
+          displayName: user?.displayName,
+          photoURL: user?.photoURL,
+          uid: user?.uid,
+          lastActive: new Date().toString(),
+        };
+        dispatch(setDate(new Date().toString()));
+
+        setDoc(doc(db, "users", user?.uid), userData);
+
+        setIsLoggedin(true);
+      } else setIsLoggedin(false);
+    });
+
+    return () => {
+      unsub();
+    };
+  }, []);
+
+  if (loading) return <Loading />;
+  if (!isLoggedin) return <Signin />;
   return (
     <div className="bg-[#a7bcff] min-h-screen flex items-center justify-center">
       <Head>

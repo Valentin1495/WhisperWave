@@ -3,12 +3,16 @@ import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { useDispatch } from "react-redux";
 import { changeFriend } from "../slices/chatSlice";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { signOut } from "firebase/auth";
 
 const Friends = () => {
   const [chats, setChats] = useState<DocumentData>();
   const user = auth.currentUser;
   const dispatch = useDispatch();
-
+  const signout = () => {
+    signOut(auth);
+  };
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "chats", user!.uid), (snapshot) =>
       setChats(snapshot.data())
@@ -30,16 +34,23 @@ const Friends = () => {
               className="flex items-center justify-center sm:justify-start gap-x-3 px-3 py-3 cursor-pointer hover:bg-[#2f2d52]"
               onClick={() => dispatch(changeFriend(chat[1].friendInfo))}
             >
-              <img
-                src={chat[1].friendInfo?.photoURL}
-                alt="pic"
-                className="rounded-full h-12 w-12"
-              />
+              {chat[1].friendInfo?.photoURL?.[35] === "-" ? (
+                <img
+                  src={chat[1].friendInfo?.photoURL}
+                  alt="pic"
+                  className="rounded-full h-12 w-12"
+                />
+              ) : (
+                <UserCircleIcon
+                  onClick={signout}
+                  className="h-12 -ml-1 cursor-pointer text-white"
+                />
+              )}
               <div className="hidden sm:block">
-                <span className="text-white text-lg hidden md:inline">
+                <span className="text-white text-lg hidden md:inline truncate">
                   {chat[1].friendInfo?.displayName}
                 </span>
-                <span className="text-white text-lg hidden sm:inline md:hidden">
+                <span className="text-white text-lg hidden sm:inline md:hidden truncate">
                   {chat[1].friendInfo?.displayName.split(" ")[0]}
                 </span>
                 <p className="text-sm text-gray-300 hidden sm:block">

@@ -12,10 +12,11 @@ const Navbar = () => {
   };
 
   const user = auth.currentUser;
+
   return (
     <div className="h-20 flex items-center bg-[#2f2d52] px-3">
       <div className="flex items-center flex-1 justify-center sm:justify-start">
-        {user?.photoURL ? (
+        {user?.photoURL?.[35] === "-" ? (
           <img
             src={user?.photoURL}
             alt="Profile Picture"
@@ -25,14 +26,14 @@ const Navbar = () => {
         ) : (
           <UserCircleIcon
             onClick={signout}
-            className="h-12 -ml-1 cursor-pointer"
+            className="h-12 -ml-1 cursor-pointer text-[#ddddf7]"
           />
         )}
 
-        <span className="text-lg text-[#ddddf7] ml-1.5 hidden md:inline">
+        <span className="text-lg text-[#ddddf7] ml-1.5 hidden md:inline truncate">
           {user?.displayName}
         </span>
-        <span className="text-lg text-[#ddddf7] ml-1.5 hidden sm:inline md:hidden">
+        <span className="text-lg text-[#ddddf7] ml-1.5 hidden sm:inline md:hidden truncate">
           {user?.displayName?.split(" ")[0]}
         </span>
       </div>

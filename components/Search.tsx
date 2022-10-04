@@ -13,8 +13,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import * as EmailValidator from "email-validator";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeFriend } from "../slices/chatSlice";
+import { RootState } from "../store";
 
 const Search = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,8 @@ const Search = () => {
   const dispatch = useDispatch();
   const combinedId =
     user!.uid > friend?.uid ? user?.uid + friend?.uid : friend?.uid + user?.uid;
+
+  const lastActive = useSelector((state: RootState) => state.date);
 
   const isValid = (mail: string) => {
     if (!EmailValidator.validate(mail)) {
@@ -66,16 +69,28 @@ const Search = () => {
     }
   };
 
-  const startChat = () => {
+  const startChat = async () => {
     const input = prompt(
       "Please enter an email address for the user you wish to chat with"
     );
 
-    if (!input) return;
+    if (input) {
+      isValid(input);
 
-    setEmail(input);
+      const snapshot = await getDocs(collection(db, "users"));
+      const isUser = snapshot.docs.find((doc) => doc.data().email === input);
+      if (!isUser) {
+        alert("User not found");
+      }
 
-    isValid(email) && searchFriend();
+      const q = query(collection(db, "users"), where("email", "==", input));
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        setFriend(doc.data());
+      });
+    }
   };
 
   const addFriend = async () => {
@@ -106,6 +121,7 @@ const Search = () => {
       {
         [combinedId]: {
           friendInfo: {
+            lastActive: lastActive.lastActive,
             uid2: friend!.uid,
             uid: user?.uid,
             email: user?.email,
@@ -156,7 +172,7 @@ const Search = () => {
             alt="friend"
             className="rounded-full h-12 w-12 mx-auto md:mx-0"
           />
-          <span className="text-white text-lg hidden md:inline truncate">
+          <span className="text-white text-lg hidden sm:inline truncate">
             {friend.displayName}
           </span>
         </div>
