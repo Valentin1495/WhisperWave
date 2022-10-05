@@ -8,13 +8,10 @@ import Loading from "../components/Loading";
 import { useEffect, useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { setDate } from "../slices/dateSlice";
-import { useDispatch } from "react-redux";
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(true);
   const [isLoggedin, setIsLoggedin] = useState(false);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -27,7 +24,6 @@ const Home: NextPage = () => {
           uid: user?.uid,
           lastActive: new Date().toString(),
         };
-        dispatch(setDate(new Date().toString()));
 
         setDoc(doc(db, "users", user?.uid), userData);
 

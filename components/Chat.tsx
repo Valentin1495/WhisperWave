@@ -17,16 +17,12 @@ import { auth, db } from "../firebase";
 
 const Chat = () => {
   const [chat, setChat] = useState<DocumentData>();
-
+  const [lastActive, setLastActive] = useState("");
   const friendName = useSelector(
     (state: RootState) => state.chat.friend.displayName
   );
   const friendEmail = useSelector(
     (state: RootState) => state.chat.friend.email
-  );
-
-  const lastActive = useSelector(
-    (state: RootState) => state.chat.friend.lastActive
   );
 
   const friendUid = useSelector((state: RootState) => state.chat.friend.uid);
@@ -46,14 +42,21 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "chats", user!.uid), (snapshot) => {
-      setChat(snapshot.data()?.[chatId!]);
-    });
+    if (friendUid) {
+      const unsub1 = onSnapshot(doc(db, "users", friendUid), (snapshot) => {
+        setLastActive(snapshot.data()?.lastActive);
+      });
 
-    return () => {
-      unsub();
-    };
-  }, [db, chatId]);
+      const unsub2 = onSnapshot(doc(db, "chats", user!.uid), (snapshot) => {
+        setChat(snapshot.data()?.[chatId!]);
+      });
+
+      return () => {
+        unsub1();
+        unsub2();
+      };
+    }
+  }, [db, friendUid, user?.uid]);
 
   return (
     <div className="basis-4/5 sm:basis-2/3">

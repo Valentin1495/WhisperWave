@@ -1,4 +1,7 @@
-import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
+import {
+  ChatBubbleBottomCenterTextIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
 import {
   collection,
   doc,
@@ -13,19 +16,17 @@ import {
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import * as EmailValidator from "email-validator";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { changeFriend } from "../slices/chatSlice";
-import { RootState } from "../store";
 
 const Search = () => {
   const [email, setEmail] = useState("");
   const [friend, setFriend] = useState<DocumentData>();
+
   const user = auth.currentUser;
   const dispatch = useDispatch();
   const combinedId =
     user!.uid > friend?.uid ? user?.uid + friend?.uid : friend?.uid + user?.uid;
-
-  const lastActive = useSelector((state: RootState) => state.date);
 
   const isValid = (mail: string) => {
     if (!EmailValidator.validate(mail)) {
@@ -101,7 +102,6 @@ const Search = () => {
       {
         [combinedId]: {
           friendInfo: {
-            lastActive: friend?.lastActive,
             uid2: user!.uid,
             uid: friend?.uid,
             email: friend?.email,
@@ -111,9 +111,7 @@ const Search = () => {
           date: serverTimestamp(),
         },
       },
-      {
-        merge: true,
-      }
+      { merge: true }
     );
 
     await setDoc(
@@ -121,7 +119,6 @@ const Search = () => {
       {
         [combinedId]: {
           friendInfo: {
-            lastActive: lastActive.lastActive,
             uid2: friend!.uid,
             uid: user?.uid,
             email: user?.email,
@@ -131,9 +128,7 @@ const Search = () => {
           date: serverTimestamp(),
         },
       },
-      {
-        merge: true,
-      }
+      { merge: true }
     );
 
     setEmail("");
@@ -167,11 +162,15 @@ const Search = () => {
           className="cursor-pointer flex 
           justify-start items-center gap-x-1.5 p-3"
         >
-          <img
-            src={friend.photoURL}
-            alt="friend"
-            className="rounded-full h-12 w-12 mx-auto md:mx-0"
-          />
+          {friend.photoURL?.[35] === "-" ? (
+            <img
+              src={friend.photoURL}
+              alt="friend"
+              className="rounded-full h-12 w-12 mx-auto md:mx-0"
+            />
+          ) : (
+            <UserCircleIcon className="h-12 -ml-1 cursor-pointer text-white" />
+          )}
           <span className="text-white text-lg hidden sm:inline truncate">
             {friend.displayName}
           </span>

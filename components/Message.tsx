@@ -2,7 +2,6 @@ import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import TimeAgo from "timeago-react";
 import { auth } from "../firebase";
 import { RootState } from "../store";
 
