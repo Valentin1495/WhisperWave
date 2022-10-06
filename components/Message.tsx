@@ -20,10 +20,10 @@ const Message = ({ msg }: { msg: msgType }) => {
   );
   const msgRef = useRef<HTMLImageElement>(null);
 
-  // useEffect(() => {
-  //   msgRef.current?.complete &&
-  //     msgRef.current?.scrollIntoView({ behavior: "smooth" });
-  // }, [msg]);
+  useEffect(() => {
+    msgRef.current?.complete &&
+      msgRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msg]);
 
   return (
     <div
@@ -68,11 +68,11 @@ const Message = ({ msg }: { msg: msgType }) => {
               alt="message image"
               className="w-1/2 rounded-md"
               ref={msgRef}
-              // onLoad={() =>
-              //   msgRef.current?.scrollIntoView({
-              //     behavior: "smooth",
-              //   })
-              // }
+              onLoad={() =>
+                msgRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                })
+              }
             />
             <span className="text-gray-500 font-light text-xs">
               {moment(msg.date.toDate()).format("LLL")}
