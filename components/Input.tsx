@@ -68,7 +68,7 @@ const Input = () => {
     <form className="h-20 bg-white flex items-center px-3" onSubmit={sendMsg}>
       <input
         type="text"
-        placeholder="Type something..."
+        placeholder="Say Something..."
         className="flex-1 outline-none"
         onChange={(e) => setText(e.target.value)}
         value={text}

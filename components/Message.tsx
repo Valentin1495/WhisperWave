@@ -1,3 +1,4 @@
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 import React, { useEffect, useRef } from "react";
@@ -15,15 +16,23 @@ interface msgType {
 
 const Message = ({ msg }: { msg: msgType }) => {
   const user = auth.currentUser;
+
   const friendPhoto = useSelector(
     (state: RootState) => state.chat.friend.photoURL
   );
-  const msgRef = useRef<HTMLImageElement>(null);
+
+  const msgRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    msgRef.current?.complete &&
-      msgRef.current?.scrollIntoView({ behavior: "smooth" });
+    msgRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [msg]);
+
+  // useEffect(() => {
+  //   msgRef.current?.complete &&
+  //     msgRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [msg]);
+
+  const src = msg.senderId === user?.uid ? user.photoURL! : friendPhoto;
 
   return (
     <div
@@ -31,11 +40,15 @@ const Message = ({ msg }: { msg: msgType }) => {
         msg.senderId === user?.uid && "flex-row-reverse"
       }`}
     >
-      <img
-        src={msg.senderId === user?.uid ? user.photoURL! : friendPhoto}
-        alt="profile picture"
-        className="w-10 h-10 rounded-full object-cover"
-      />
+      {src?.[35] === "-" ? (
+        <img
+          src={src}
+          alt="profile picture"
+          className="w-10 h-10 rounded-full object-cover"
+        />
+      ) : (
+        <UserCircleIcon className="h-12 -ml-1 text-" />
+      )}
 
       <div
         className={`max-w-[80%] gap-y-2.5 flex flex-col ${
@@ -55,7 +68,7 @@ const Message = ({ msg }: { msg: msgType }) => {
             </p>
 
             {!msg.image && (
-              <span className="text-gray-500 font-light text-xs">
+              <span ref={msgRef} className="text-gray-500 font-light text-xs">
                 {moment(msg.date.toDate()).format("LLL")}
               </span>
             )}
@@ -67,14 +80,11 @@ const Message = ({ msg }: { msg: msgType }) => {
               src={msg.image}
               alt="message image"
               className="w-1/2 rounded-md"
-              ref={msgRef}
               onLoad={() =>
-                msgRef.current?.scrollIntoView({
-                  behavior: "smooth",
-                })
+                msgRef.current?.scrollIntoView({ behavior: "smooth" })
               }
             />
-            <span className="text-gray-500 font-light text-xs">
+            <span ref={msgRef} className="text-gray-500 font-light text-xs">
               {moment(msg.date.toDate()).format("LLL")}
             </span>
           </>
