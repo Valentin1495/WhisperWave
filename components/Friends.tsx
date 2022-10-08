@@ -46,12 +46,12 @@ const Friends = () => {
                 <img
                   src={chat[1].friendInfo?.photoURL}
                   alt="pic"
-                  className="rounded-full h-12 w-12 sm:h-14 sm:w-14 object-cover"
+                  className="rounded-full h-12 w-12 object-cover"
                 />
               ) : (
                 <UserCircleIcon
                   onClick={signout}
-                  className="h-12 w-12 sm:-ml-1 cursor-pointer text-white"
+                  className="h-12 w-12 sm:h-14 sm:w-14 sm:-ml-1 cursor-pointer text-white"
                 />
               )}
               <div className="hidden sm:block w-2/3">

@@ -166,13 +166,16 @@ const Search = () => {
             <img
               src={friend.photoURL}
               alt="friend"
-              className="rounded-full h-12 w-12 mx-auto md:mx-0"
+              className="rounded-full h-12 w-12 object-cover"
             />
           ) : (
             <UserCircleIcon className="h-12 -ml-1 cursor-pointer text-white" />
           )}
-          <span className="text-white text-lg hidden sm:inline truncate">
+          <span className="text-white text-lg hidden md:inline truncate">
             {friend.displayName}
+          </span>
+          <span className="text-white text-lg hidden sm:inline md:hidden truncate">
+            {friend.displayName.split(" ")[0]}
           </span>
         </div>
       )}
