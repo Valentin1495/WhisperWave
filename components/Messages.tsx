@@ -29,7 +29,7 @@ const Messages = () => {
   }, [db, chatId]);
 
   return (
-    <div className="bg-[#ddddf7] h-[calc(100%-160px)] overflow-auto scrollbar-hide">
+    <div className="bg-[#ddddf7] h-[calc(100%-112px)] sm:h-[calc(100%-160px)] overflow-auto scrollbar-hide pt-5 sm:pt-3">
       {messages &&
         messages.map((message) => <Message msg={message} key={message.id} />)}
     </div>

@@ -65,11 +65,14 @@ const Input = () => {
   };
 
   return (
-    <form className="h-20 bg-white flex items-center px-3" onSubmit={sendMsg}>
+    <form
+      className="h-12 sm:h-20 bg-white flex items-center px-1.5 sm:px-3"
+      onSubmit={sendMsg}
+    >
       <input
         type="text"
         placeholder="Say Something..."
-        className="flex-1 outline-none"
+        className="w-full flex-1 outline-none pr-1.5 sm:pr-3 placeholder:text-sm sm:placeholder:text-base"
         onChange={(e) => setText(e.target.value)}
         value={text}
       />
@@ -80,11 +83,11 @@ const Input = () => {
         onChange={(e) => setImg(e.target.files?.[0])}
       />
       <label htmlFor="img">
-        <PhotoIcon className="h-6 w-6 mr-2 text-gray-400 cursor-pointer" />
+        <PhotoIcon className="h-6 w-6 mr-1 text-gray-400 cursor-pointer" />
       </label>
       <button
         type="submit"
-        className="bg-[#8da4f1] text-white px-2 py-1 rounded-sm disabled:cursor-not-allowed disabled:hover:opacity-80"
+        className="bg-[#8da4f1] text-xs sm:text-base text-white px-1.5 py-0.5 rounded-sm disabled:cursor-not-allowed disabled:hover:opacity-80"
         disabled={!text.trim() && !img}
       >
         Send

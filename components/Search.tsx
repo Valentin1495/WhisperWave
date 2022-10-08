@@ -148,7 +148,7 @@ const Search = () => {
         />
         <input
           type="text"
-          placeholder="Find Your Friends"
+          placeholder="Find your Friends..."
           className="hidden sm:inline-block bg-transparent outline-none placeholder-gray-300
           placeholder:text-sm text-white w-full"
           value={email}

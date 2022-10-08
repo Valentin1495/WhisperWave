@@ -59,21 +59,21 @@ const Chat = () => {
   }, [db, friendUid, user?.uid]);
 
   return (
-    <div className="basis-4/5 sm:basis-2/3">
-      <div className="bg-[#5d5b8d] text-gray-300 h-20 flex items-center px-3">
+    <div className="w-4/5 sm:w-2/3">
+      <div className="bg-[#5d5b8d] text-gray-300 h-16 sm:h-20 flex items-center px-3">
         {chat && (
           <div className="flex items-center w-full">
             <div className="flex-1">
-              <h3>
-                {friendName} ( {friendEmail} )
-              </h3>
-              <span>
+              <h3 className="text-base sm:text-2xl italic">{friendName}</h3>
+
+              <span className="text-xs font-light sm:text-sm">
                 Last active: <TimeAgo datetime={lastActive} />
               </span>
             </div>
+
             <TrashIcon
               onClick={deleteChat}
-              className="h-6 w-6 cursor-pointer"
+              className="h-6 w-6 sm:h-8 sm:w-8 cursor-pointer hover:text-white"
             />
           </div>
         )}

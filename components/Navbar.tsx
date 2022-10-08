@@ -14,7 +14,7 @@ const Navbar = () => {
   const user = auth.currentUser;
 
   return (
-    <div className="h-20 flex items-center bg-[#2f2d52] px-3">
+    <div className="h-16 sm:h-20 flex items-center bg-[#2f2d52] sm:px-3">
       <div className="flex items-center flex-1 justify-center sm:justify-start">
         {user?.photoURL?.[35] === "-" ? (
           <img
@@ -26,7 +26,7 @@ const Navbar = () => {
         ) : (
           <UserCircleIcon
             onClick={signout}
-            className="h-12 -ml-1 cursor-pointer text-[#ddddf7]"
+            className="h-12 w-12 cursor-pointer text-[#ddddf7]"
           />
         )}
 
