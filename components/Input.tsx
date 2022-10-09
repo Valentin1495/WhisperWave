@@ -100,12 +100,12 @@ const Input = () => {
         <img
           src={url}
           alt=""
-          className="h-8 w-8 cursor-pointer rounded-md mr-1"
+          className="h-5 w-5 sm:h-8 sm:w-8 cursor-pointer rounded-md mr-1"
           onClick={() => setImg(undefined)}
         />
       ) : (
         <label htmlFor="img">
-          <PhotoIcon className="h-8 w-8 mr-1 text-gray-400 cursor-pointer hover:opacity-80" />
+          <PhotoIcon className="h-6 w-6 sm:h-8 sm:w-8 mr-1 text-gray-400 cursor-pointer hover:opacity-80" />
         </label>
       )}
       <button

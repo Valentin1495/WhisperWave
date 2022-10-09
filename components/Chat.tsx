@@ -18,11 +18,9 @@ import { auth, db } from "../firebase";
 const Chat = () => {
   const [chat, setChat] = useState<DocumentData>();
   const [lastActive, setLastActive] = useState("");
+
   const friendName = useSelector(
     (state: RootState) => state.chat.friend.displayName
-  );
-  const friendEmail = useSelector(
-    (state: RootState) => state.chat.friend.email
   );
 
   const friendUid = useSelector((state: RootState) => state.chat.friend.uid);
@@ -63,25 +61,32 @@ const Chat = () => {
   }, [db, friendUid, user?.uid]);
 
   return (
-    <div className="w-4/5 sm:w-2/3">
-      <div className="bg-[#5d5b8d] text-gray-300 h-16 sm:h-20 flex items-center px-3">
-        {chat && (
-          <div className="flex items-center w-full">
-            <div className="flex-1">
-              <h3 className="text-base sm:text-2xl italic">{friendName}</h3>
+    <div className=" w-4/5 sm:w-2/3 bg-[#ddddf7]">
+      {chat ? (
+        <>
+          <div className="bg-[#5d5b8d] text-gray-300 h-16 sm:h-20 flex items-center px-3">
+            <div className="flex items-center w-full">
+              <div className="flex-1">
+                <h3 className="text-base sm:text-2xl italic">{friendName}</h3>
 
-              <span className="text-xs font-light sm:text-sm">
-                Last active: <TimeAgo datetime={lastActive} />
-              </span>
+                <p className="text-xs font-light sm:text-sm">
+                  Last active: <TimeAgo datetime={lastActive} />
+                </p>
+              </div>
+              <button onClick={deleteChat} className="hover:text-white">
+                <XCircleIcon className="h-6 w-6 sm:h-8 sm:w-8" />
+              </button>
             </div>
-            <button onClick={deleteChat} className="hover:text-white">
-              <XCircleIcon className="h-6 w-6 sm:h-8 sm:w-8" />
-            </button>
           </div>
-        )}
-      </div>
-      <Messages />
-      <Input />
+          <Messages />
+          <Input />
+        </>
+      ) : (
+        <div className="flex flex-col justify-center items-center h-full text-[#5d5b8d] font-bold text-lg sm:text-xl md:text-3xl">
+          <p>Start a New Chat </p>
+          <p>by Adding your Friends!</p>
+        </div>
+      )}
     </div>
   );
 };
