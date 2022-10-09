@@ -6,7 +6,7 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { auth, db, storage } from "../firebase";
 import { RootState } from "../store";
@@ -19,6 +19,7 @@ const Input = () => {
   const chatId = useSelector((state: RootState) => state.chat.chatId);
   const friendUid = useSelector((state: RootState) => state.chat.friend.uid);
   const user = auth.currentUser;
+  const [url, setUrl] = useState("");
 
   const sendMsg = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +65,19 @@ const Input = () => {
     setImg(undefined);
   };
 
+  useEffect(() => {
+    const reader = new FileReader();
+
+    img && reader.readAsDataURL(img);
+
+    reader.onload = (e) => {
+      let result = e.target?.result as string;
+      setUrl(result);
+    };
+
+    setUrl("");
+  }, [img]);
+
   return (
     <form
       className="h-12 sm:h-20 bg-white flex items-center px-1.5 sm:px-3"
@@ -82,9 +96,18 @@ const Input = () => {
         className="hidden"
         onChange={(e) => setImg(e.target.files?.[0])}
       />
-      <label htmlFor="img">
-        <PhotoIcon className="h-6 w-6 mr-1 text-gray-400 cursor-pointer" />
-      </label>
+      {url ? (
+        <img
+          src={url}
+          alt=""
+          className="h-8 w-8 cursor-pointer rounded-md mr-1"
+          onClick={() => setImg(undefined)}
+        />
+      ) : (
+        <label htmlFor="img">
+          <PhotoIcon className="h-8 w-8 mr-1 text-gray-400 cursor-pointer hover:opacity-80" />
+        </label>
+      )}
       <button
         type="submit"
         className="bg-[#8da4f1] text-xs sm:text-base text-white px-1.5 py-0.5 rounded-sm disabled:cursor-not-allowed disabled:hover:opacity-80"

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { auth } from "../firebase";
 import { RootState } from "../store";
 
-interface msgType {
+interface msg {
   date: Timestamp;
   id: string;
   image?: string;
@@ -14,7 +14,7 @@ interface msgType {
   text: string;
 }
 
-const Message = ({ msg }: { msg: msgType }) => {
+const Message = ({ msg }: { msg: msg }) => {
   const user = auth.currentUser;
 
   const friendPhoto = useSelector(

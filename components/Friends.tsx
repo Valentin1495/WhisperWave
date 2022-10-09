@@ -24,13 +24,6 @@ const Friends = () => {
     };
   }, [db, user?.uid]);
 
-  const truncate = (str: string, num: number) => {
-    if (str?.length > num) {
-      return str?.slice(0, num) + "...";
-    } else {
-      return str;
-    }
-  };
   return (
     <div className="pb-3 overflow-auto scrollbar-hide">
       {chats &&

@@ -5,7 +5,7 @@ import { db } from "../firebase";
 import { RootState } from "../store";
 import Message from "./Message";
 
-interface msgType {
+interface msg {
   date: Timestamp;
   id: string;
   image?: string;
@@ -14,7 +14,7 @@ interface msgType {
 }
 
 const Messages = () => {
-  const [messages, setMessages] = useState<msgType[]>([]);
+  const [messages, setMessages] = useState<msg[]>([]);
   const chatId = useSelector((state: RootState) => state.chat.chatId);
 
   useEffect(() => {
@@ -29,7 +29,10 @@ const Messages = () => {
   }, [db, chatId]);
 
   return (
-    <div className="bg-[#ddddf7] h-[calc(100%-112px)] sm:h-[calc(100%-160px)] overflow-auto scrollbar-hide pt-5 sm:pt-3">
+    <div
+      className="bg-[#ddddf7] h-[calc(100%-112px)] sm:h-[calc(100%-160px)] 
+                   overflow-auto scrollbar-hide pt-5 sm:pt-3"
+    >
       {messages &&
         messages.map((message) => <Message msg={message} key={message.id} />)}
     </div>

@@ -4,7 +4,7 @@ import Messages from "./Messages";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import TimeAgo from "timeago-react";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { XCircleIcon } from "@heroicons/react/24/outline";
 import {
   deleteDoc,
   deleteField,
@@ -32,13 +32,17 @@ const Chat = () => {
   const user = auth.currentUser;
 
   const deleteChat = async () => {
-    await updateDoc(doc(db, "chats", user!.uid), {
-      [chatId!]: deleteField(),
-    });
-    await updateDoc(doc(db, "chats", friendUid), {
-      [chatId!]: deleteField(),
-    });
-    await deleteDoc(doc(db, "messages", chatId!));
+    const ok = confirm("Remove this friend?");
+
+    if (ok) {
+      await updateDoc(doc(db, "chats", user!.uid), {
+        [chatId!]: deleteField(),
+      });
+      await updateDoc(doc(db, "chats", friendUid), {
+        [chatId!]: deleteField(),
+      });
+      await deleteDoc(doc(db, "messages", chatId!));
+    }
   };
 
   useEffect(() => {
@@ -70,11 +74,9 @@ const Chat = () => {
                 Last active: <TimeAgo datetime={lastActive} />
               </span>
             </div>
-
-            <TrashIcon
-              onClick={deleteChat}
-              className="h-6 w-6 sm:h-8 sm:w-8 cursor-pointer hover:text-white"
-            />
+            <button onClick={deleteChat} className="hover:text-white">
+              <XCircleIcon className="h-6 w-6 sm:h-8 sm:w-8" />
+            </button>
           </div>
         )}
       </div>

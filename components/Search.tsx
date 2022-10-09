@@ -1,6 +1,8 @@
 import {
   ChatBubbleBottomCenterTextIcon,
   UserCircleIcon,
+  UserPlusIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
   collection,
@@ -154,12 +156,12 @@ const Search = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={enter}
+          autoFocus
         />
       </div>
       {friend && (
         <div
-          onClick={addFriend}
-          className="cursor-pointer flex 
+          className="flex 
           justify-start items-center gap-x-1.5 p-3"
         >
           {friend.photoURL?.[35] === "-" ? (
@@ -169,14 +171,28 @@ const Search = () => {
               className="rounded-full h-12 w-12 object-cover"
             />
           ) : (
-            <UserCircleIcon className="h-12 -ml-1 cursor-pointer text-white" />
+            <UserCircleIcon className="h-12 w-12 -ml-1 cursor-pointer text-white" />
           )}
-          <span className="text-white text-lg hidden md:inline truncate">
+
+          <span className="text-white text-lg hidden md:inline md:mr-auto truncate">
             {friend.displayName}
           </span>
-          <span className="text-white text-lg hidden sm:inline md:hidden truncate">
+          <span className="text-white text-lg hidden sm:inline sm:mr-auto md:hidden truncate">
             {friend.displayName.split(" ")[0]}
           </span>
+
+          <button
+            onClick={() => setFriend(undefined)}
+            className="hidden sm:inline-block hover:scale-110 ease-in-out duration-300"
+          >
+            <XMarkIcon className="text-white h-6 w-6" />
+          </button>
+          <button
+            className="hidden sm:inline-block hover:scale-110 ease-in-out duration-300"
+            onClick={addFriend}
+          >
+            <UserPlusIcon className="h-6 w-6 text-white" />
+          </button>
         </div>
       )}
     </div>

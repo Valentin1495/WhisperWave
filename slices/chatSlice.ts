@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface friendType {
+interface friend {
   uid: string;
   displayName: string;
   photoURL: string;
@@ -8,7 +8,7 @@ interface friendType {
 }
 
 export interface ChatState {
-  friend: friendType;
+  friend: friend;
   chatId: string | undefined;
 }
 
