@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id        String    @id @default(uuid())
+  userId    String    @unique
+  name      String
+  imageUrl  String    @db.Text
+  email     String    @db.Text
+  createdAt DateTime  @default(now())
+  channels  Channel[]
+
+  servers Server[]
+  members Member[]
+}
+
+model Server {
+  id         String    @id @default(uuid())
+  name       String
+  imageUrl   String    @db.Text
+  inviteCode String    @db.Text
+  createdAt  DateTime  @default(now())
+  members    Member[]
+  channels   Channel[]
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Member {
+  id        String     @id @default(uuid())
+  role      MemberRole @default(GUEST)
+  createdAt DateTime   @default(now())
+
+  serverId  String
+  server    Server  @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Channel {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  serverId  String
+  server    Server  @relation(fields: [serverId], references: [id], onDelete: Cascade)
+}
