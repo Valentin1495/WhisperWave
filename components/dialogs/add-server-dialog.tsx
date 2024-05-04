@@ -8,21 +8,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useEffect, useRef, useState } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, Plus } from 'lucide-react';
 import { AvatarPhoto } from '../avatar-photo';
 import { cn } from '@/lib/utils';
 import { addServer } from '@/actions/server.action';
 import SubmitButton from '../submit-button';
+import { useFormState } from 'react-dom';
+
+const initialState = {
+  message: '',
+};
 
 export default function AddServerDialog() {
   const [isMounted, setIsMounted] = useState(false);
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState('');
+  const [open, setOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const [state, addServerAction] = useFormState(addServer, initialState);
 
   useEffect(() => {
     setIsMounted(true);
@@ -40,10 +53,29 @@ export default function AddServerDialog() {
     }
   }, [file]);
 
+  useEffect(() => {
+    if (state.message === 'Success!') {
+      setOpen(false);
+    }
+  }, [state]);
+
   if (isMounted)
     return (
-      <Dialog defaultOpen>
-        <DialogTrigger>Open</DialogTrigger>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger>
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger>
+                <section className='bg-background size-11 rounded-full flex items-center justify-center group hover:bg-primary hover:rounded-xl transition'>
+                  <Plus className='text-primary group-hover:text-secondary transition-colors' />
+                </section>
+              </TooltipTrigger>
+              <TooltipContent side='right' sideOffset={14}>
+                <p className='font-semibold'>Add a Server</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </DialogTrigger>
         <DialogContent className='px-3 pb-3 pt-6'>
           <DialogHeader>
             <DialogTitle className='font-bold text-xl text-center'>
@@ -55,7 +87,7 @@ export default function AddServerDialog() {
             </DialogDescription>
           </DialogHeader>
 
-          <form action={addServer}>
+          <form action={addServerAction}>
             <Input
               name='serverIcon'
               type='file'

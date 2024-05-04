@@ -62,7 +62,7 @@ export async function uploadFileToS3(fileKey: string, fileContent: Buffer) {
   }
 }
 
-export async function addServer(formdata: FormData) {
+export async function addServer(prevState: any, formdata: FormData) {
   const user = (await currentUser()) as User;
   const profile = (await findProfile(user.id)) as Profile;
   const profileId = profile.id;
@@ -99,6 +99,37 @@ export async function addServer(formdata: FormData) {
     });
 
     revalidatePath('/');
+
+    return {
+      message: 'Success!',
+    };
+  } catch (error: any) {
+    return {
+      message: 'Failed to add server',
+    };
+  }
+}
+
+export async function findMyServers() {
+  const user = (await currentUser()) as User;
+
+  const profile = await findProfile(user.id);
+
+  try {
+    const myServers = await db.server.findMany({
+      where: {
+        members: {
+          some: {
+            profileId: profile?.id,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return myServers;
   } catch (error: any) {
     throw new Error(error);
   }
