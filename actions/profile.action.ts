@@ -17,6 +17,22 @@ export async function findProfile(userId: string) {
   }
 }
 
+export async function getMyProfile() {
+  const user = (await currentUser()) as User;
+
+  try {
+    const myProfile = await db.profile.findUnique({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    return myProfile;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
 export async function createProfile() {
   const user = (await currentUser()) as User;
   const profile = await findProfile(user.id);

@@ -134,3 +134,32 @@ export async function findMyServers() {
     throw new Error(error);
   }
 }
+
+export async function findServer(serverId: string) {
+  try {
+    const server = await db.server.findUnique({
+      where: {
+        id: serverId,
+      },
+      include: {
+        members: {
+          include: {
+            profile: true,
+          },
+          orderBy: {
+            role: 'asc',
+          },
+        },
+        channels: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+      },
+    });
+
+    return server;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}

@@ -8,7 +8,7 @@ export default async function NavSidebar() {
   const myServers = await findMyServers();
 
   return (
-    <nav className='sticky top-0 bg-blue-50 dark:bg-secondary h-screen w-16 py-2.5'>
+    <nav className='sticky top-0 bg-blue-100 dark:bg-secondary h-screen w-16 py-2.5'>
       <div className='space-y-2 h-[calc(100vh-186px)] mb-2.5'>
         {myServers.map(({ id, name, imageUrl }) => (
           <MyServer key={id} id={id} name={name} imageUrl={imageUrl} />

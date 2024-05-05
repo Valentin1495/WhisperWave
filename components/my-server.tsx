@@ -35,7 +35,11 @@ export default function MyServer({ id, name, imageUrl }: MyServerProps) {
         <Tooltip>
           <TooltipTrigger className='mx-auto'>
             <Link href={`/server/${id}`}>
-              <AvatarPhoto className='size-11' src={imageUrl} alt={name} />
+              <AvatarPhoto
+                className='size-11 hover:opacity-75 transition'
+                src={imageUrl}
+                alt={name}
+              />
             </Link>
           </TooltipTrigger>
           <TooltipContent className='max-w-40' side='right' sideOffset={14}>
