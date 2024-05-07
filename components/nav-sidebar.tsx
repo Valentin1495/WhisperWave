@@ -1,8 +1,8 @@
 import { findMyServers } from '@/actions/server.action';
 import MyServer from './my-server';
-import AddServerDialog from './dialogs/add-server-dialog';
 import { ModeToggle } from './mode-toggle';
 import { UserButton } from '@clerk/nextjs';
+import OpenAddServerDialog from './open-add-server-dialog';
 
 export default async function NavSidebar() {
   const myServers = await findMyServers();
@@ -16,7 +16,7 @@ export default async function NavSidebar() {
       </div>
 
       <div className='flex flex-col items-center gap-2'>
-        <AddServerDialog />
+        <OpenAddServerDialog />
         <UserButton
           afterSignOutUrl='/'
           appearance={{

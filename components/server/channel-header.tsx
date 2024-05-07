@@ -7,13 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  ChevronDown,
-  LogOut,
-  PlusCircle,
-  Settings,
-  UserPlus,
-} from 'lucide-react';
+import { ChevronDown, LogOut, PlusCircle, Settings } from 'lucide-react';
+import OpenInvitePeopleDialog from './open-invite-people-dialog';
 
 type ChannelHeaderProps = {
   server: ServerWithMembers;
@@ -26,7 +21,7 @@ export default function ChannelHeader({ server, role }: ChannelHeaderProps) {
   const { name } = server;
 
   return (
-    <header className='hover:bg-blue-200 transition truncate'>
+    <header className='hover:bg-blue-200 dark:hover:bg-blue-900 transition truncate'>
       <DropdownMenu>
         <DropdownMenuTrigger className='p-3 flex items-center w-48 justify-between'>
           <span className='font-semibold text-sm'>{name}</span>
@@ -34,16 +29,8 @@ export default function ChannelHeader({ server, role }: ChannelHeaderProps) {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className='w-44'>
-          <DropdownMenuItem className='cursor-pointer focus:bg-primary hover:bg-primary group'>
-            <span className='text-primary font-medium group-hover:text-primary-foreground transition'>
-              Invite People
-            </span>
-            <UserPlus
-              size={16}
-              className='ml-auto text-primary group-hover:text-primary-foreground transition'
-              strokeWidth={2.25}
-            />
-          </DropdownMenuItem>
+          <OpenInvitePeopleDialog serverName={name} />
+
           {isAdmin && (
             <DropdownMenuItem className='cursor-pointer focus:bg-primary hover:bg-primary group'>
               <span className='font-medium group-hover:text-primary-foreground transition'>

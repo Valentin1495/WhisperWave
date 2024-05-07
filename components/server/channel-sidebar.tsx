@@ -19,7 +19,7 @@ export default async function ChannelSidebar({
   return (
     <div className='sticky top-0 bg-blue-50 dark:bg-secondary/50 h-screen'>
       <ChannelHeader server={server} role={role} />
-      <section className='w-full bg-zinc-300 h-[2px]' />
+      <section className='w-full bg-blue-100 dark:bg-secondary h-[2px]' />
     </div>
   );
 }

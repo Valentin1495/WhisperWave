@@ -1,11 +1,5 @@
 'use client';
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import Link from 'next/link';
 import { AvatarPhoto } from './avatar-photo';
 import { useParams } from 'next/navigation';
@@ -31,22 +25,13 @@ export default function MyServer({ id, name, imageUrl }: MyServerProps) {
         )}
       />
 
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger className='mx-auto'>
-            <Link href={`/server/${id}`}>
-              <AvatarPhoto
-                className='size-11 hover:opacity-75 transition'
-                src={imageUrl}
-                alt={name}
-              />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent className='max-w-40' side='right' sideOffset={14}>
-            <p className='font-semibold'>{name}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Link href={`/server/${id}`} className='mx-auto'>
+        <AvatarPhoto
+          className='size-11 hover:opacity-75 transition'
+          src={imageUrl}
+          alt={name}
+        />
+      </Link>
     </div>
   );
 }

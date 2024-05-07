@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { Open_Sans } from 'next/font/google';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
+import DialogProvider from '@/components/providers/dialog-provider';
 
 const openSans = Open_Sans({ subsets: ['latin'] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <DialogProvider />
           </ThemeProvider>
         </body>
       </html>
