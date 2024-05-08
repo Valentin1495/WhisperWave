@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { addServer } from '@/actions/server.action';
 import { Input } from './ui/input';
 import { AvatarPhoto } from './avatar-photo';
-import SubmitButton from './submit-button';
+import SubmitButton from './add-server-button';
 
 export default function AddServerForm() {
   const [serverName, setServerName] = useState('');

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import AddServerDialog from '../dialogs/add-server-dialog';
 import InvitePeopleDialog from '../dialogs/invite-people-dialog';
+import EditServerDialog from '../dialogs/edit-server-dialog';
 
 export default function DialogProvider() {
   const [isMounted, setIsMounted] = useState(false);
@@ -17,6 +18,7 @@ export default function DialogProvider() {
     <div>
       <AddServerDialog />
       <InvitePeopleDialog />
+      <EditServerDialog />
     </div>
   );
 }

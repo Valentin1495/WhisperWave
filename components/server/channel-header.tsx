@@ -7,8 +7,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, LogOut, PlusCircle, Settings } from 'lucide-react';
+import { ChevronDown, LogOut, PlusCircle } from 'lucide-react';
 import OpenInvitePeopleDialog from './open-invite-people-dialog';
+import OpenEditServerDialog from './open-edit-server-dialog';
 
 type ChannelHeaderProps = {
   server: ServerWithMembers;
@@ -21,7 +22,7 @@ export default function ChannelHeader({ server, role }: ChannelHeaderProps) {
   const { name } = server;
 
   return (
-    <header className='hover:bg-blue-200 dark:hover:bg-blue-900 transition truncate'>
+    <header className='hover:bg-blue-200 dark:hover:bg-blue-900 truncate'>
       <DropdownMenu>
         <DropdownMenuTrigger className='p-3 flex items-center w-48 justify-between'>
           <span className='font-semibold text-sm'>{name}</span>
@@ -29,28 +30,17 @@ export default function ChannelHeader({ server, role }: ChannelHeaderProps) {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className='w-44'>
-          <OpenInvitePeopleDialog serverName={name} />
+          <OpenInvitePeopleDialog server={server} />
 
-          {isAdmin && (
-            <DropdownMenuItem className='cursor-pointer focus:bg-primary hover:bg-primary group'>
-              <span className='font-medium group-hover:text-primary-foreground transition'>
-                Server Settings
-              </span>
-              <Settings
-                size={16}
-                className='ml-auto  group-hover:text-primary-foreground transition'
-                strokeWidth={2.25}
-              />
-            </DropdownMenuItem>
-          )}
+          {isAdmin && <OpenEditServerDialog server={server} />}
           {isMod && (
             <DropdownMenuItem className='cursor-pointer focus:bg-primary hover:bg-primary group'>
-              <span className='font-medium group-hover:text-primary-foreground transition'>
+              <span className='font-medium group-hover:text-primary-foreground'>
                 Create Channel
               </span>
               <PlusCircle
                 size={16}
-                className='ml-auto  group-hover:text-primary-foreground transition'
+                className='ml-auto  group-hover:text-primary-foreground'
                 strokeWidth={2.25}
               />
             </DropdownMenuItem>
@@ -59,12 +49,12 @@ export default function ChannelHeader({ server, role }: ChannelHeaderProps) {
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem className='cursor-pointer focus:bg-destructive hover:bg-destructive group'>
-                <span className='text-destructive font-medium group-hover:text-destructive-foreground transition'>
+                <span className='text-destructive font-medium group-hover:text-destructive-foreground'>
                   Leave Server
                 </span>
                 <LogOut
                   size={16}
-                  className='ml-auto text-destructive group-hover:text-destructive-foreground transition'
+                  className='ml-auto text-destructive group-hover:text-destructive-foreground'
                   strokeWidth={2.25}
                 />
               </DropdownMenuItem>

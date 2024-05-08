@@ -14,7 +14,8 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export default function InvitePeopleDialog() {
-  const { open, closeDialog, type, serverName } = useDialog();
+  const { open, closeDialog, type, data } = useDialog();
+  const serverName = data?.server?.name;
   const { serverId } = useParams();
   const origin = window.location.origin;
   const serverLink = `${origin}/server/${serverId}`;

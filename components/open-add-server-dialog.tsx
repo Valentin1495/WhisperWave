@@ -9,7 +9,11 @@ export default function OpenAddServerDialog() {
   return (
     <button
       className='bg-background size-11 rounded-full flex items-center justify-center group hover:bg-primary hover:rounded-xl transition'
-      onClick={() => openDialog('addServer', null)}
+      onClick={() =>
+        openDialog('addServer', {
+          server: null,
+        })
+      }
     >
       <Plus className='text-primary group-hover:text-secondary transition-colors' />
     </button>

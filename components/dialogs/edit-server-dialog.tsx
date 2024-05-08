@@ -3,33 +3,40 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useEffect, useRef, useState } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { ImagePlus } from 'lucide-react';
 import { AvatarPhoto } from '../avatar-photo';
 import { cn } from '@/lib/utils';
-import { addServer } from '@/actions/server.action';
-import AddServerButton from '../add-server-button';
+import { editServer } from '@/actions/server.action';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/hooks/use-dialog-store';
 import ImagePreview from '../image-preview';
+import EditServerButton from '../edit-server-button';
 
 const initialState = {
   message: '',
 };
 
-export default function AddServerDialog() {
-  const [serverName, setServerName] = useState('');
+export default function EditServerDialog() {
+  const { open, closeDialog, type, data } = useDialog();
+  const [serverName, setServerName] = useState<string>();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
+  const [mouseEnter, setMouseEnter] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const [state, addServerAction] = useFormState(addServer, initialState);
-  const { open, closeDialog, type } = useDialog();
+  const [state, editServerAction] = useFormState(editServer, initialState);
+  let prevServerName = data?.server?.name;
+  let prevImageUrl = data?.server?.imageUrl;
+  const isSameServer = serverName === prevServerName && !file;
+
+  useEffect(() => {
+    setServerName(prevServerName);
+    setPreview(prevImageUrl);
+  }, [data]);
 
   useEffect(() => {
     if (state.message === 'Success!') {
@@ -38,19 +45,15 @@ export default function AddServerDialog() {
   }, [state]);
 
   return (
-    <Dialog open={open && type === 'addServer'} onOpenChange={closeDialog}>
+    <Dialog open={open && type === 'editServer'} onOpenChange={closeDialog}>
       <DialogContent className='px-3 pb-3 pt-6'>
         <DialogHeader>
           <DialogTitle className='font-bold text-xl text-center'>
-            Customize Your Server
+            Server Overview
           </DialogTitle>
-          <DialogDescription className='text-sm text-center'>
-            Give your new server a personality with a name and an icon. You can
-            always change it later.
-          </DialogDescription>
         </DialogHeader>
 
-        <form action={addServerAction}>
+        <form action={editServerAction}>
           <Input
             name='serverIcon'
             type='file'
@@ -71,22 +74,25 @@ export default function AddServerDialog() {
               !preview && 'border-2 border-foreground border-dashed'
             )}
             onClick={() => fileRef.current?.click()}
+            onMouseEnter={() => setMouseEnter(true)}
+            onMouseLeave={() => setMouseEnter(false)}
           >
             <ImagePreview file={file} setPreview={setPreview} />
-            {preview ? (
-              <AvatarPhoto
-                src={preview}
-                alt={file ? file.name : 'server icon'}
-                className='size-full'
-              />
-            ) : (
-              <section className='text-sm font-bold'>
-                <ImagePlus
-                  strokeWidth={2.25}
-                  className='mx-auto text-foreground'
+            {preview && (
+              <div className='relative'>
+                <AvatarPhoto
+                  src={preview}
+                  alt={file ? file.name : 'server icon'}
+                  className='size-full'
                 />
-                UPLOAD
-              </section>
+                {mouseEnter && (
+                  <section className='absolute inset-0 bg-black/50 rounded-full flex items-center justify-center'>
+                    <h3 className='text-xs text-center font-bold text-primary-foreground dark:text-foreground'>
+                      CHANGE <br /> ICON
+                    </h3>
+                  </section>
+                )}
+              </div>
             )}
           </div>
           <Label className='text-sm font-semibold'>SERVER NAME</Label>
@@ -96,8 +102,24 @@ export default function AddServerDialog() {
             value={serverName}
             onChange={(e) => setServerName(e.target.value)}
           />
-
-          <AddServerButton serverName={serverName} file={file} />
+          <Input
+            type='hidden'
+            className='hidden'
+            value={data?.server?.id}
+            readOnly
+            name='serverId'
+          />
+          <Input
+            type='hidden'
+            className='hidden'
+            value={prevImageUrl}
+            readOnly
+            name='prevImageUrl'
+          />
+          <EditServerButton
+            serverName={serverName || ''}
+            isSameServer={isSameServer}
+          />
         </form>
       </DialogContent>
     </Dialog>

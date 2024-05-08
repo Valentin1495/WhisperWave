@@ -163,3 +163,42 @@ export async function findServer(serverId: string) {
     throw new Error(error);
   }
 }
+
+export async function editServer(prevState: any, formdata: FormData) {
+  const serverId = formdata.get('serverId') as string;
+  const serverName = formdata.get('serverName') as string;
+  const serverIcon = formdata.get('serverIcon') as File;
+  const prevImageUrl = formdata.get('prevImageUrl') as string;
+  let isSameFile = serverIcon.size === 0;
+  let imageUrl;
+
+  if (isSameFile) {
+    imageUrl = prevImageUrl;
+  } else {
+    const fileKey = `serverIcons/${uuidv4()}-${serverIcon.name}`;
+    const fileContent = Buffer.from(await serverIcon.arrayBuffer());
+    imageUrl = await uploadFileToS3(fileKey, fileContent);
+  }
+
+  try {
+    await db.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        name: serverName,
+        imageUrl,
+      },
+    });
+
+    revalidatePath(`/server/${serverId}`);
+
+    return {
+      message: 'Success!',
+    };
+  } catch (error: any) {
+    return {
+      message: 'Failed to edit server',
+    };
+  }
+}
