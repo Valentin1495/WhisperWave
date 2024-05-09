@@ -1,4 +1,4 @@
-import ChannelSidebar from '@/components/server/channel-sidebar';
+import ServerSidebar from '@/components/server/server-sidebar';
 
 export default async function ServerLayout({
   children,
@@ -11,8 +11,8 @@ export default async function ServerLayout({
 }>) {
   return (
     <div className='flex items-start'>
-      <ChannelSidebar serverId={params.serverId} />
-      {children}
+      <ServerSidebar serverId={params.serverId} />
+      <div className='w-[calc(100vw-316px)]'>{children}</div>
     </div>
   );
 }

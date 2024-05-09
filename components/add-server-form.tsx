@@ -1,35 +1,37 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Label } from './ui/label';
 import { ImagePlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { addServer } from '@/actions/server.action';
 import { Input } from './ui/input';
 import { AvatarPhoto } from './avatar-photo';
-import SubmitButton from './add-server-button';
+import AddServerButton from './add-server-button';
+import ImagePreview from './image-preview';
+import { useFormState } from 'react-dom';
+
+const initialState = {
+  message: '',
+};
 
 export default function AddServerForm() {
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState('');
+  const [preview, setPreview] = useState<string>();
   const fileRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreview('');
-    }
-  }, [file]);
+  const [_, addServerAction] = useFormState(addServer, initialState);
 
   return (
-    <div className='w-80 lg:w-[400px] bg-secondary px-3 pb-3 pt-6 rounded-lg'>
-      <form action={addServer}>
+    <div className='w-96 lg:w-[500px] bg-secondary px-3 pb-3 pt-6 rounded-lg space-y-5'>
+      <div className='space-y-2'>
+        <h1 className='font-bold text-xl text-center'>Create Your Server</h1>
+        <p className='text-sm text-center'>
+          Your server is where you and your friends hang out. Make yours and
+          start talking.
+        </p>
+      </div>
+      <form action={addServerAction}>
         <Input
           name='serverIcon'
           type='file'
@@ -51,6 +53,7 @@ export default function AddServerForm() {
           )}
           onClick={() => fileRef.current?.click()}
         >
+          <ImagePreview file={file} setPreview={setPreview} />
           {preview ? (
             <AvatarPhoto
               src={preview}
@@ -75,7 +78,7 @@ export default function AddServerForm() {
           onChange={(e) => setServerName(e.target.value)}
         />
 
-        <SubmitButton serverName={serverName} file={file} />
+        <AddServerButton serverName={serverName} file={file} />
       </form>
     </div>
   );

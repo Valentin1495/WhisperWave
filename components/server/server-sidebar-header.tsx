@@ -11,25 +11,28 @@ import { ChevronDown, LogOut, PlusCircle } from 'lucide-react';
 import OpenInvitePeopleDialog from './open-invite-people-dialog';
 import OpenEditServerDialog from './open-edit-server-dialog';
 
-type ChannelHeaderProps = {
+type ServerSidebarHeaderProps = {
   server: ServerWithMembers;
   role?: MemberRole;
 };
 
-export default function ChannelHeader({ server, role }: ChannelHeaderProps) {
+export default function ServerSidebarHeader({
+  server,
+  role,
+}: ServerSidebarHeaderProps) {
   const isAdmin = role === MemberRole.ADMIN;
   const isMod = isAdmin || role === MemberRole.MODERATOR;
   const { name } = server;
 
   return (
-    <header className='hover:bg-blue-200 dark:hover:bg-blue-900 truncate'>
+    <header className='hover:bg-blue-200 dark:hover:bg-blue-900 transition'>
       <DropdownMenu>
-        <DropdownMenuTrigger className='p-3 flex items-center w-48 justify-between'>
-          <span className='font-semibold text-sm'>{name}</span>
-          <ChevronDown size={18} />
+        <DropdownMenuTrigger className='p-3 flex items-center w-full justify-between'>
+          <h1 className='font-semibold text-sm truncate'>{name}</h1>
+          <ChevronDown size={18} className='min-w-fit' />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className='w-44'>
+        <DropdownMenuContent className='w-56'>
           <OpenInvitePeopleDialog server={server} />
 
           {isAdmin && <OpenEditServerDialog server={server} />}

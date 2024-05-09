@@ -1,7 +1,7 @@
 'use server';
 
 import { User, currentUser } from '@clerk/nextjs/server';
-import { findProfile } from './profile.action';
+import { findProfile, getCurrentProfile } from './profile.action';
 import db from '@/lib/db';
 import { redirect } from 'next/navigation';
 import {
@@ -111,16 +111,14 @@ export async function addServer(prevState: any, formdata: FormData) {
 }
 
 export async function findMyServers() {
-  const user = (await currentUser()) as User;
-
-  const profile = await findProfile(user.id);
+  const currentProfile = await getCurrentProfile();
 
   try {
     const myServers = await db.server.findMany({
       where: {
         members: {
           some: {
-            profileId: profile?.id,
+            profileId: currentProfile?.id,
           },
         },
       },
@@ -164,6 +162,27 @@ export async function findServer(serverId: string) {
   }
 }
 
+export async function findExistingServer(inviteCode: string) {
+  const currentProfile = await getCurrentProfile();
+
+  try {
+    const existServer = await db.server.findUnique({
+      where: {
+        inviteCode,
+        members: {
+          some: {
+            profileId: currentProfile?.id,
+          },
+        },
+      },
+    });
+
+    return existServer;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
 export async function editServer(prevState: any, formdata: FormData) {
   const serverId = formdata.get('serverId') as string;
   const serverName = formdata.get('serverName') as string;
@@ -200,5 +219,85 @@ export async function editServer(prevState: any, formdata: FormData) {
     return {
       message: 'Failed to edit server',
     };
+  }
+}
+
+export async function inviteToServer(inviteCode: string) {
+  const currentProfile = (await getCurrentProfile()) as Profile;
+
+  const existingServer = await findExistingServer(inviteCode);
+
+  if (existingServer) return existingServer.id;
+
+  try {
+    const invitedServer = await db.server.update({
+      where: {
+        inviteCode,
+      },
+      data: {
+        members: {
+          create: [
+            {
+              profileId: currentProfile.id,
+            },
+          ],
+        },
+      },
+    });
+
+    return invitedServer.id;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function changeRole(
+  serverId: string,
+  memberId: string,
+  newRole: MemberRole
+) {
+  try {
+    await db.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        members: {
+          update: {
+            where: {
+              id: memberId,
+            },
+            data: {
+              role: newRole,
+            },
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/server/${serverId}/members`);
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function kickMember(serverId?: string, memberId?: string) {
+  try {
+    await db.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        members: {
+          delete: {
+            id: memberId,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/server/${serverId}/members`);
+  } catch (error: any) {
+    throw new Error(error);
   }
 }

@@ -8,20 +8,17 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useDialog } from '@/hooks/use-dialog-store';
-import { useParams } from 'next/navigation';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export default function InvitePeopleDialog() {
   const { open, closeDialog, type, data } = useDialog();
-  const serverName = data?.server?.name;
-  const { serverId } = useParams();
   const origin = window.location.origin;
-  const serverLink = `${origin}/server/${serverId}`;
+  const inviteLink = `${origin}/invite/${data?.server?.inviteCode}`;
   const [copied, setCopied] = useState(false);
   const copyLink = () => {
-    navigator.clipboard.writeText(serverLink);
+    navigator.clipboard.writeText(inviteLink);
     setCopied(true);
 
     setTimeout(() => {
@@ -34,14 +31,15 @@ export default function InvitePeopleDialog() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle className='text-base'>
-            Invite friends to <span className='font-bold'>{serverName}</span>
+            Invite friends to{' '}
+            <span className='font-bold'>{data?.server?.name}</span>
           </DialogTitle>
           <DialogDescription className='text-xs'>
             SEND A SERVER INVITE LINK TO A FRIEND
           </DialogDescription>
         </DialogHeader>
         <p className='text-sm bg-zinc-100 dark:bg-secondary text-zinc-500 dark:text-secondary-foreground px-1 rounded-lg flex items-center'>
-          <span className='px-2 py-1'>{serverLink}</span>
+          <span className='px-2 py-1'>{inviteLink}</span>
           <Button
             onClick={copyLink}
             className={cn(
