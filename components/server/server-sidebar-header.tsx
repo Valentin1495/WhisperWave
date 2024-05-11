@@ -3,14 +3,15 @@ import { MemberRole } from '@prisma/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, LogOut, PlusCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import OpenInvitePeopleDialog from './open-invite-people-dialog';
 import OpenEditServerDialog from './open-edit-server-dialog';
 import OpenCreateChannelDialog from './open-create-channel-dialog';
+import OpenLeaveServerDialog from './open-leave-server-dialog';
+import OpenDeleteServerDialog from './open-delete-server-dialog';
 
 type ServerSidebarHeaderProps = {
   server: ServerWithMembers;
@@ -41,16 +42,13 @@ export default function ServerSidebarHeader({
           {!isAdmin && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className='cursor-pointer focus:bg-destructive hover:bg-destructive group'>
-                <span className='text-destructive font-medium group-hover:text-destructive-foreground'>
-                  Leave Server
-                </span>
-                <LogOut
-                  size={16}
-                  className='ml-auto text-destructive group-hover:text-destructive-foreground'
-                  strokeWidth={2.25}
-                />
-              </DropdownMenuItem>
+              <OpenLeaveServerDialog server={server} />
+            </>
+          )}
+          {isAdmin && (
+            <>
+              <DropdownMenuSeparator />
+              <OpenDeleteServerDialog server={server} />
             </>
           )}
         </DropdownMenuContent>

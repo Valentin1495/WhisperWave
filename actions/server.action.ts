@@ -289,7 +289,7 @@ export async function kickMember(serverId?: string, memberId?: string) {
       },
       data: {
         members: {
-          delete: {
+          deleteMany: {
             id: memberId,
           },
         },
@@ -341,5 +341,59 @@ export async function createChannel(prevState: any, formData: FormData) {
     return {
       message: 'Failed to create channel',
     };
+  }
+}
+
+export async function leaveServer(serverId?: string) {
+  const currentProfile = (await getCurrentProfile()) as Profile;
+  const profileId = currentProfile.id;
+  let redirectPath;
+
+  try {
+    await db.server.update({
+      where: {
+        id: serverId,
+        members: {
+          some: {
+            profileId,
+          },
+        },
+      },
+      data: {
+        members: {
+          deleteMany: {
+            profileId,
+          },
+        },
+      },
+    });
+
+    redirectPath = '/';
+  } catch (error: any) {
+    throw new Error(error);
+  } finally {
+    if (redirectPath) {
+      redirect(redirectPath);
+    }
+  }
+}
+
+export async function deleteServer(serverId?: string) {
+  let redirectPath;
+
+  try {
+    await db.server.delete({
+      where: {
+        id: serverId,
+      },
+    });
+
+    redirectPath = '/';
+  } catch (error: any) {
+    throw new Error(error);
+  } finally {
+    if (redirectPath) {
+      redirect(redirectPath);
+    }
   }
 }

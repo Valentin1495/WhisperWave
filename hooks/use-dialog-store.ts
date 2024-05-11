@@ -6,7 +6,9 @@ export type DialogType =
   | 'invitePeople'
   | 'editServer'
   | 'kickMember'
-  | 'createChannel';
+  | 'createChannel'
+  | 'leaveServer'
+  | 'deleteServer';
 
 export type DialogData = {
   server: ServerWithMembers;
