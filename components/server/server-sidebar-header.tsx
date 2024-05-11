@@ -10,6 +10,7 @@ import {
 import { ChevronDown, LogOut, PlusCircle } from 'lucide-react';
 import OpenInvitePeopleDialog from './open-invite-people-dialog';
 import OpenEditServerDialog from './open-edit-server-dialog';
+import OpenCreateChannelDialog from './open-create-channel-dialog';
 
 type ServerSidebarHeaderProps = {
   server: ServerWithMembers;
@@ -36,18 +37,7 @@ export default function ServerSidebarHeader({
           <OpenInvitePeopleDialog server={server} />
 
           {isAdmin && <OpenEditServerDialog server={server} />}
-          {isMod && (
-            <DropdownMenuItem className='cursor-pointer focus:bg-primary hover:bg-primary group'>
-              <span className='font-medium group-hover:text-primary-foreground'>
-                Create Channel
-              </span>
-              <PlusCircle
-                size={16}
-                className='ml-auto  group-hover:text-primary-foreground'
-                strokeWidth={2.25}
-              />
-            </DropdownMenuItem>
-          )}
+          {isMod && <OpenCreateChannelDialog server={server} />}
           {!isAdmin && (
             <>
               <DropdownMenuSeparator />

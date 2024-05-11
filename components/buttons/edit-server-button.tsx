@@ -1,21 +1,21 @@
 import { useFormStatus } from 'react-dom';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
-type AddServerButtonProps = {
+type EditServerButtonProps = {
   serverName: string;
-  file: File | null;
+  isSameServer: boolean;
 };
 
-export default function AddServerButton({
+export default function EditServerButton({
   serverName,
-  file,
-}: AddServerButtonProps) {
+  isSameServer,
+}: EditServerButtonProps) {
   const { pending } = useFormStatus();
 
   return (
     <div className='text-end'>
       <Button
-        disabled={!serverName.trim() || !file || pending}
+        disabled={!serverName.trim() || isSameServer || pending}
         className='dark:text-secondary-foreground w-[76px]'
       >
         {pending ? (

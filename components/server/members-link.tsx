@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Users } from 'lucide-react';
+import { UsersRound } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -23,7 +23,7 @@ export default function MembersLink({ serverId }: MembersLinkProps) {
             'font-semibold bg-blue-200 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-900'
         )}
       >
-        <Users size={18} />
+        <UsersRound size={18} />
         Members
       </Link>
       <section className='w-full bg-blue-100 dark:bg-secondary h-[2px]' />

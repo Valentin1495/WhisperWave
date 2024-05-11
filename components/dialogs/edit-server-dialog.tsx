@@ -15,7 +15,7 @@ import { editServer } from '@/actions/server.action';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/hooks/use-dialog-store';
 import ImagePreview from '../image-preview';
-import EditServerButton from '../edit-server-button';
+import EditServerButton from '../buttons/edit-server-button';
 
 const initialState = {
   message: '',
@@ -95,8 +95,11 @@ export default function EditServerDialog() {
               </div>
             )}
           </div>
-          <Label className='text-sm font-semibold'>SERVER NAME</Label>
+          <Label htmlFor='serverName' className='text-sm font-semibold'>
+            SERVER NAME
+          </Label>
           <Input
+            id='serverName'
             name='serverName'
             className='border-none my-2.5 bg-primary/10 dark:bg-primary/20'
             value={serverName}

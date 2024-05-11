@@ -7,9 +7,9 @@ import { cn } from '@/lib/utils';
 import { addServer } from '@/actions/server.action';
 import { Input } from './ui/input';
 import { AvatarPhoto } from './avatar-photo';
-import AddServerButton from './add-server-button';
 import ImagePreview from './image-preview';
 import { useFormState } from 'react-dom';
+import AddServerButton from './buttons/add-server-button';
 
 const initialState = {
   message: '',
@@ -70,8 +70,11 @@ export default function AddServerForm() {
             </section>
           )}
         </div>
-        <Label className='text-sm font-semibold'>SERVER NAME</Label>
+        <Label htmlFor='serverName' className='text-sm font-semibold'>
+          SERVER NAME
+        </Label>
         <Input
+          id='serverName'
           name='serverName'
           className='border-none my-2.5 bg-primary/10 dark:bg-primary/20'
           value={serverName}

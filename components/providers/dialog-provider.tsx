@@ -5,6 +5,7 @@ import AddServerDialog from '../dialogs/add-server-dialog';
 import InvitePeopleDialog from '../dialogs/invite-people-dialog';
 import EditServerDialog from '../dialogs/edit-server-dialog';
 import KickMemberDialog from '../dialogs/kick-member-dialog';
+import CreateChannelDialog from '../dialogs/create-channel-dialog';
 
 export default function DialogProvider() {
   const [isMounted, setIsMounted] = useState(false);
@@ -21,6 +22,7 @@ export default function DialogProvider() {
       <InvitePeopleDialog />
       <EditServerDialog />
       <KickMemberDialog />
+      <CreateChannelDialog />
     </div>
   );
 }

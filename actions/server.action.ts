@@ -301,3 +301,45 @@ export async function kickMember(serverId?: string, memberId?: string) {
     throw new Error(error);
   }
 }
+
+export async function createChannel(prevState: any, formData: FormData) {
+  const currentProfile = (await getCurrentProfile()) as Profile;
+
+  const profileId = currentProfile.id;
+  const serverId = formData.get('serverId') as string;
+  const channelName = formData.get('channelName') as string;
+
+  try {
+    await db.server.update({
+      where: {
+        id: serverId,
+        members: {
+          some: {
+            profileId,
+            role: {
+              in: [MemberRole.ADMIN, MemberRole.MODERATOR],
+            },
+          },
+        },
+      },
+      data: {
+        channels: {
+          create: {
+            profileId,
+            name: channelName,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/server/${serverId}`);
+
+    return {
+      message: 'Success!',
+    };
+  } catch (error: any) {
+    return {
+      message: 'Failed to create channel',
+    };
+  }
+}

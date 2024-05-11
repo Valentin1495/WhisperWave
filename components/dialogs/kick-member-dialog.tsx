@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useDialog } from '@/hooks/use-dialog-store';
-import KickMemberButton from '../kick-member-button';
+import KickMemberButton from '../buttons/kick-member-button';
 
 export default function KickMemberDialog() {
   const { open, closeDialog, type, data } = useDialog();

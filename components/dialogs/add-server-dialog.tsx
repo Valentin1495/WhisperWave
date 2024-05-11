@@ -14,7 +14,7 @@ import { ImagePlus } from 'lucide-react';
 import { AvatarPhoto } from '../avatar-photo';
 import { cn } from '@/lib/utils';
 import { addServer } from '@/actions/server.action';
-import AddServerButton from '../add-server-button';
+import AddServerButton from '../buttons/add-server-button';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/hooks/use-dialog-store';
 import ImagePreview from '../image-preview';
@@ -89,8 +89,11 @@ export default function AddServerDialog() {
               </section>
             )}
           </div>
-          <Label className='text-sm font-semibold'>SERVER NAME</Label>
+          <Label htmlFor='serverName' className='text-sm font-semibold'>
+            SERVER NAME
+          </Label>
           <Input
+            id='serverName'
             name='serverName'
             className='border-none my-2.5 bg-primary/10 dark:bg-primary/20'
             value={serverName}
