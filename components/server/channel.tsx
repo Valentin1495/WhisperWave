@@ -1,14 +1,23 @@
 'use client';
 
+import { useDialog } from '@/hooks/use-dialog-store';
 import { cn } from '@/lib/utils';
-import { Channel as ChannelType } from '@prisma/client';
+import { ChannelWithRole } from '@/types';
 import { Hash, Settings, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-export default function Channel({ id, name, serverId }: ChannelType) {
+export default function Channel({
+  id,
+  name,
+  serverId,
+  role,
+  server,
+}: ChannelWithRole) {
   const params = useParams();
   const isActive = params.channelId === id;
+  const isGuest = role === 'GUEST';
+  const { openDialog } = useDialog();
 
   return (
     <Link
@@ -21,12 +30,32 @@ export default function Channel({ id, name, serverId }: ChannelType) {
     >
       <Hash size={20} />
       <h5>{name}</h5>
-      {isActive && (
+      {isActive && !isGuest && (
         <section className='flex items-center gap-1 ml-auto'>
-          <button>
+          <button
+            onClick={() =>
+              openDialog('deleteChannel', {
+                server,
+                channel: {
+                  id,
+                  name,
+                },
+              })
+            }
+          >
             <Trash2 size={16} className='hover:scale-125 transition' />
           </button>
-          <button>
+          <button
+            onClick={() =>
+              openDialog('editChannel', {
+                server,
+                channel: {
+                  id,
+                  name,
+                },
+              })
+            }
+          >
             <Settings size={16} className='hover:scale-125 transition' />
           </button>
         </section>

@@ -25,7 +25,12 @@ export default async function ServerSidebar({ serverId }: ServerSidebarProps) {
       <div className='space-y-1'>
         {!!server.channels.length &&
           server.channels.map((channel) => (
-            <Channel key={channel.id} {...channel} />
+            <Channel
+              key={channel.id}
+              {...channel}
+              role={role}
+              server={server}
+            />
           ))}
       </div>
     </aside>

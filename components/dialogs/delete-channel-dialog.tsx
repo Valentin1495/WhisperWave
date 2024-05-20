@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteServer } from '@/actions/server.action';
+import { deleteChannel } from '@/actions/server.action';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -13,27 +13,27 @@ import {
 import { useDialog } from '@/hooks/use-dialog-store';
 import DeleteServerButton from '../buttons/delete-server-button';
 
-export default function DeleteServerDialog() {
+export default function DeleteChannelDialog() {
   const { open, closeDialog, type, data } = useDialog();
-  const deleteServerAction = async () => {
-    await deleteServer(data?.server.id);
+  const deleteChannelAction = async () => {
+    await deleteChannel(data?.server.id, data?.channel?.id);
     closeDialog();
   };
 
   return (
     <AlertDialog
-      open={open && type === 'deleteServer'}
+      open={open && type === 'deleteChannel'}
       onOpenChange={closeDialog}
     >
       <AlertDialogContent>
-        <form action={deleteServerAction} className='space-y-3'>
+        <form action={deleteChannelAction} className='space-y-3'>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              server{' '}
+              channel{' '}
               <span className='text-primary font-semibold'>
-                {data?.server.name}
+                #{data?.channel?.name}
               </span>
               .
             </AlertDialogDescription>

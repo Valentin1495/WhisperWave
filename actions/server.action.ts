@@ -397,3 +397,64 @@ export async function deleteServer(serverId?: string) {
     }
   }
 }
+
+export async function deleteChannel(serverId?: string, channelId?: string) {
+  let redirectPath;
+
+  try {
+    await db.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        channels: {
+          deleteMany: {
+            id: channelId,
+          },
+        },
+      },
+    });
+
+    redirectPath = `/server/${serverId}`;
+  } catch (error: any) {
+    throw new Error(error);
+  } finally {
+    if (redirectPath) redirect(redirectPath);
+  }
+}
+
+export async function editChannel(prevState: any, formData: FormData) {
+  const channelName = formData.get('channelName') as string;
+  const serverId = formData.get('serverId') as string;
+  const channelId = formData.get('channelId') as string;
+
+  try {
+    await db.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        channels: {
+          update: {
+            where: {
+              id: channelId,
+            },
+            data: {
+              name: channelName,
+            },
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/server/${serverId}/channel/${channelId}`);
+
+    return {
+      message: 'Success!',
+    };
+  } catch (error: any) {
+    return {
+      message: 'Failed to edit channel',
+    };
+  }
+}

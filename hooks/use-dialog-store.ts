@@ -8,10 +8,16 @@ export type DialogType =
   | 'kickMember'
   | 'createChannel'
   | 'leaveServer'
-  | 'deleteServer';
+  | 'deleteServer'
+  | 'deleteChannel'
+  | 'editChannel';
 
 export type DialogData = {
   server: ServerWithMembers;
+  channel?: {
+    id: string;
+    name: string;
+  };
   memberId?: string;
 };
 
