@@ -20,14 +20,14 @@ export default function MyServer({ id, name, imageUrl }: MyServerProps) {
     <div className='flex'>
       <section
         className={cn(
-          'h-14 bg-blue-600 dark:bg-blue-300 w-1 rounded-full',
+          'h-[52px] bg-blue-600 dark:bg-blue-300 w-1 rounded-full',
           isCurrentServer ? 'opacity-100' : 'opacity-0'
         )}
       />
 
       <Link href={`/server/${id}`} className='mx-auto'>
         <AvatarPhoto
-          className='size-14 hover:opacity-75 transition'
+          className='size-[52px] hover:opacity-75 transition'
           src={imageUrl}
           alt={name}
         />

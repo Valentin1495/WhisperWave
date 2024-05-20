@@ -14,7 +14,7 @@ export default function MembersLink({ serverId }: MembersLinkProps) {
   const isActive = pathname.includes('members');
 
   return (
-    <section className='p-1.5 space-y-1.5'>
+    <section className='p-3 space-y-3'>
       <Link
         href={`/server/${serverId}/members`}
         className={cn(

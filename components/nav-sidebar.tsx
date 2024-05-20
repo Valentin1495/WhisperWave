@@ -21,7 +21,7 @@ export default async function NavSidebar() {
           afterSignOutUrl='/'
           appearance={{
             elements: {
-              avatarBox: 'size-14',
+              avatarBox: 'size-[52px]',
             },
           }}
         />

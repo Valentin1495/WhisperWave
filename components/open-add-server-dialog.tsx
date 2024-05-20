@@ -8,7 +8,7 @@ export default function OpenAddServerDialog() {
 
   return (
     <button
-      className='bg-background size-14 rounded-full flex items-center justify-center group hover:bg-primary hover:rounded-xl transition'
+      className='bg-background size-[52px] rounded-full flex items-center justify-center group hover:bg-primary hover:rounded-xl transition'
       onClick={() => openDialog('addServer')}
     >
       <Plus className='text-primary group-hover:text-secondary transition-colors' />
