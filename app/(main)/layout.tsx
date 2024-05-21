@@ -7,7 +7,9 @@ export default function MainLayout({
 }>) {
   return (
     <div className='flex items-start'>
-      <NavSidebar />
+      <section className='hidden md:block'>
+        <NavSidebar />
+      </section>
       {children}
     </div>
   );

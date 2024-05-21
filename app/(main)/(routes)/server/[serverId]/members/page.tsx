@@ -21,9 +21,9 @@ export default async function Members({ params }: MembersProps) {
 
   return (
     <main>
-      <ServerHeader name='Members' type='members' />
-      <section className='bg-blue-100 dark:bg-secondary h-[2px] w-full' />
-      <div className='border rounded-lg divide-y mx-3 mt-3'>
+      <ServerHeader name='Members' type='members' serverId={params.serverId} />
+      <section className='bg-blue-100 dark:bg-secondary h-[2px] w-screen md:w-full' />
+      <div className='border rounded-lg divide-y mx-3 mt-3 w-[calc(100vw-24px)] md:w-auto'>
         <h2 className='text-sm font-medium p-3'>
           {members.length} {members.length === 1 ? 'Member' : 'Members'}
         </h2>

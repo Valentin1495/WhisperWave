@@ -30,6 +30,7 @@ export default function MemberRow({
   const { name, email, imageUrl } = profile;
   const { optimisticRole, changeOptimisticRole } = useChangeRole(role);
   const serverId = server.id;
+
   return (
     <div className='flex p-3 justify-between items-center'>
       <div className='flex items-center gap-2'>
