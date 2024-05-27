@@ -3,6 +3,7 @@ import { findServer } from '@/actions/server.action';
 import MemberRow from '@/components/server/member-row';
 import ServerHeader from '@/components/server/server-header';
 import { ServerWithMembers } from '@/types';
+import { Profile } from '@prisma/client';
 
 type MembersProps = {
   params: {
@@ -13,12 +14,12 @@ type MembersProps = {
 export default async function Members({ params }: MembersProps) {
   const server = (await findServer(params.serverId)) as ServerWithMembers;
   const members = server.members;
-  const currentProfile = await getCurrentProfile();
+  const currentProfile = await getCurrentProfile() as Profile
   const myRole = members.find(
     (member) => member.profileId === currentProfile?.id
   )?.role;
   const isGuest = myRole === 'GUEST';
-
+  
   return (
     <main>
       <ServerHeader name='Members' type='members' serverId={params.serverId} />
@@ -33,6 +34,7 @@ export default async function Members({ params }: MembersProps) {
             {...member}
             isGuest={isGuest}
             server={server}
+            currentProfileId={currentProfile.id}
           />
         ))}
       </div>

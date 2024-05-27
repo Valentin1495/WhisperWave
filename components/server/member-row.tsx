@@ -2,16 +2,18 @@
 
 import { Member, Profile } from '@prisma/client';
 import { AvatarPhoto } from '../avatar-photo';
-import { ShieldAlert, ShieldCheck } from 'lucide-react';
+import { MessageCirclePlus, ShieldAlert, ShieldCheck } from 'lucide-react';
 import RoleDropdownMenu from './role-dropdown-menu';
 import { useChangeRole } from '@/hooks/use-change-role';
 import OpenKickMemberDialog from './open-kick-member-dialog';
 import { ServerWithMembers } from '@/types';
+import Link from 'next/link';
 
 type MemberWithProfile = Member & {
   profile: Profile;
   isGuest: boolean;
   server: ServerWithMembers;
+  currentProfileId: string;
 };
 
 const roleIcons = {
@@ -26,10 +28,13 @@ export default function MemberRow({
   id: memberId,
   isGuest,
   server,
+  currentProfileId,
 }: MemberWithProfile) {
-  const { name, email, imageUrl } = profile;
+  const { name, email, imageUrl, id } = profile;
   const { optimisticRole, changeOptimisticRole } = useChangeRole(role);
   const serverId = server.id;
+
+  const isCurrentMember = id === currentProfileId;
 
   return (
     <div className='flex p-3 justify-between items-center'>
@@ -43,8 +48,19 @@ export default function MemberRow({
           <p className='text-sm'>{email}</p>
         </section>
       </div>
+      {!isCurrentMember && (
+        <Link
+          href={`/server/${serverId}/conversation/${memberId}`}
+          className='ml-auto'
+        >
+          <MessageCirclePlus
+            size={30}
+            className='text-primary hover:scale-110 transition'
+          />
+        </Link>
+      )}
       {!isGuest && (
-        <>
+        <div className='ml-1.5'>
           {role !== 'ADMIN' && (
             <div className='space-x-1.5'>
               <RoleDropdownMenu
@@ -56,7 +72,7 @@ export default function MemberRow({
               <OpenKickMemberDialog server={server} memberId={memberId} />
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

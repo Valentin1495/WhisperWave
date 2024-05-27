@@ -1,0 +1,27 @@
+'use client';
+
+import { useSocket } from '@/hooks/use-socket';
+import { Badge } from './ui/badge';
+
+export default function SocketIndicator() {
+  const { isConnected } = useSocket();
+
+  if (isConnected)
+    return (
+      <Badge
+        variant='outline'
+        className='bg-emerald-500 text-secondary border-none'
+      >
+        Live: Real-time updates
+      </Badge>
+    );
+
+  return (
+    <Badge
+      variant='outline'
+      className='bg-yellow-600 text-secondary border-none'
+    >
+      Fallback: Polling every 1s
+    </Badge>
+  );
+}

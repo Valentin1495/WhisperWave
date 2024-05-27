@@ -11,3 +11,7 @@ export type ChannelWithRole = Channel & {
   role?: MemberRole;
   server: ServerWithMembers;
 };
+
+export type MemberWithProfile = Member & {
+  profile: Profile;
+};
