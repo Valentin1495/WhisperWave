@@ -1,13 +1,9 @@
-'use client';
-
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
-type ImagePreviewProps = {
-  file: File | null;
-  setPreview: Dispatch<SetStateAction<string | undefined>>;
-};
-
-export default function ImagePreview({ file, setPreview }: ImagePreviewProps) {
+export const useImagePreview = (
+  file: File | null,
+  setPreview: Dispatch<SetStateAction<string | null>>
+) => {
   useEffect(() => {
     if (file) {
       const reader = new FileReader();
@@ -19,4 +15,4 @@ export default function ImagePreview({ file, setPreview }: ImagePreviewProps) {
   }, [file]);
 
   return null;
-}
+};

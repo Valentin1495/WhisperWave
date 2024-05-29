@@ -5,6 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import DialogProvider from '@/components/providers/dialog-provider';
 import { SocketProvider } from '@/components/providers/socket-provider';
+import { Toaster } from '@/components/ui/sonner';
 
 const openSans = Open_Sans({ subsets: ['latin'] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <SocketProvider>{children}</SocketProvider>
+            <Toaster position='bottom-center' />
             <DialogProvider />
           </ThemeProvider>
         </body>

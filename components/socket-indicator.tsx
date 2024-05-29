@@ -1,10 +1,10 @@
 'use client';
 
-import { useSocket } from '@/hooks/use-socket';
+import { useSocketContext } from '@/hooks/use-socket-context';
 import { Badge } from './ui/badge';
 
 export default function SocketIndicator() {
-  const { isConnected } = useSocket();
+  const { isConnected } = useSocketContext();
 
   if (isConnected)
     return (

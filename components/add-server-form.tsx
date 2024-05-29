@@ -7,9 +7,9 @@ import { cn } from '@/lib/utils';
 import { addServer } from '@/actions/server.action';
 import { Input } from './ui/input';
 import { AvatarPhoto } from './avatar-photo';
-import ImagePreview from './image-preview';
 import { useFormState } from 'react-dom';
 import AddServerButton from './buttons/add-server-button';
+import { useImagePreview } from '@/hooks/use-image-preview';
 
 const initialState = {
   message: '',
@@ -18,9 +18,10 @@ const initialState = {
 export default function AddServerForm() {
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>();
+  const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [_, addServerAction] = useFormState(addServer, initialState);
+  useImagePreview(file, setPreview);
 
   return (
     <div className='w-96 lg:w-[500px] bg-secondary px-3 pb-3 pt-6 rounded-lg space-y-5'>
@@ -53,7 +54,6 @@ export default function AddServerForm() {
           )}
           onClick={() => fileRef.current?.click()}
         >
-          <ImagePreview file={file} setPreview={setPreview} />
           {preview ? (
             <AvatarPhoto
               src={preview}

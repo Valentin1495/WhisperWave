@@ -17,7 +17,7 @@ import { addServer } from '@/actions/server.action';
 import AddServerButton from '../buttons/add-server-button';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/hooks/use-dialog-store';
-import ImagePreview from '../image-preview';
+import { useImagePreview } from '@/hooks/use-image-preview';
 
 const initialState = {
   message: '',
@@ -26,7 +26,7 @@ const initialState = {
 export default function AddServerDialog() {
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>();
+  const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [state, addServerAction] = useFormState(addServer, initialState);
   const { open, closeDialog, type } = useDialog();
@@ -36,6 +36,8 @@ export default function AddServerDialog() {
       closeDialog();
     }
   }, [state]);
+
+  useImagePreview(file, setPreview);
 
   return (
     <Dialog open={open && type === 'addServer'} onOpenChange={closeDialog}>
@@ -72,7 +74,6 @@ export default function AddServerDialog() {
             )}
             onClick={() => fileRef.current?.click()}
           >
-            <ImagePreview file={file} setPreview={setPreview} />
             {preview ? (
               <AvatarPhoto
                 src={preview}

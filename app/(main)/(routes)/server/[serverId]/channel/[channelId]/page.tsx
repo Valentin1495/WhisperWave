@@ -1,3 +1,4 @@
+import ChatInput from '@/components/chat/chat-input';
 import ServerHeader from '@/components/server/server-header';
 import db from '@/lib/db';
 import { Channel } from '@prisma/client';
@@ -23,7 +24,15 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
         name={channel.name}
         type='channel'
       />
-      <section className='bg-blue-100 dark:bg-secondary h-[2px] w-screen md:w-full' />
+      <div className='flex flex-col h-[calc(100vh-45px)]'>
+        <div className='flex-1'></div>
+        <ChatInput
+          serverId={params.serverId}
+          channelId={params.channelId}
+          name={channel.name}
+          type='channel'
+        />
+      </div>
     </main>
   );
 }

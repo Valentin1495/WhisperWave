@@ -14,8 +14,8 @@ import { cn } from '@/lib/utils';
 import { editServer } from '@/actions/server.action';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/hooks/use-dialog-store';
-import ImagePreview from '../image-preview';
 import EditServerButton from '../buttons/edit-server-button';
+import { useImagePreview } from '@/hooks/use-image-preview';
 
 const initialState = {
   message: '',
@@ -25,7 +25,7 @@ export default function EditServerDialog() {
   const { open, closeDialog, type, data } = useDialog();
   const [serverName, setServerName] = useState<string>();
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>();
+  const [preview, setPreview] = useState<string | null>(null);
   const [mouseEnter, setMouseEnter] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [state, editServerAction] = useFormState(editServer, initialState);
@@ -35,7 +35,7 @@ export default function EditServerDialog() {
 
   useEffect(() => {
     setServerName(prevServerName);
-    setPreview(prevImageUrl);
+    setPreview(prevImageUrl || null);
   }, [data]);
 
   useEffect(() => {
@@ -43,6 +43,8 @@ export default function EditServerDialog() {
       closeDialog();
     }
   }, [state]);
+
+  useImagePreview(file, setPreview);
 
   return (
     <Dialog open={open && type === 'editServer'} onOpenChange={closeDialog}>
@@ -77,7 +79,6 @@ export default function EditServerDialog() {
             onMouseEnter={() => setMouseEnter(true)}
             onMouseLeave={() => setMouseEnter(false)}
           >
-            <ImagePreview file={file} setPreview={setPreview} />
             {preview && (
               <div className='relative'>
                 <AvatarPhoto
