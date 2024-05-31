@@ -10,13 +10,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import LeaveServerButton from '../buttons/leave-server-button';
 
 export default function LeaveServerDialog() {
   const { open, closeDialog, type, data } = useDialog();
   const leaveServerAction = async () => {
-    await leaveServer(data?.server.id);
+    await leaveServer(data?.server?.id);
     closeDialog();
   };
 

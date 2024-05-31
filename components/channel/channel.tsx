@@ -1,6 +1,6 @@
 'use client';
 
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { cn } from '@/lib/utils';
 import { ChannelWithRole } from '@/types';
 import { Hash, Settings, Trash2 } from 'lucide-react';

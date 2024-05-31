@@ -13,9 +13,9 @@ import { AvatarPhoto } from '../avatar-photo';
 import { cn } from '@/lib/utils';
 import { editServer } from '@/actions/server.action';
 import { useFormState } from 'react-dom';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import EditServerButton from '../buttons/edit-server-button';
-import { useImagePreview } from '@/hooks/use-image-preview';
+import { useImagePreview } from '@/lib/hooks/use-image-preview';
 
 const initialState = {
   message: '',

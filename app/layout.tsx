@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import DialogProvider from '@/components/providers/dialog-provider';
 import { SocketProvider } from '@/components/providers/socket-provider';
 import { Toaster } from '@/components/ui/sonner';
+import QueryProvider from '@/components/providers/query-provider';
 
 const openSans = Open_Sans({ subsets: ['latin'] });
 
@@ -29,7 +30,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SocketProvider>{children}</SocketProvider>
+            <SocketProvider>
+              <QueryProvider>{children}</QueryProvider>
+            </SocketProvider>
             <Toaster position='bottom-center' />
             <DialogProvider />
           </ThemeProvider>

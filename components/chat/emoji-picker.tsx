@@ -29,7 +29,11 @@ export default function EmojiPicker({
       >
         <Smile />
       </PopoverTrigger>
-      <PopoverContent side='top' sideOffset={20} className='w-auto mr-3'>
+      <PopoverContent
+        side='top'
+        sideOffset={20}
+        className='w-auto mr-8 p-0 shadow-none border-none border-0'
+      >
         <Picker
           data={data}
           onEmojiSelect={(emoji: any) => {

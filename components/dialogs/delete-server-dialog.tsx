@@ -10,13 +10,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import DeleteServerButton from '../buttons/delete-server-button';
 
 export default function DeleteServerDialog() {
   const { open, closeDialog, type, data } = useDialog();
   const deleteServerAction = async () => {
-    await deleteServer(data?.server.id);
+    await deleteServer(data?.server?.id);
     closeDialog();
   };
 
@@ -33,7 +33,7 @@ export default function DeleteServerDialog() {
               This action cannot be undone. This will permanently delete the
               server{' '}
               <span className='text-primary font-semibold'>
-                {data?.server.name}
+                {data?.server?.name}
               </span>
               .
             </AlertDialogDescription>

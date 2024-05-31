@@ -10,15 +10,17 @@ export type DialogType =
   | 'leaveServer'
   | 'deleteServer'
   | 'deleteChannel'
-  | 'editChannel';
+  | 'editChannel'
+  | 'deleteMessage';
 
 export type DialogData = {
-  server: ServerWithMembers;
+  server?: ServerWithMembers;
   channel?: {
     id: string;
     name: string;
   };
   memberId?: string;
+  messageId?: string;
 };
 
 type DialogStore = {

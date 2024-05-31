@@ -2,7 +2,7 @@
 
 import { UserPlus } from 'lucide-react';
 import { DropdownMenuItem } from '../ui/dropdown-menu';
-import { DialogData, useDialog } from '@/hooks/use-dialog-store';
+import { DialogData, useDialog } from '@/lib/hooks/use-dialog-store';
 
 export default function OpenInvitePeopleDialog({ server }: DialogData) {
   const { openDialog } = useDialog();

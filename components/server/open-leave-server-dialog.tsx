@@ -2,7 +2,7 @@
 
 import { LogOut } from 'lucide-react';
 import { DropdownMenuItem } from '../ui/dropdown-menu';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { ServerWithMembers } from '@/types';
 
 type OpenLeaveServerDialogProps = { server: ServerWithMembers };

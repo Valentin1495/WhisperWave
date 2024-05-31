@@ -10,13 +10,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import DeleteServerButton from '../buttons/delete-server-button';
 
 export default function DeleteChannelDialog() {
   const { open, closeDialog, type, data } = useDialog();
   const deleteChannelAction = async () => {
-    await deleteChannel(data?.server.id, data?.channel?.id);
+    await deleteChannel(data?.server?.id, data?.channel?.id);
     closeDialog();
   };
 

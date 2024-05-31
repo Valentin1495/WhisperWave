@@ -4,7 +4,7 @@ import { Member, Profile } from '@prisma/client';
 import { AvatarPhoto } from '../avatar-photo';
 import { MessageCirclePlus, ShieldAlert, ShieldCheck } from 'lucide-react';
 import RoleDropdownMenu from './role-dropdown-menu';
-import { useChangeRole } from '@/hooks/use-change-role';
+import { useChangeRole } from '@/lib/hooks/use-change-role';
 import OpenKickMemberDialog from './open-kick-member-dialog';
 import { ServerWithMembers } from '@/types';
 import Link from 'next/link';

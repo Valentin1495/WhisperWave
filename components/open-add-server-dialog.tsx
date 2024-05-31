@@ -1,6 +1,6 @@
 'use client';
 
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { Plus } from 'lucide-react';
 
 export default function OpenAddServerDialog() {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useSocketContext } from '@/hooks/use-socket-context';
+import { useSocketContext } from '@/lib/hooks/use-socket-context';
 import { Badge } from './ui/badge';
 
 export default function SocketIndicator() {

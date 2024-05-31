@@ -10,12 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import KickMemberButton from '../buttons/kick-member-button';
 
 export default function KickMemberDialog() {
   const { open, closeDialog, type, data } = useDialog();
-  const serverId = data?.server.id;
+  const serverId = data?.server?.id;
   const memberId = data?.memberId;
   const kickMemberAction = async () => {
     await kickMember(serverId, memberId);

@@ -16,8 +16,8 @@ import { cn } from '@/lib/utils';
 import { addServer } from '@/actions/server.action';
 import AddServerButton from '../buttons/add-server-button';
 import { useFormState } from 'react-dom';
-import { useDialog } from '@/hooks/use-dialog-store';
-import { useImagePreview } from '@/hooks/use-image-preview';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
+import { useImagePreview } from '@/lib/hooks/use-image-preview';
 
 const initialState = {
   message: '',

@@ -3,7 +3,7 @@
 import { PlusCircle } from 'lucide-react';
 import { DropdownMenuItem } from '../ui/dropdown-menu';
 import { ServerWithMembers } from '@/types';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 
 type OpenCreateChannelDialogProps = { server: ServerWithMembers };
 

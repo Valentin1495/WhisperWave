@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { Label } from '../ui/label';
 import { useEffect, useState } from 'react';
 import CreateChannelButton from '../buttons/create-channel-button';
@@ -53,7 +53,7 @@ export default function CreateChannelDialog() {
             />
             <input
               name='serverId'
-              value={data?.server.id}
+              value={data?.server?.id}
               className='hidden'
               type='hidden'
               readOnly

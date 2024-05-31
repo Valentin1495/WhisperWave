@@ -10,6 +10,7 @@ import LeaveServerDialog from '../dialogs/leave-server-dialog';
 import DeleteServerDialog from '../dialogs/delete-server-dialog';
 import DeleteChannelDialog from '../dialogs/delete-channel-dialog';
 import EditChannelDialog from '../dialogs/edit-channel-dialog';
+import DeleteMessageDialog from '../dialogs/delete-message-dialog';
 
 export default function DialogProvider() {
   const [isMounted, setIsMounted] = useState(false);
@@ -31,6 +32,7 @@ export default function DialogProvider() {
       <DeleteServerDialog />
       <DeleteChannelDialog />
       <EditChannelDialog />
+      <DeleteMessageDialog />
     </div>
   );
 }

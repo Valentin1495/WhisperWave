@@ -11,7 +11,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { editChannel } from '@/actions/server.action';
 import { useFormState } from 'react-dom';
-import { useDialog } from '@/hooks/use-dialog-store';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 import EditChannelButton from '../buttons/edit-channel-button';
 
 const initialState = {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useImagePreview } from '@/hooks/use-image-preview';
-import { useSocket } from '@/hooks/use-socket';
+import { useImagePreview } from '@/lib/hooks/use-image-preview';
+import { useSocket } from '@/lib/hooks/use-socket';
 import { FileUp, Send, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { FormEvent, KeyboardEvent, useRef, useState } from 'react';
@@ -9,7 +9,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { toast } from 'sonner';
 import { Separator } from '../ui/separator';
 import EmojiPicker from './emoji-picker';
-import { useMounted } from '@/hooks/use-mounted';
+import { useMounted } from '@/lib/hooks/use-mounted';
 import { cn } from '@/lib/utils';
 
 type ChatInputProps = {
@@ -43,7 +43,7 @@ export default function ChatInput({
     setIsLoading(true);
     try {
       const response = await fetch(
-        attachment ? '/api/attachment' : '/api/chat',
+        attachment ? '/api/chat-attachment' : '/api/chat',
         {
           method: 'POST',
           body: formData,
@@ -61,7 +61,7 @@ export default function ChatInput({
       }
     } catch (error) {
       console.error(error);
-      toast('An error occurred while submitting the form. Please try again.');
+      toast('An error occurred while sending the message. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +85,7 @@ export default function ChatInput({
 
   if (isMounted)
     return (
-      <div className='sticky top-0 mb-3 mx-3'>
+      <div className='sticky top-0 mb-4 mx-4'>
         <form
           onSubmit={sendMessage}
           className={cn(

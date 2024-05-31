@@ -9,7 +9,7 @@ import { Input } from './ui/input';
 import { AvatarPhoto } from './avatar-photo';
 import { useFormState } from 'react-dom';
 import AddServerButton from './buttons/add-server-button';
-import { useImagePreview } from '@/hooks/use-image-preview';
+import { useImagePreview } from '@/lib/hooks/use-image-preview';
 
 const initialState = {
   message: '',
