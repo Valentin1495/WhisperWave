@@ -2,8 +2,7 @@ import { ServerWithMembers } from '@/types';
 import { Member, Profile } from '@prisma/client';
 import db from '@/lib/db';
 import { getCurrentProfile } from '@/actions/profile.action';
-import { findServer, uploadFileToS3 } from '@/actions/server.action';
-import { v4 as uuidv4 } from 'uuid';
+import { findServer, uploadFile } from '@/actions/server.action';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -15,9 +14,7 @@ export async function POST(request: Request) {
   const serverId = formData.get('serverId') as string;
   const currentProfile = (await getCurrentProfile()) as Profile;
   const server = (await findServer(serverId)) as ServerWithMembers;
-  const fileKey = `attachments/${uuidv4()}-${file.name}`;
-  const fileContent = Buffer.from(await file.arrayBuffer());
-  const fileUrl = await uploadFileToS3(fileKey, fileContent);
+  const fileUrl = await uploadFile(file);
   const currentMember = server.members.find(
     (member) => member.profileId === currentProfile.id
   ) as Member;

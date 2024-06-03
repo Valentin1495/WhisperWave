@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'whisperwave.s3.ap-northeast-2.amazonaws.com',
+        hostname: 'utfs.io',
       },
     ],
   },
