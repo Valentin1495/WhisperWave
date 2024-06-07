@@ -22,7 +22,7 @@ export default function DialogProvider() {
   if (!isMounted) return null;
 
   return (
-    <div>
+    <>
       <AddServerDialog />
       <InvitePeopleDialog />
       <EditServerDialog />
@@ -33,6 +33,6 @@ export default function DialogProvider() {
       <DeleteChannelDialog />
       <EditChannelDialog />
       <DeleteMessageDialog />
-    </div>
+    </>
   );
 }

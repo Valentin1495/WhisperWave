@@ -4,7 +4,8 @@ import { getCurrentProfile } from '@/actions/profile.action';
 import ChatInput from '@/components/chat/chat-input';
 import ChatMessagesList from '@/components/chat/chat-message-list';
 import ServerHeader from '@/components/server/server-header';
-import { Channel, Member, Profile } from '@prisma/client';
+import { MemberWithProfile } from '@/types';
+import { Channel, Profile } from '@prisma/client';
 
 type ChannelPageProps = {
   params: {
@@ -20,7 +21,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
   const currentMember = (await findMember(
     serverId,
     currentProfile.id
-  )) as Member;
+  )) as MemberWithProfile;
 
   return (
     <main>
@@ -34,7 +35,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
             type='channel'
             currentMember={currentMember}
             name={channel.name}
-            paramValue={channelId}
+            channel={channel}
           />
         </div>
         <ChatInput
@@ -42,6 +43,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
           channelId={channelId}
           name={channel.name}
           type='channel'
+          currentMember={currentMember}
         />
       </div>
     </main>

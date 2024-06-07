@@ -1,6 +1,6 @@
 'use client';
 
-import { MemberRole } from '@prisma/client';
+import { Channel, MemberRole } from '@prisma/client';
 import { AvatarPhoto } from '../avatar-photo';
 import { format, isEqual } from 'date-fns';
 import Image from 'next/image';
@@ -12,17 +12,19 @@ import EmojiPicker from './emoji-picker';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
+import { UseMutationResult } from '@tanstack/react-query';
+import { EditedMessage } from '@/types';
+import { socket } from '@/socket';
 
 type ChatMessageProps = {
   id: string;
   fileUrl: string | null;
   content: string;
   createdAt: Date;
-  deleted: boolean;
   updatedAt: Date;
   currentMemberId: string;
   currentMemberRole: MemberRole;
-
+  channel: Channel;
   member: {
     id: string;
     role: MemberRole;
@@ -31,6 +33,22 @@ type ChatMessageProps = {
       imageUrl: string;
     };
   };
+  editMessageMutation: UseMutationResult<
+    any,
+    Error,
+    EditedMessage,
+    {
+      previousMessages: unknown;
+    }
+  >;
+  deleteMessageMutation: UseMutationResult<
+    any,
+    Error,
+    string,
+    {
+      previousMessages: unknown;
+    }
+  >;
 };
 
 export default function ChatMessage({
@@ -39,10 +57,11 @@ export default function ChatMessage({
   fileUrl,
   createdAt,
   updatedAt,
-  deleted,
+  channel,
   member,
   currentMemberId,
   currentMemberRole,
+  editMessageMutation,
 }: ChatMessageProps) {
   const { role, profile } = member;
   const { name, imageUrl } = profile;
@@ -50,42 +69,33 @@ export default function ChatMessage({
   const isCurrentMemberMsg = currentMemberId === member.id;
   const isGuest = currentMemberRole === 'GUEST';
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
-  const params = useParams();
+  const { channelId } = useParams();
   const isEdited = !isEqual(createdAt, updatedAt);
-  const { type, openDialog, closeDialog, data } = useDialog();
+  const { openDialog } = useDialog();
+
   const editMessage = async (event: FormEvent) => {
     event.preventDefault();
 
-    const message = {
-      messageId: id,
-      editedContent,
-      channelId: params.channelId,
-      fileUrl,
-    };
-
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/edit-message', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
+    editMessageMutation.mutate(
+      {
+        messageId: id,
+        channelId: channelId as string,
+        editedContent,
+      },
+      {
+        onSuccess: (updatedMessage) => {
+          socket.emit(`chat:${channelId}`, updatedMessage);
+          setIsEditing(false);
         },
-        body: JSON.stringify(message),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+        onError: (error) => {
+          console.error(error);
+          toast(
+            'An error occurred while editing the message. Please try again.'
+          );
+        },
       }
-
-      setIsEditing(false);
-    } catch (error) {
-      console.error(error);
-      toast('An error occurred while editing the message. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    );
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -139,6 +149,7 @@ export default function ChatMessage({
                   onClick={() =>
                     openDialog('deleteMessage', {
                       messageId: id,
+                      channel,
                     })
                   }
                 >
@@ -155,13 +166,11 @@ export default function ChatMessage({
               >
                 <TextareaAutosize
                   className='w-full bg-transparent outline-none resize-none disabled:pointer-events-none text-sm'
-                  disabled={isLoading}
                   value={editedContent}
                   onChange={(e) => setEditedContent(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
                 <EmojiPicker
-                  isLoading={false}
                   handleEmojiSelect={(emoji: string) => {
                     setEditedContent((prev) => prev + emoji);
                   }}

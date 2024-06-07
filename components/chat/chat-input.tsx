@@ -1,7 +1,6 @@
 'use client';
 
 import { useImagePreview } from '@/lib/hooks/use-image-preview';
-import { useSocket } from '@/lib/hooks/use-socket';
 import { FileUp, Send, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { FormEvent, KeyboardEvent, useRef, useState } from 'react';
@@ -11,12 +10,16 @@ import { Separator } from '../ui/separator';
 import EmojiPicker from './emoji-picker';
 import { useMounted } from '@/lib/hooks/use-mounted';
 import { cn } from '@/lib/utils';
+import { useMessages } from '@/lib/hooks/use-messages';
+import { MemberWithProfile } from '@/types';
+import { socket } from '@/socket';
 
 type ChatInputProps = {
   serverId: string;
   channelId: string;
   name: string;
   type: 'conversation' | 'channel';
+  currentMember: MemberWithProfile;
 };
 
 export default function ChatInput({
@@ -24,47 +27,37 @@ export default function ChatInput({
   channelId,
   name,
   type,
+  currentMember,
 }: ChatInputProps) {
-  const [message, setMessage] = useState('');
+  const [newMessage, setNewMessage] = useState('');
   const [attachment, setAttachment] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
-
+  const { sendMessageMutation } = useMessages(channelId, currentMember);
   const sendMessage = async (event: FormEvent) => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append('message', message);
+    formData.append('newMessage', newMessage);
     formData.append('channelId', channelId);
     formData.append('serverId', serverId);
     attachment && formData.append('file', attachment as File);
 
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        attachment ? '/api/chat-attachment' : '/api/chat',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+    sendMessageMutation.mutate(formData, {
+      onSuccess: (newMessage) => {
+        socket.emit(`chat:${channelId}`, newMessage);
+      },
+      onError: (error) => {
+        console.error(error);
+        toast('An error occurred while sending the message. Please try again.');
+      },
+    });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      setMessage('');
-      if (attachment) {
-        setAttachment(null);
-        setPreview(null);
-      }
-    } catch (error) {
-      console.error(error);
-      toast('An error occurred while sending the message. Please try again.');
-    } finally {
-      setIsLoading(false);
+    if (attachment) {
+      setAttachment(null);
+      setPreview(null);
     }
+    setNewMessage('');
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -78,9 +71,9 @@ export default function ChatInput({
     setAttachment(null);
     setPreview(null);
   };
-  const isEmpty = message.trim().length === 0;
+
+  const isEmpty = newMessage.trim().length === 0;
   const isMounted = useMounted();
-  useSocket();
   useImagePreview(attachment, setPreview);
 
   if (isMounted)
@@ -88,10 +81,7 @@ export default function ChatInput({
       <div className='sticky top-0 mb-4 mx-4'>
         <form
           onSubmit={sendMessage}
-          className={cn(
-            'bg-blue-50 dark:bg-secondary/50 p-3 rounded-md flex-col',
-            isLoading && 'opacity-50'
-          )}
+          className='bg-blue-50 dark:bg-secondary/50 p-3 rounded-md flex-col'
         >
           {preview && (
             <>
@@ -105,7 +95,6 @@ export default function ChatInput({
                   />
                 </section>
                 <button
-                  disabled={isLoading}
                   type='button'
                   onClick={removeAttachment}
                   className='absolute -top-3 p-1 rounded-full -right-1 bg-red-700 hover:bg-red-600 disabled:pointer-events-none'
@@ -122,11 +111,10 @@ export default function ChatInput({
 
           <div className='flex items-start'>
             <TextareaAutosize
-              name='message'
+              name='newMessage'
               className='w-full bg-transparent outline-none resize-none disabled:pointer-events-none'
-              disabled={isLoading}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
               placeholder={
                 type === 'channel' ? `Message #${name}` : `Message @${name}`
               }
@@ -147,14 +135,12 @@ export default function ChatInput({
             />
 
             <EmojiPicker
-              isLoading={isLoading}
               handleEmojiSelect={(emoji: string) => {
-                setMessage((prev) => prev + emoji);
+                setNewMessage((prev) => prev + emoji);
               }}
             />
             <button
               type='button'
-              disabled={isLoading}
               onClick={() => fileRef.current?.click()}
               className='disabled:pointer-events-none hover:scale-110 transition ml-2'
             >
@@ -166,7 +152,7 @@ export default function ChatInput({
                 isEmpty && 'opacity-50'
               )}
               type='submit'
-              disabled={isEmpty || isLoading}
+              disabled={isEmpty}
             >
               <Send className='text-primary' />
             </button>

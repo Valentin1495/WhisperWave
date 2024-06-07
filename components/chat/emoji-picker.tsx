@@ -12,21 +12,14 @@ import {
 
 type EmojiPickerProps = {
   handleEmojiSelect: (emoji: string) => void;
-  isLoading: boolean;
 };
 
-export default function EmojiPicker({
-  handleEmojiSelect,
-  isLoading,
-}: EmojiPickerProps) {
+export default function EmojiPicker({ handleEmojiSelect }: EmojiPickerProps) {
   const { resolvedTheme } = useTheme();
 
   return (
     <Popover>
-      <PopoverTrigger
-        className='text-zinc-500 hover:text-zinc-700 transition disabled:pointer-events-none'
-        disabled={isLoading}
-      >
+      <PopoverTrigger className='text-zinc-500 hover:text-zinc-700 transition disabled:pointer-events-none'>
         <Smile />
       </PopoverTrigger>
       <PopoverContent

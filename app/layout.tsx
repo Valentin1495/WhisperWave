@@ -31,10 +31,12 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <SocketProvider>
-              <QueryProvider>{children}</QueryProvider>
+              <QueryProvider>
+                {children}
+                <DialogProvider />
+                <Toaster position='bottom-center' />
+              </QueryProvider>
             </SocketProvider>
-            <Toaster position='bottom-center' />
-            <DialogProvider />
           </ThemeProvider>
         </body>
       </html>

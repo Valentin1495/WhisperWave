@@ -11,37 +11,31 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { Button } from '../ui/button';
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import { toast } from 'sonner';
+import { useMessages } from '@/lib/hooks/use-messages';
+import { socket } from '@/socket';
 
 export default function DeleteMessageDialog() {
   const { open, closeDialog, type, data } = useDialog();
-  const [isLoading, setIsLoading] = useState(false);
-
+  const channelId = data?.channel?.id as string;
+  const messageId = data?.messageId as string;
+  const { deleteMessageMutation } = useMessages(channelId);
   const deleteMessage = async (e: FormEvent) => {
     e.preventDefault();
 
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/delete-message', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ messageId: data?.messageId }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      closeDialog();
-    } catch (error) {
-      console.error(error);
-      toast('An error occurred while deleting the message. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    deleteMessageMutation.mutate(messageId, {
+      onSuccess: (updatedMessage) => {
+        socket.emit(`chat:${channelId}`, updatedMessage);
+        closeDialog();
+      },
+      onError: (error) => {
+        console.error(error);
+        toast(
+          'An error occurred while deleting the message. Please try again.'
+        );
+      },
+    });
   };
 
   return (
@@ -59,20 +53,8 @@ export default function DeleteMessageDialog() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button
-              variant='destructive'
-              className='w-[93px]'
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className='pending'>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </span>
-              ) : (
-                'Delete'
-              )}
+            <Button variant='destructive' className='w-[93px]'>
+              Delete
             </Button>
           </AlertDialogFooter>
         </form>
