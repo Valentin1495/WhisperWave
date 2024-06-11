@@ -27,13 +27,13 @@ export default function EditChannelDialog() {
 
   useEffect(() => {
     setChannelName(prevChannelName);
-  }, [data]);
+  }, [data, prevChannelName]);
 
   useEffect(() => {
     if (state.message === 'Success!') {
       closeDialog();
     }
-  }, [state]);
+  }, [state, closeDialog]);
 
   return (
     <Dialog open={open && type === 'editChannel'} onOpenChange={closeDialog}>

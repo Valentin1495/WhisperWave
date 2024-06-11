@@ -196,7 +196,7 @@ export const useMessages = (channelId: string, member?: MemberWithProfile) => {
         );
       });
     }
-  }, [socket, queryClient]);
+  }, [queryClient, channelId]);
 
   return {
     messages,

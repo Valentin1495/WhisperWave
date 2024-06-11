@@ -30,7 +30,7 @@ export default function CreateChannelDialog() {
     if (state.message === 'Success!') {
       closeDialog();
     }
-  }, [state]);
+  }, [state, closeDialog]);
 
   return (
     <Dialog open={open && type === 'createChannel'} onOpenChange={closeDialog}>

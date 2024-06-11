@@ -12,7 +12,7 @@ export const useImagePreview = (
       };
       reader.readAsDataURL(file);
     }
-  }, [file]);
+  }, [file, setPreview]);
 
   return null;
 };

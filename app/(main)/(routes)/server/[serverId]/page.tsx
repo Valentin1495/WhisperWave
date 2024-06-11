@@ -18,8 +18,8 @@ export default async function Server({ params }: ServerProps) {
         <Frown size={48} />
         <h1 className='font-semibold'>NO CHANNELS</h1>
         <p className='text-center'>
-          You find yourself in a strange place. You don't have access to any
-          channels, or there are none in this server.
+          You find yourself in a strange place. You don&apos;t have access to
+          any channels, or there are none in this server.
         </p>
       </main>
     );

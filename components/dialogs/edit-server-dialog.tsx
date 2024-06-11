@@ -36,13 +36,13 @@ export default function EditServerDialog() {
   useEffect(() => {
     setServerName(prevServerName);
     setPreview(prevImageUrl || null);
-  }, [data]);
+  }, [data, prevImageUrl, prevServerName]);
 
   useEffect(() => {
     if (state.message === 'Success!') {
       closeDialog();
     }
-  }, [state]);
+  }, [state, closeDialog]);
 
   useImagePreview(file, setPreview);
 

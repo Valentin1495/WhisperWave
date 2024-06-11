@@ -35,7 +35,7 @@ export default function AddServerDialog() {
     if (state.message === 'Success!') {
       closeDialog();
     }
-  }, [state]);
+  }, [state, closeDialog]);
 
   useImagePreview(file, setPreview);
 
