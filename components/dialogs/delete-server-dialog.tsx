@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
-import DeleteServerButton from '../buttons/delete-server-button';
+import DeleteButton from '../buttons/delete-button';
 
 export default function DeleteServerDialog() {
   const { open, closeDialog, type, data } = useDialog();
@@ -40,7 +40,7 @@ export default function DeleteServerDialog() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <DeleteServerButton />
+            <DeleteButton />
           </AlertDialogFooter>
         </form>
       </AlertDialogContent>

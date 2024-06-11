@@ -19,7 +19,7 @@ export default function EmojiPicker({ handleEmojiSelect }: EmojiPickerProps) {
 
   return (
     <Popover>
-      <PopoverTrigger className='text-zinc-500 hover:text-zinc-700 transition disabled:pointer-events-none'>
+      <PopoverTrigger className='text-zinc-500 hover:text-zinc-700 transition'>
         <Smile />
       </PopoverTrigger>
       <PopoverContent

@@ -53,7 +53,7 @@ export default function DeleteMessageDialog() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button variant='destructive' className='w-[93px]'>
+            <Button variant='destructive' className='w-full md:w-[93px]'>
               Delete
             </Button>
           </AlertDialogFooter>

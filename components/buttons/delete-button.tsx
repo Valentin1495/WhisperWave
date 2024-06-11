@@ -3,11 +3,15 @@
 import { useFormStatus } from 'react-dom';
 import { Button } from '../ui/button';
 
-export default function DeleteServerButton() {
+export default function DeleteButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button variant='destructive' disabled={pending} className='w-[93px]'>
+    <Button
+      variant='destructive'
+      disabled={pending}
+      className='w-full md:w-[93px]'
+    >
       {pending ? (
         <span className='pending'>
           <span></span>

@@ -63,7 +63,7 @@ export default function ChatMessage({
   currentMemberRole,
   editMessageMutation,
 }: ChatMessageProps) {
-  const { role, profile } = member;
+  const { profile } = member;
   const { name, imageUrl } = profile;
   const timestamp = format(createdAt, 'MM/dd/yyyy h:mm a');
   const isCurrentMemberMsg = currentMemberId === member.id;

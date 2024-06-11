@@ -14,7 +14,7 @@ export default async function ServerLayout({
       <section className='hidden md:block'>
         <ServerSidebar serverId={params.serverId} />
       </section>
-      <div className='w-[calc(100vw-316px)]'>{children}</div>
+      <div className='md:w-[calc(100vw-316px)] w-screen'>{children}</div>
     </div>
   );
 }

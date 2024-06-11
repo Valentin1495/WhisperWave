@@ -97,7 +97,7 @@ export default function ChatInput({
                 <button
                   type='button'
                   onClick={removeAttachment}
-                  className='absolute -top-3 p-1 rounded-full -right-1 bg-red-700 hover:bg-red-600 disabled:pointer-events-none'
+                  className='absolute -top-3 p-1 rounded-full -right-1 bg-red-700 hover:bg-red-600'
                 >
                   <Trash2 className='text-white' size={20} />
                 </button>
@@ -110,9 +110,16 @@ export default function ChatInput({
           )}
 
           <div className='flex items-start'>
+            <button
+              type='button'
+              onClick={() => fileRef.current?.click()}
+              className='text-zinc-500 hover:text-zinc-700 transition'
+            >
+              <FileUp />
+            </button>
             <TextareaAutosize
               name='newMessage'
-              className='w-full bg-transparent outline-none resize-none disabled:pointer-events-none'
+              className='w-full bg-transparent outline-none resize-none mx-2'
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder={
@@ -139,13 +146,6 @@ export default function ChatInput({
                 setNewMessage((prev) => prev + emoji);
               }}
             />
-            <button
-              type='button'
-              onClick={() => fileRef.current?.click()}
-              className='disabled:pointer-events-none hover:scale-110 transition ml-2'
-            >
-              <FileUp className='text-zinc-500' />
-            </button>
             <button
               className={cn(
                 'disabled:pointer-events-none hover:scale-110 transition ml-2',

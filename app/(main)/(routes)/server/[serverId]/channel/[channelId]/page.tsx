@@ -26,7 +26,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
   return (
     <main>
       <ServerHeader serverId={serverId} name={channel.name} type='channel' />
-      <div className='flex flex-col h-[calc(100vh-45px)]'>
+      <div className='flex flex-col h-[calc(100vh-52px)] md:h-[calc(100vh-45px)]'>
         <div className='flex-1 py-4 overflow-y-auto space-y-4'>
           <p className='font-bold text-xl text-center'>
             Welcome to <br /> {channel.name}

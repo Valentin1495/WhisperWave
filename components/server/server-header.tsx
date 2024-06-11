@@ -17,7 +17,7 @@ export default function ServerHeader({
   imageUrl,
 }: ServerHeaderProps) {
   return (
-    <header className='w-[calc(100vw-316px)] flex gap-3 px-4 py-3 text-sm font-semibold items-center bg-blue-100 dark:bg-secondary'>
+    <header className='md:w-[calc(100vw-316px)] flex gap-3 px-4 py-3 text-sm font-semibold items-center bg-blue-100 dark:bg-secondary'>
       <MobileToggle serverId={serverId} />
       {type === 'members' ? (
         <UsersRound size={20} strokeWidth={2.25} />
