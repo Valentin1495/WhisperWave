@@ -160,22 +160,25 @@ export default function ChatMessage({
           </div>
           <div>
             {isEditing ? (
-              <form
-                onSubmit={editMessage}
-                className='bg-zinc-200 dark:bg-zinc-600 rounded-md my-2 flex items-center p-2'
-              >
-                <TextareaAutosize
-                  className='w-full bg-transparent outline-none resize-none disabled:pointer-events-none text-sm'
-                  value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
-                <EmojiPicker
-                  handleEmojiSelect={(emoji: string) => {
-                    setEditedContent((prev) => prev + emoji);
-                  }}
-                />
-              </form>
+              <>
+                <form
+                  onSubmit={editMessage}
+                  className='bg-zinc-200 dark:bg-zinc-600 rounded-md my-2 flex items-center p-2'
+                >
+                  <TextareaAutosize
+                    className='w-full bg-transparent outline-none resize-none disabled:pointer-events-none text-sm'
+                    value={editedContent}
+                    onChange={(e) => setEditedContent(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <EmojiPicker
+                    handleEmojiSelect={(emoji: string) => {
+                      setEditedContent((prev) => prev + emoji);
+                    }}
+                  />
+                </form>
+                <p className='text-xs'>escape to cancel</p>
+              </>
             ) : (
               <p className={cn(fileUrl && 'mb-1', 'text-sm')}>
                 {content}{' '}

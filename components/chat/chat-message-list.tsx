@@ -35,10 +35,7 @@ export default function ChatMessagesList({
   if (error)
     return (
       <div className='flex h-full items-center'>
-        <p className='text-destructive text-center'>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aut vel eius
-          eveniet aperiam quae iusto temporibus non expedita asperiores at?
-        </p>
+        <p className='text-destructive text-center'>{error.message}</p>
       </div>
     );
   return (
