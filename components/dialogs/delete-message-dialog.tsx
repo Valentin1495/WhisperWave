@@ -31,7 +31,7 @@ export default function DeleteMessageDialog() {
       },
       onError: (error) => {
         console.error(error);
-        toast(
+        toast.error(
           'An error occurred while deleting the message. Please try again.'
         );
       },

@@ -3,47 +3,43 @@
 <h1 align="center">WhisperWave</h1>
 
 <p align="center">
-  그룹 챗 애플리케이션으로서, 서버와 채널을 만들어 사용자들이 실시간으로 메시지를 주고받을 수 있다.
+  서버와 채널을 만들어 사용자들이 실시간으로 메시지를 주고받을 수 있는 그룹 챗 애플리케이션.
 </p>
 <br/>
 
 ## Features
 
-- 회원 인증: Clerk을 활용한 이메일/소셜 로그인 (Google and GitHub)
+- 회원 인증: Clerk을 활용한 이메일/소셜 로그인 (Google & GitHub)
 
--
+- 서버/채널 생성/수정
 
-- 온보딩 페이지: 사용자 프로필 등록
+- 초대 링크 생성 - 사용자 서버 참가
 
-- 검색 페이지: 게시물/사용자 검색
+- 실시간 챗 - Socket.io
 
-- 알림 페이지: 팔로우/답글/좋아요 받을 시 알림
+- Websocket 사용 불가시: 경고 메시지 표시 & 폴링 사용
 
-- 프로필 페이지: 나의 게시물/내가 답글 단 게시물/내가 좋아한 게시물/팔로워/팔로우 중 조회
+- 이미지 첨부 - UploadThing
 
-- 백엔드: Prisma & MongoDB를 활용하여 스키마와 데이터 관리
+- 실시간 메시지 수정/삭제
 
-- 콘텐츠 게시
+- 멤버 관리 (강퇴, Guest/Mod 역할 변경)
 
-- 답글
+- 라이트/다크 모드
 
-- 좋아요
+- ORM - Prisma
 
-- 팔로우
+- PostgreSQL 데이터베이스 - Neon
 
-- Server-side Rendering
+- Server-Side Rendering
 
 - Next.js Layout Route Groups
 
 - Next.js Server Actions
 
-- 미들웨어 with Clerk
+- 미들웨어 - Clerk
 
-- 파일 업로드 with UploadThing
-
-- 데이터 검증 with Zod
-
-- 반응형 디자인 with Tailwind CSS
+- 반응형 디자인 - Tailwind CSS
 
 ## Tech Stack
 
@@ -51,10 +47,9 @@
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/)
 - [Clerk](https://clerk.com/)
-- [Prisma](https://www.prisma.io/)
-- [MongoDB](https://www.mongodb.com/)
 - [UploadThing](https://uploadthing.com/)
-- [Zod](https://zod.dev/)
-- [Vercel](https://vercel.com/)
+- [Prisma](https://www.prisma.io/)
+- [Neon](https://neon.tech/)
+- [Railway](https://railway.app/)
 - [Lucide](https://lucide.dev/)
 - [`next/font`](https://nextjs.org/docs/basic-features/font-optimization)

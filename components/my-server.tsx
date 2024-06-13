@@ -22,7 +22,8 @@ export default function MyServer({ id, name, imageUrl }: MyServerProps) {
         <AvatarPhoto
           className={cn(
             'size-[52px] hover:opacity-75 transition',
-            isCurrentServer && 'border-blue-600 dark:border-blue-300 border-2'
+            isCurrentServer &&
+              'border-blue-600 dark:border-blue-300 border-[3px]'
           )}
           src={imageUrl}
           alt={name}

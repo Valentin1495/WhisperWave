@@ -90,7 +90,7 @@ export default function ChatMessage({
         },
         onError: (error) => {
           console.error(error);
-          toast(
+          toast.error(
             'An error occurred while editing the message. Please try again.'
           );
         },

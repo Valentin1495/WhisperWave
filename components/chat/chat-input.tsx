@@ -49,7 +49,9 @@ export default function ChatInput({
       },
       onError: (error) => {
         console.error(error);
-        toast('An error occurred while sending the message. Please try again.');
+        toast.error(
+          'An error occurred while sending the message. Please try again.'
+        );
       },
     });
 
