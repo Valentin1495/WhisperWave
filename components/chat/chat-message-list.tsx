@@ -21,8 +21,8 @@ export default function ChatMessagesList({
   currentMember,
 }: ChatMessagesListProps) {
   const [isNewMessageAdded, setIsNewMessageAdded] = useState(true);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<MessageWithMember[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { data, isLoading, error } = useMessagesQuery(channel.id);
 
   useEffect(() => {
@@ -36,7 +36,10 @@ export default function ChatMessagesList({
     if (socket) {
       socket.on('newMessage', (message: MessageWithMember) => {
         setMessages((prev) => {
-          if (isEqual(prev[prev.length - 1].createdAt, message.createdAt)) {
+          if (
+            prev.length > 0 &&
+            isEqual(prev[prev.length - 1].createdAt, message.createdAt)
+          ) {
             return prev;
           } else {
             return [...prev, message];
