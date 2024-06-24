@@ -1,9 +1,13 @@
 <h1 align="center">WhisperWave</h1>
 
 <p align="center">
-  사용자들이 실시간으로 메시지를 주고받을 수 있는 그룹 챗 애플리케이션.
+  사용자들이 실시간으로 메시지를 주고받는 그룹 챗 애플리케이션
 </p>
 <br/>
+
+## Demo
+
+https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-bc7b-0475f098b9da
 
 ## Features
 
@@ -47,6 +51,7 @@
 
 - [Next.js](https://nextjs.org/)
 - [React Query](https://tanstack.com/query/latest)
+- [Socket.io](https://socket.io/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/)
 - [Clerk](https://clerk.com/)
