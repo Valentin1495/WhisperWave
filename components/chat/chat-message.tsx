@@ -174,7 +174,7 @@ export default function ChatMessage({
                     }}
                   />
                 </form>
-                <p className='text-xs'>escape to cancel</p>
+                <p className='text-xs mb-2'>escape to cancel</p>
               </>
             ) : (
               <p className={cn(fileUrl && 'mb-1', 'text-sm')}>
@@ -182,6 +182,7 @@ export default function ChatMessage({
                 {isEdited && <span className='text-xs'>(edited)</span>}
               </p>
             )}
+
             {fileUrl && (
               <a
                 href={fileUrl}

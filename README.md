@@ -1,5 +1,3 @@
-<!-- ![homepage](/public/postplanet.png) -->
-
 <h1 align="center">WhisperWave</h1>
 
 <p align="center">
@@ -19,11 +17,11 @@
 
 - 실시간 챗 - Socket.io
 
-- Websocket 연결 실패 시: 경고 메시지 표시 & 폴링 사용
+- Websocket 연결 실패 시: 경고 메시지 표시 & 1초 지연 - React Query
 
 - 이미지 첨부 - UploadThing
 
-- 실시간 메시지 수정/삭제
+- 실시간 메시지 수정/삭제 - Socket.io
 
 - 멤버 관리 (강퇴, Guest/Mod 역할 변경)
 
@@ -34,6 +32,8 @@
 - PostgreSQL 데이터베이스 - Neon
 
 - Server-Side Rendering
+
+- Client-Side Rendering - React Query
 
 - Next.js Layout Route Groups
 
@@ -46,6 +46,7 @@
 ## Tech Stack
 
 - [Next.js](https://nextjs.org/)
+- [React Query](https://tanstack.com/query/latest)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/)
 - [Clerk](https://clerk.com/)
