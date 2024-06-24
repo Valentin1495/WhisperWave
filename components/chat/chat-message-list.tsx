@@ -1,11 +1,13 @@
 'use client';
 
-import { MemberWithProfile } from '@/types';
+import { MemberWithProfile, MessageWithMember } from '@/types';
 import ChatMessage from './chat-message';
-import { useMessages } from '@/lib/hooks/use-messages';
 import { Channel } from '@prisma/client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ServerCrash } from 'lucide-react';
+import { socket } from '@/socket';
+import { useMessagesQuery } from '@/lib/hooks/use-messages-query';
+import { isEqual } from 'date-fns';
 
 type ChatMessagesListProps = {
   currentMember: MemberWithProfile;
@@ -18,21 +20,39 @@ export default function ChatMessagesList({
   channel,
   currentMember,
 }: ChatMessagesListProps) {
-  const {
-    messages,
-    isLoading,
-    error,
-    editMessageMutation,
-    deleteMessageMutation,
-  } = useMessages(channel.id, currentMember);
+  const [isNewMessageAdded, setIsNewMessageAdded] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const [messages, setMessages] = useState<MessageWithMember[]>([]);
+  const { data, isLoading, error } = useMessagesQuery(channel.id);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (data) {
+      setMessages(data);
+      setIsNewMessageAdded(true);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('newMessage', (message: MessageWithMember) => {
+        setMessages((prev) => {
+          if (isEqual(prev[prev.length - 1].createdAt, message.createdAt)) {
+            return prev;
+          } else {
+            return [...prev, message];
+          }
+        });
+        setIsNewMessageAdded(true);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isNewMessageAdded) {
+      messagesEndRef.current?.scrollIntoView();
+      setIsNewMessageAdded(false);
+    }
+  }, [messages, isNewMessageAdded]);
 
   if (isLoading)
     return (
@@ -50,24 +70,25 @@ export default function ChatMessagesList({
     );
   return (
     <div className='space-y-3'>
-      {messages?.map(
-        ({ id, content, createdAt, fileUrl, member, updatedAt }) => (
-          <ChatMessage
-            id={id}
-            key={id}
-            createdAt={createdAt}
-            content={content}
-            fileUrl={fileUrl}
-            member={member}
-            currentMemberId={currentMember.id}
-            currentMemberRole={currentMember.role}
-            updatedAt={updatedAt}
-            editMessageMutation={editMessageMutation}
-            deleteMessageMutation={deleteMessageMutation}
-            channel={channel}
-          />
-        )
-      )}
+      {messages.length
+        ? messages.map(
+            ({ id, content, createdAt, fileUrl, member, updatedAt }) => (
+              <ChatMessage
+                id={id}
+                key={id}
+                createdAt={createdAt}
+                content={content}
+                fileUrl={fileUrl}
+                member={member}
+                currentMemberId={currentMember.id}
+                currentMemberRole={currentMember.role}
+                updatedAt={updatedAt}
+                messages={messages}
+                setMessages={setMessages}
+              />
+            )
+          )
+        : null}
 
       <div ref={messagesEndRef} />
     </div>

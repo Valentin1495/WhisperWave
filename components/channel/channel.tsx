@@ -22,6 +22,7 @@ export default function Channel({
   return (
     <Link
       href={`/server/${serverId}/channel/${id}`}
+      prefetch={false}
       className={cn(
         'flex items-center gap-2 mx-2 p-1 rounded-sm hover:bg-blue-100 dark:hover:bg-blue-800 transition',
         isActive &&

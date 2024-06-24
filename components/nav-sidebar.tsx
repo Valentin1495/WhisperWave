@@ -1,11 +1,13 @@
 import { findMyServers } from '@/actions/server.action';
 import MyServer from './my-server';
 import { ModeToggle } from './mode-toggle';
-import { UserButton } from '@clerk/nextjs';
 import OpenAddServerDialog from './open-add-server-dialog';
+import { User, currentUser } from '@clerk/nextjs/server';
+import UserButton from './buttons/user-button';
 
 export default async function NavSidebar() {
   const myServers = await findMyServers();
+  const user = (await currentUser()) as User;
 
   return (
     <nav className='md:sticky md:top-0 bg-blue-100 dark:bg-secondary h-screen w-[76px] py-2.5'>
@@ -17,13 +19,11 @@ export default async function NavSidebar() {
 
       <div className='flex flex-col items-center gap-2'>
         <OpenAddServerDialog />
+
         <UserButton
-          afterSignOutUrl='/'
-          appearance={{
-            elements: {
-              avatarBox: 'size-[52px]',
-            },
-          }}
+          imageUrl={user.imageUrl}
+          fullName={user.fullName}
+          username={user.username}
         />
         <ModeToggle />
       </div>

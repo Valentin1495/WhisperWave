@@ -17,6 +17,7 @@ export default function MembersLink({ serverId }: MembersLinkProps) {
     <section className='p-3 space-y-3'>
       <Link
         href={`/server/${serverId}/members`}
+        prefetch={false}
         className={cn(
           'flex gap-x-2 text-sm p-1.5 rounded-sm hover:bg-blue-100 dark:hover:bg-blue-800 transition',
           isActive &&

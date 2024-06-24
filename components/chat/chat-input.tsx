@@ -1,21 +1,18 @@
 'use client';
 
-import { useImagePreview } from '@/lib/hooks/use-image-preview';
 import { FileUp, Send, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { FormEvent, KeyboardEvent, useRef, useState } from 'react';
+import { FormEvent, KeyboardEvent, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { toast } from 'sonner';
 import { Separator } from '../ui/separator';
 import EmojiPicker from './emoji-picker';
 import { useMounted } from '@/lib/hooks/use-mounted';
 import { cn } from '@/lib/utils';
-import { useMessages } from '@/lib/hooks/use-messages';
 import { MemberWithProfile } from '@/types';
 import { socket } from '@/socket';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 
 type ChatInputProps = {
-  serverId: string;
   channelId: string;
   name: string;
   type: 'conversation' | 'channel';
@@ -23,41 +20,27 @@ type ChatInputProps = {
 };
 
 export default function ChatInput({
-  serverId,
   channelId,
   name,
   type,
   currentMember,
 }: ChatInputProps) {
   const [newMessage, setNewMessage] = useState('');
-  const [attachment, setAttachment] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement | null>(null);
-  const { sendMessageMutation } = useMessages(channelId, currentMember);
-  const sendMessage = async (event: FormEvent) => {
+  const { openDialog, fileName, fileUrl, removeAttachment } = useDialog();
+  const { id } = currentMember;
+
+  const handleSend = async (event: FormEvent) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append('newMessage', newMessage);
-    formData.append('channelId', channelId);
-    formData.append('serverId', serverId);
-    attachment && formData.append('file', attachment as File);
-
-    sendMessageMutation.mutate(formData, {
-      onSuccess: (newMessage) => {
-        socket.emit(`chat:${channelId}`, newMessage);
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error(
-          'An error occurred while sending the message. Please try again.'
-        );
-      },
+    socket.emit('sendMessage', {
+      newMessage: newMessage.trim(),
+      fileUrl,
+      channelId,
+      currentMemberId: id,
     });
 
-    if (attachment) {
-      setAttachment(null);
-      setPreview(null);
+    if (fileUrl) {
+      removeAttachment();
     }
     setNewMessage('');
   };
@@ -65,33 +48,27 @@ export default function ChatInput({
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      sendMessage(event as any); // TypeScript workaround for FormEvent
+      handleSend(event as any); // TypeScript workaround for FormEvent
     }
   };
 
-  const removeAttachment = () => {
-    setAttachment(null);
-    setPreview(null);
-  };
-
-  const isEmpty = newMessage.trim().length === 0;
+  const isEmpty = newMessage.trim().length === 0 && !fileUrl;
   const isMounted = useMounted();
-  useImagePreview(attachment, setPreview);
 
   if (isMounted)
     return (
       <div className='sticky top-0 mb-4 mx-4'>
         <form
-          onSubmit={sendMessage}
+          onSubmit={handleSend}
           className='bg-blue-50 dark:bg-secondary/50 p-3 rounded-md flex-col'
         >
-          {preview && (
+          {fileUrl && (
             <>
               <div className='bg-background w-fit p-2 space-y-2 relative'>
                 <section className='bg-background rounded-sm overflow-hidden relative size-40'>
                   <Image
-                    src={preview}
-                    alt={attachment?.name || 'attachment'}
+                    src={fileUrl}
+                    alt={fileName!}
                     fill
                     className='object-cover'
                   />
@@ -104,7 +81,7 @@ export default function ChatInput({
                   <Trash2 className='text-white' size={20} />
                 </button>
                 <p className='text-sm text-zinc-500 truncate w-40'>
-                  {attachment?.name}
+                  {fileName}
                 </p>
               </div>
               <Separator className='my-3' />
@@ -114,7 +91,7 @@ export default function ChatInput({
           <div className='flex items-start'>
             <button
               type='button'
-              onClick={() => fileRef.current?.click()}
+              onClick={() => openDialog('uploadFile')}
               className='text-zinc-500 hover:text-zinc-700 transition'
             >
               <FileUp />
@@ -128,19 +105,6 @@ export default function ChatInput({
                 type === 'channel' ? `Message #${name}` : `Message @${name}`
               }
               onKeyDown={handleKeyDown}
-            />
-            <input
-              type='file'
-              name='file'
-              className='hidden'
-              ref={fileRef}
-              accept='image/*'
-              onChange={(e) => {
-                const file = e.target.files && e.target.files[0];
-                if (file && file.type.slice(0, 5) === 'image') {
-                  setAttachment(file);
-                }
-              }}
             />
 
             <EmojiPicker

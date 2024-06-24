@@ -6,7 +6,6 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
@@ -26,22 +25,21 @@ export default function DeleteServerDialog() {
       onOpenChange={closeDialog}
     >
       <AlertDialogContent>
-        <form action={deleteServerAction} className='space-y-3'>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              server{' '}
-              <span className='text-primary font-semibold'>
-                {data?.server?.name}
-              </span>
-              .
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <DeleteButton />
-          </AlertDialogFooter>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the
+            server{' '}
+            <span className='text-primary font-semibold'>
+              {data?.server?.name}
+            </span>
+            .
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <form action={deleteServerAction} className='ml-auto space-x-1.5'>
+          <AlertDialogCancel className='w-[93px]'>Cancel</AlertDialogCancel>
+          <DeleteButton />
         </form>
       </AlertDialogContent>
     </AlertDialog>

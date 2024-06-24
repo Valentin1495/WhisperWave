@@ -34,8 +34,9 @@ export type MessageWithMember = Message & {
   };
 };
 
-export type EditedMessage = {
-  messageId: string;
+export type PostRequestType = {
+  newMessage: string;
   channelId: string;
-  editedContent: string;
+  currentMemberId: string;
+  fileUrl: string | null;
 };

@@ -1,6 +1,44 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { generateUploadDropzone } from '@uploadthing/react';
+import type { OurFileRouter } from '@/app/api/uploadthing/core';
+import { MessageWithMember, PostRequestType } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
+
+export const UploadDropzone = generateUploadDropzone<OurFileRouter>();
+
+export const fetchMessages = async (
+  channelId: string
+): Promise<MessageWithMember[]> => {
+  const res = await fetch(`/api/messages?channel=${channelId}`);
+  if (!res.ok) throw new Error('Failed to fetch messages');
+
+  const messages = await res.json();
+  return messages;
+};
+
+export const sendMessage = async (
+  postRequest: PostRequestType
+): Promise<MessageWithMember> => {
+  const { channelId, currentMemberId, fileUrl, newMessage } = postRequest;
+
+  const res = await fetch('/api/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      newMessage,
+      channelId,
+      currentMemberId,
+      fileUrl,
+    }),
+  });
+  if (!res.ok) throw new Error('Failed to send message');
+
+  const message = await res.json();
+  return message;
+};

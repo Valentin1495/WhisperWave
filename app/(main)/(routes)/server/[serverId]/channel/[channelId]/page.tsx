@@ -1,11 +1,11 @@
 import { findChannel } from '@/actions/channel.action';
 import { findMember } from '@/actions/member.action';
 import { getCurrentProfile } from '@/actions/profile.action';
-import ChatInput from '@/components/chat/chat-input';
-import ChatMessagesList from '@/components/chat/chat-message-list';
 import ServerHeader from '@/components/server/server-header';
 import { MemberWithProfile } from '@/types';
 import { Channel, Profile } from '@prisma/client';
+import ChatInput from '@/components/chat/chat-input';
+import ChatMessagesList from '@/components/chat/chat-message-list';
 
 type ChannelPageProps = {
   params: {
@@ -33,17 +33,16 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
           </p>
           <ChatMessagesList
             type='channel'
-            currentMember={currentMember}
             name={channel.name}
+            currentMember={currentMember}
             channel={channel}
           />
         </div>
         <ChatInput
-          serverId={serverId}
-          channelId={channelId}
-          name={channel.name}
           type='channel'
+          name={channel.name}
           currentMember={currentMember}
+          channelId={channelId}
         />
       </div>
     </main>

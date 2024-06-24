@@ -11,7 +11,8 @@ export type DialogType =
   | 'deleteServer'
   | 'deleteChannel'
   | 'editChannel'
-  | 'deleteMessage';
+  | 'deleteMessage'
+  | 'uploadFile';
 
 export type DialogData = {
   server?: ServerWithMembers;
@@ -20,21 +21,26 @@ export type DialogData = {
     name: string;
   };
   memberId?: string;
-  messageId?: string;
 };
 
 type DialogStore = {
   type: DialogType | null;
   open: boolean;
   data: DialogData | null;
+  fileUrl: string | null;
+  fileName: string | null;
   openDialog: (type: DialogType, data?: DialogData) => void;
   closeDialog: () => void;
+  addAttachment: (fileUrl: string, fileName: string) => void;
+  removeAttachment: () => void;
 };
 
 export const useDialog = create<DialogStore>((set) => ({
   type: null,
   open: false,
   data: null,
+  fileUrl: null,
+  fileName: null,
   openDialog: (type: DialogType, data?: DialogData) => {
     set({
       type,
@@ -46,6 +52,18 @@ export const useDialog = create<DialogStore>((set) => ({
     set({
       type: null,
       open: false,
+    });
+  },
+  addAttachment: (fileUrl: string, fileName: string) => {
+    set({
+      fileUrl,
+      fileName,
+    });
+  },
+  removeAttachment: () => {
+    set({
+      fileUrl: null,
+      fileName: null,
     });
   },
 }));

@@ -3,21 +3,23 @@
 <h1 align="center">WhisperWave</h1>
 
 <p align="center">
-  서버와 채널을 만들어 사용자들이 실시간으로 메시지를 주고받을 수 있는 그룹 챗 애플리케이션.
+  사용자들이 실시간으로 메시지를 주고받을 수 있는 그룹 챗 애플리케이션.
 </p>
 <br/>
 
 ## Features
 
-- 회원 인증: Clerk을 활용한 이메일/소셜 로그인 (Google & GitHub)
+- 이메일/소셜 로그인 (Google & GitHub) - Clerk
 
-- 서버/채널 생성/수정
+- 서버 생성/수정
 
-- 초대 링크 생성 - 사용자 서버 참가
+- 채널 생성/수정
+
+- 초대 링크 생성 - 서버 참가
 
 - 실시간 챗 - Socket.io
 
-- Websocket 사용 불가시: 경고 메시지 표시 & 폴링 사용
+- Websocket 연결 실패 시: 경고 메시지 표시 & 폴링 사용
 
 - 이미지 첨부 - UploadThing
 

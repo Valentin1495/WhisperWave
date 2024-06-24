@@ -5,16 +5,20 @@ import { AvatarPhoto } from '../avatar-photo';
 import { format, isEqual } from 'date-fns';
 import Image from 'next/image';
 import { Edit, Trash2 } from 'lucide-react';
-import { FormEvent, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { cn } from '@/lib/utils';
 import EmojiPicker from './emoji-picker';
-import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
-import { UseMutationResult } from '@tanstack/react-query';
-import { EditedMessage } from '@/types';
 import { socket } from '@/socket';
+import { MessageWithMember } from '@/types';
 
 type ChatMessageProps = {
   id: string;
@@ -24,7 +28,6 @@ type ChatMessageProps = {
   updatedAt: Date;
   currentMemberId: string;
   currentMemberRole: MemberRole;
-  channel: Channel;
   member: {
     id: string;
     role: MemberRole;
@@ -33,22 +36,8 @@ type ChatMessageProps = {
       imageUrl: string;
     };
   };
-  editMessageMutation: UseMutationResult<
-    any,
-    Error,
-    EditedMessage,
-    {
-      previousMessages: unknown;
-    }
-  >;
-  deleteMessageMutation: UseMutationResult<
-    any,
-    Error,
-    string,
-    {
-      previousMessages: unknown;
-    }
-  >;
+  messages: MessageWithMember[];
+  setMessages: Dispatch<SetStateAction<MessageWithMember[]>>;
 };
 
 export default function ChatMessage({
@@ -57,45 +46,42 @@ export default function ChatMessage({
   fileUrl,
   createdAt,
   updatedAt,
-  channel,
   member,
   currentMemberId,
   currentMemberRole,
-  editMessageMutation,
+  messages,
+  setMessages,
 }: ChatMessageProps) {
-  const { profile } = member;
-  const { name, imageUrl } = profile;
   const timestamp = format(createdAt, 'MM/dd/yyyy h:mm a');
-  const isCurrentMemberMsg = currentMemberId === member.id;
+  const isCurrentMemberMsg = currentMemberId === member?.id;
   const isGuest = currentMemberRole === 'GUEST';
   const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedMessage, setEditedMessage] = useState(content);
+  const [isEdited, setIsEdited] = useState(!isEqual(createdAt, updatedAt));
   const { channelId } = useParams();
-  const isEdited = !isEqual(createdAt, updatedAt);
-  const { openDialog } = useDialog();
 
   const editMessage = async (event: FormEvent) => {
     event.preventDefault();
 
-    editMessageMutation.mutate(
-      {
-        messageId: id,
-        channelId: channelId as string,
-        editedContent,
-      },
-      {
-        onSuccess: (updatedMessage) => {
-          socket.emit(`chat:${channelId}`, updatedMessage);
-          setIsEditing(false);
-        },
-        onError: (error) => {
-          console.error(error);
-          toast.error(
-            'An error occurred while editing the message. Please try again.'
-          );
-        },
-      }
+    socket.emit('editMessage', {
+      messageId: id,
+      channelId,
+      editedMessage,
+    });
+  };
+
+  const deleteMessage = async (event: FormEvent) => {
+    event.preventDefault();
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this message?'
     );
+
+    if (confirmed) {
+      socket.emit('deleteMessage', {
+        messageId: id,
+        channelId,
+      });
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -109,6 +95,7 @@ export default function ChatMessage({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsEditing(false);
+        setEditedMessage(content);
       }
     };
 
@@ -117,20 +104,38 @@ export default function ChatMessage({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [content]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('editedMessage', (message: MessageWithMember) => {
+        id === message.id && setIsEdited(true);
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === message.id ? { ...msg, content: message.content } : msg
+          )
+        );
+        setIsEditing(false);
+      });
+
+      socket.on('deletedMessage', (message: MessageWithMember) => {
+        setMessages((prev) => prev.filter((msg) => msg.id !== message.id));
+      });
+    }
+  }, [id, setMessages]);
 
   return (
     <div className='hover:bg-zinc-100 dark:hover:bg-zinc-800 px-4 py-1 group'>
       <div className='flex gap-3'>
         <AvatarPhoto
-          src={imageUrl}
-          alt='profile picture'
-          className='object-cover size-10'
+          src={member?.profile?.imageUrl}
+          alt='Profile picture'
+          className='size-10'
         />
 
         <div className='w-full'>
           <div className='space-x-1.5 relative'>
-            <span className='font-medium'>{name}</span>
+            <span className='font-medium'>{member?.profile?.name}</span>
             <span className='text-xs text-zinc-500 dark:text-zinc-400 mr-auto'>
               {timestamp}
             </span>
@@ -146,12 +151,7 @@ export default function ChatMessage({
               {(!isGuest || isCurrentMemberMsg) && (
                 <button
                   className='hover:opacity-75 transition text-destructive'
-                  onClick={() =>
-                    openDialog('deleteMessage', {
-                      messageId: id,
-                      channel,
-                    })
-                  }
+                  onClick={deleteMessage}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -167,13 +167,13 @@ export default function ChatMessage({
                 >
                   <TextareaAutosize
                     className='w-full bg-transparent outline-none resize-none disabled:pointer-events-none text-sm'
-                    value={editedContent}
-                    onChange={(e) => setEditedContent(e.target.value)}
+                    value={editedMessage}
+                    onChange={(e) => setEditedMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
                   />
                   <EmojiPicker
                     handleEmojiSelect={(emoji: string) => {
-                      setEditedContent((prev) => prev + emoji);
+                      setEditedMessage((prev) => prev + emoji);
                     }}
                   />
                 </form>

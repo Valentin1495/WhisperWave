@@ -104,4 +104,8 @@
       opacity: 0.2;
     }
   }
+
+  .upload-dropzone {
+    margin: 10px;
+  }
 }

@@ -18,7 +18,7 @@ export default function MyServer({ id, name, imageUrl }: MyServerProps) {
 
   return (
     <div className='flex'>
-      <Link href={`/server/${id}`} className='mx-auto'>
+      <Link href={`/server/${id}`} className='mx-auto' prefetch={false}>
         <AvatarPhoto
           className={cn(
             'size-[52px] hover:opacity-75 transition',

@@ -51,12 +51,11 @@ export default function MemberRow({
       {!isCurrentMember && (
         <Link
           href={`/server/${serverId}/conversation/${memberId}`}
-          className='ml-auto'
+          className='ml-auto bg-zinc-100 hover:bg-zinc-200 transition p-1 rounded-sm text-sm dark:bg-zinc-700 dark:hover:bg-zinc-800 w-10'
+          prefetch={false}
         >
-          <MessageCirclePlus
-            size={30}
-            className='text-primary hover:scale-110 transition'
-          />
+          <MessageCirclePlus size={16} className='mx-auto' />
+          Chat
         </Link>
       )}
       {!isGuest && (

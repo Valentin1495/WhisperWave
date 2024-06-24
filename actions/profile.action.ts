@@ -18,11 +18,13 @@ export async function findProfile(userId: string) {
 }
 
 export async function getCurrentProfile() {
-  const user = (await currentUser()) as User;
-
-  const currentPrfile = await findProfile(user.id);
-
-  return currentPrfile;
+  try {
+    const user = (await currentUser()) as User;
+    const profile = await findProfile(user.id);
+    return profile;
+  } catch (error: any) {
+    throw new Error(error);
+  }
 }
 
 export async function createProfile() {
