@@ -1,6 +1,6 @@
 'use client';
 
-import { Channel, MemberRole } from '@prisma/client';
+import { MemberRole } from '@prisma/client';
 import { AvatarPhoto } from '../avatar-photo';
 import { format, isEqual } from 'date-fns';
 import Image from 'next/image';
@@ -16,7 +16,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { cn } from '@/lib/utils';
 import EmojiPicker from './emoji-picker';
 import { useParams } from 'next/navigation';
-import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { socket } from '@/socket';
 import { MessageWithMember } from '@/types';
 
@@ -36,7 +35,6 @@ type ChatMessageProps = {
       imageUrl: string;
     };
   };
-  messages: MessageWithMember[];
   setMessages: Dispatch<SetStateAction<MessageWithMember[]>>;
 };
 
@@ -49,7 +47,6 @@ export default function ChatMessage({
   member,
   currentMemberId,
   currentMemberRole,
-  messages,
   setMessages,
 }: ChatMessageProps) {
   const timestamp = format(createdAt, 'MM/dd/yyyy h:mm a');

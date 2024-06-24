@@ -83,7 +83,6 @@ export default function ChatMessagesList({
                 currentMemberId={currentMember.id}
                 currentMemberRole={currentMember.role}
                 updatedAt={updatedAt}
-                messages={messages}
                 setMessages={setMessages}
               />
             )
