@@ -1,6 +1,6 @@
 'use client';
 
-import { socket } from '@/socket';
+import { socket } from '@/lib/socket';
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
 
 export interface SocketContextType {

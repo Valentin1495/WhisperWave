@@ -5,19 +5,14 @@ import { AvatarPhoto } from '../avatar-photo';
 import { format, isEqual } from 'date-fns';
 import Image from 'next/image';
 import { Edit, Trash2 } from 'lucide-react';
-import {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { cn } from '@/lib/utils';
 import EmojiPicker from './emoji-picker';
 import { useParams } from 'next/navigation';
-import { socket } from '@/socket';
 import { MessageWithMember } from '@/types';
+import { QueryClient } from '@tanstack/react-query';
+import { socket } from '@/lib/socket';
 
 type ChatMessageProps = {
   id: string;
@@ -35,7 +30,7 @@ type ChatMessageProps = {
       imageUrl: string;
     };
   };
-  setMessages: Dispatch<SetStateAction<MessageWithMember[]>>;
+  queryClient: QueryClient;
 };
 
 export default function ChatMessage({
@@ -47,7 +42,7 @@ export default function ChatMessage({
   member,
   currentMemberId,
   currentMemberRole,
-  setMessages,
+  queryClient,
 }: ChatMessageProps) {
   const timestamp = format(createdAt, 'MM/dd/yyyy h:mm a');
   const isCurrentMemberMsg = currentMemberId === member?.id;
@@ -69,6 +64,7 @@ export default function ChatMessage({
 
   const deleteMessage = async (event: FormEvent) => {
     event.preventDefault();
+
     const confirmed = window.confirm(
       'Are you sure you want to delete this message?'
     );
@@ -104,22 +100,30 @@ export default function ChatMessage({
   }, [content]);
 
   useEffect(() => {
-    if (socket) {
-      socket.on('editedMessage', (message: MessageWithMember) => {
-        id === message.id && setIsEdited(true);
-        setMessages((prev) =>
-          prev.map((msg) =>
+    socket.on('editedMessage', (message: MessageWithMember) => {
+      id === message.id && setIsEdited(true);
+      queryClient.setQueryData(
+        ['messages', channelId],
+        (old: MessageWithMember[]) =>
+          old.map((msg) =>
             msg.id === message.id ? { ...msg, content: message.content } : msg
           )
-        );
-        setIsEditing(false);
-      });
+      );
+      setIsEditing(false);
+    });
 
-      socket.on('deletedMessage', (message: MessageWithMember) => {
-        setMessages((prev) => prev.filter((msg) => msg.id !== message.id));
-      });
-    }
-  }, [id, setMessages]);
+    socket.on('deletedMessage', (message: MessageWithMember) => {
+      queryClient.setQueryData(
+        ['messages', channelId],
+        (old: MessageWithMember[]) => old.filter((msg) => msg.id !== message.id)
+      );
+    });
+
+    return () => {
+      socket.off('editedMessage');
+      socket.off('deletedMessage');
+    };
+  }, [id, channelId]);
 
   return (
     <div className='hover:bg-zinc-100 dark:hover:bg-zinc-800 px-4 py-1 group'>

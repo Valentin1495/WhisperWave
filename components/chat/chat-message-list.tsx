@@ -5,9 +5,9 @@ import ChatMessage from './chat-message';
 import { Channel } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { ServerCrash } from 'lucide-react';
-import { socket } from '@/socket';
 import { useMessagesQuery } from '@/lib/hooks/use-messages-query';
-import { isEqual } from 'date-fns';
+import { useQueryClient } from '@tanstack/react-query';
+import { socket } from '@/lib/socket';
 
 type ChatMessagesListProps = {
   currentMember: MemberWithProfile;
@@ -21,37 +21,26 @@ export default function ChatMessagesList({
   currentMember,
 }: ChatMessagesListProps) {
   const [isNewMessageAdded, setIsNewMessageAdded] = useState(true);
-  const [messages, setMessages] = useState<MessageWithMember[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const { data, isLoading, error } = useMessagesQuery(channel.id);
+  const { data: messages, isLoading, error } = useMessagesQuery(channel.id);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (data) {
-      setMessages(data);
+    socket.on('newMessage', (message: MessageWithMember) => {
+      queryClient.setQueryData(
+        ['messages', channel.id],
+        (old: MessageWithMember[]) => [...old, message]
+      );
       setIsNewMessageAdded(true);
-    }
-  }, [data]);
+    });
+
+    return () => {
+      socket.off('newMessage');
+    };
+  }, [queryClient]);
 
   useEffect(() => {
-    if (socket) {
-      socket.on('newMessage', (message: MessageWithMember) => {
-        setMessages((prev) => {
-          if (
-            prev.length > 0 &&
-            isEqual(prev[prev.length - 1].createdAt, message.createdAt)
-          ) {
-            return prev;
-          } else {
-            return [...prev, message];
-          }
-        });
-        setIsNewMessageAdded(true);
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isNewMessageAdded) {
+    if (isNewMessageAdded && messages) {
       messagesEndRef.current?.scrollIntoView();
       setIsNewMessageAdded(false);
     }
@@ -60,7 +49,7 @@ export default function ChatMessagesList({
   if (isLoading)
     return (
       <div className='flex flex-col items-center h-full justify-center gap-2'>
-        <span className='loading w-10 h-10 border-[5px]' />
+        <span className='loading size-10 border-[5px]' />
         <p>Loading messages...</p>
       </div>
     );
@@ -71,28 +60,29 @@ export default function ChatMessagesList({
         <p>Something went wrong.</p>
       </div>
     );
-  return (
-    <div className='space-y-3'>
-      {messages.length
-        ? messages.map(
-            ({ id, content, createdAt, fileUrl, member, updatedAt }) => (
-              <ChatMessage
-                id={id}
-                key={id}
-                createdAt={createdAt}
-                content={content}
-                fileUrl={fileUrl}
-                member={member}
-                currentMemberId={currentMember.id}
-                currentMemberRole={currentMember.role}
-                updatedAt={updatedAt}
-                setMessages={setMessages}
-              />
+  if (messages)
+    return (
+      <div className='space-y-3'>
+        {messages.length
+          ? messages.map(
+              ({ id, content, createdAt, fileUrl, member, updatedAt }) => (
+                <ChatMessage
+                  id={id}
+                  key={id}
+                  createdAt={createdAt}
+                  content={content}
+                  fileUrl={fileUrl}
+                  member={member}
+                  currentMemberId={currentMember.id}
+                  currentMemberRole={currentMember.role}
+                  updatedAt={updatedAt}
+                  queryClient={queryClient}
+                />
+              )
             )
-          )
-        : null}
+          : null}
 
-      <div ref={messagesEndRef} />
-    </div>
-  );
+        <div ref={messagesEndRef} />
+      </div>
+    );
 }

@@ -9,8 +9,8 @@ import EmojiPicker from './emoji-picker';
 import { useMounted } from '@/lib/hooks/use-mounted';
 import { cn } from '@/lib/utils';
 import { MemberWithProfile } from '@/types';
-import { socket } from '@/socket';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
+import { socket } from '@/lib/socket';
 
 type ChatInputProps = {
   channelId: string;
@@ -39,10 +39,10 @@ export default function ChatInput({
       currentMemberId: id,
     });
 
+    setNewMessage('');
     if (fileUrl) {
       removeAttachment();
     }
-    setNewMessage('');
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
