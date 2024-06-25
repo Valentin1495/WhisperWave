@@ -21,11 +21,13 @@ https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-b
 
 - 실시간 챗 - Socket.io
 
+- 실시간 메시지 수정/삭제 - Socket.io
+
 - Websocket 연결 실패 시: 경고 메시지 표시 & 1초 지연 - React Query
 
 - 이미지 첨부 - UploadThing
 
-- 실시간 메시지 수정/삭제 - Socket.io
+- 전역 상태 관리 - Zustand
 
 - 멤버 관리 (강퇴, Guest/Mod 역할 변경)
 
@@ -52,6 +54,7 @@ https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-b
 - [Next.js](https://nextjs.org/)
 - [React Query](https://tanstack.com/query/latest)
 - [Socket.io](https://socket.io/)
+- [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/)
 - [Clerk](https://clerk.com/)
