@@ -1,7 +1,7 @@
 <h1 align="center">WhisperWave</h1>
 
 <p align="center">
-  사용자들이 실시간으로 메시지를 주고받는 그룹 챗 애플리케이션
+  실시간으로 메시지를 주고받는 그룹 챗 애플리케이션
 </p>
 <br/>
 
