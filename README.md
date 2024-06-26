@@ -23,11 +23,11 @@ https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-b
 
 - 실시간 메시지 수정/삭제 - Socket.io
 
-- Websocket 연결 실패 시: 경고 메시지 표시 & 1초 지연 - React Query
+- Websocket 연결 실패 시: 경고 메시지 표시 & 1초 지연
 
 - 이미지 첨부 - UploadThing
 
-- 전역 상태 관리 - Zustand
+- 상태 관리 - React Query & Zustand
 
 - 멤버 관리 (강퇴, Guest/Mod 역할 변경)
 
