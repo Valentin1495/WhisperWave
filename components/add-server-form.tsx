@@ -10,7 +10,7 @@ import { AvatarPhoto } from './avatar-photo';
 import { useFormState } from 'react-dom';
 import AddServerButton from './buttons/add-server-button';
 import { useImagePreview } from '@/lib/hooks/use-image-preview';
-import { useParams, redirect } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 const initialState = {
@@ -19,27 +19,25 @@ const initialState = {
 
 export default function AddServerForm() {
   const params = useParams();
+  const router = useRouter();
   const username = params.username;
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [state, addServerAction] = useFormState(addServer, initialState);
-  const isServerAdded = state.message.includes('Success');
 
   useImagePreview(file, setPreview);
 
   useEffect(() => {
-    if (state.message && !isServerAdded) {
-      toast.error('Failed to create a server');
+    if (state.message.includes('Success')) {
+      const serverId = state.message.split(':')[1];
+
+      router.push(`/${username}/server/${serverId}`);
+    } else if (state.message) {
+      toast.error(state.message);
     }
-  }, [state, isServerAdded]);
-
-  if (isServerAdded) {
-    const serverId = state.message.split(':')[1];
-
-    redirect(`/${username}/server/${serverId}`);
-  }
+  }, [state, username, router]);
 
   return (
     <div className='w-2/3 md:w-1/2 xl:w-1/4 bg-secondary p-5 rounded-lg space-y-5'>

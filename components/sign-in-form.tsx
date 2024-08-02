@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { signIn } from '@/actions/profile.action';
 import { useEffect, useState } from 'react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { Separator } from './ui/separator';
@@ -18,16 +18,15 @@ const initialState = {
 export default function SignInForm() {
   const [state, signInAction] = useFormState(signIn, initialState);
   const [username, setUsername] = useState('');
-  const signedIn = state.message === 'Success';
-  const signInFailed = state.message && !signedIn;
+  const router = useRouter();
 
   useEffect(() => {
-    if (signInFailed) {
+    if (state.message === 'Success') {
+      router.push(`/${username}`);
+    } else if (state.message) {
       toast.error(state.message);
     }
-  }, [state, signInFailed]);
-
-  if (signedIn) redirect(`/${username}`);
+  }, [state, username, router]);
 
   return (
     <div className='w-2/3 md:w-1/2 xl:w-1/4 bg-secondary p-5 rounded-lg'>

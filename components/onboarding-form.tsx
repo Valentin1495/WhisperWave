@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { createProfile } from '@/actions/profile.action';
 import { useEffect, useRef, useState } from 'react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ImagePlus } from 'lucide-react';
@@ -25,20 +25,17 @@ export default function OnboardingForm() {
   const [username, setUsername] = useState('');
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const onboarded = state.message === 'Success';
-  const onboardingFailed = state.message && !onboarded;
+  const router = useRouter();
 
   useImagePreview(file, setPreview);
 
   useEffect(() => {
-    if (onboardingFailed) {
+    if (state.message === 'Success') {
+      router.push(`/${username}`);
+    } else if (state.message) {
       toast.error(state.message);
     }
-  }, [state, onboardingFailed]);
-
-  if (onboarded) {
-    redirect(`/${username}`);
-  }
+  }, [state, username, router]);
 
   return (
     <div className='w-2/3 md:w-1/2 xl:w-1/4 bg-secondary p-5 rounded-lg'>
