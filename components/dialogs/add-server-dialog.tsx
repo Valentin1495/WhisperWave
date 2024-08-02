@@ -32,20 +32,21 @@ export default function AddServerDialog() {
   const [mouseEnter, setMouseEnter] = useState(false);
   const [state, addServerAction] = useFormState(addServer, initialState);
   const { open, closeDialog, type } = useDialog();
+  const isServerAdded = state.message.includes('Success');
 
   useEffect(() => {
-    if (state.message.includes('Failed')) {
+    if (state.message && !isServerAdded) {
       toast.error('Failed to create a server');
     }
+  }, [state, isServerAdded]);
 
-    if (state.message.includes('Success')) {
-      closeDialog();
+  if (isServerAdded) {
+    closeDialog();
 
-      const serverId = state.message.split(':')[1];
+    const serverId = state.message.split(':')[1];
 
-      redirect(`/${username}/server/${serverId}`);
-    }
-  }, [state, closeDialog, username]);
+    redirect(`/${username}/server/${serverId}`);
+  }
 
   return (
     <Dialog open={open && type === 'addServer'} onOpenChange={closeDialog}>

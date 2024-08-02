@@ -36,7 +36,9 @@ export default function OnboardingForm() {
     }
   }, [state, onboardingFailed]);
 
-  if (onboarded) redirect(`/${username}`);
+  if (onboarded) {
+    redirect(`/${username}`);
+  }
 
   return (
     <div className='w-2/3 md:w-1/2 xl:w-1/4 bg-secondary p-5 rounded-lg'>
