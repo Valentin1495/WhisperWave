@@ -52,7 +52,9 @@ export async function redirectToServer(username: string, profileId: string) {
       },
     });
 
-    redirectPath = server && `/${username}/server/${server.id}`;
+    if (!server) return;
+
+    redirectPath = `/${username}/server/${server.id}`;
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -114,16 +116,14 @@ export async function addServer(prevState: any, formdata: FormData) {
       },
     });
 
-    revalidatePath(`/${username}`);
-
     return {
-      message: `Success-${server.id}`,
+      message: `Success:${server.id}`,
     };
   } catch (error) {
     console.error(error);
 
     return {
-      message: 'Failed to add server',
+      message: 'Failed to create a server',
     };
   }
 }
@@ -226,6 +226,7 @@ export async function editServer(prevState: any, formdata: FormData) {
     };
   } catch (error) {
     console.error(error);
+
     return {
       message: 'Failed to edit server',
     };

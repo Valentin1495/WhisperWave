@@ -1,7 +1,7 @@
 import { findServer } from '@/actions/server.action';
 import SetUsernameInLocalStorage from '@/components/set-username-in-local-storage';
 import { Frown } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 type ServerProps = {
   params: {
@@ -12,10 +12,15 @@ type ServerProps = {
 
 export default async function Server({ params }: ServerProps) {
   const server = await findServer(params.serverId);
-  const channels = server?.channels;
+
+  if (!server) {
+    notFound();
+  }
+
+  const channels = server.channels;
   const username = params.username;
 
-  if (channels?.length === 0)
+  if (channels.length === 0)
     return (
       <main className='flex flex-col justify-center items-center min-h-screen gap-2'>
         <Frown size={48} />
@@ -29,5 +34,5 @@ export default async function Server({ params }: ServerProps) {
       </main>
     );
 
-  redirect(`/${username}/server/${server?.id}/channel/${channels![0].id}`);
+  redirect(`/${username}/server/${server.id}/channel/${channels[0].id}`);
 }

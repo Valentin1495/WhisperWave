@@ -18,6 +18,7 @@ import { redirect, useParams } from 'next/navigation';
 import { AvatarPhoto } from '../avatar-photo';
 import Upload from '../upload';
 import { FileType } from '@/types';
+import { toast } from 'sonner';
 
 const initialState = {
   message: '',
@@ -25,17 +26,23 @@ const initialState = {
 
 export default function AddServerDialog() {
   const params = useParams();
+  const username = params.username;
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<FileType | null>(null);
   const [mouseEnter, setMouseEnter] = useState(false);
   const [state, addServerAction] = useFormState(addServer, initialState);
   const { open, closeDialog, type } = useDialog();
-  const username = params.username;
 
   useEffect(() => {
+    if (state.message.includes('Failed')) {
+      toast.error('Failed to create a server');
+    }
+
     if (state.message.includes('Success')) {
       closeDialog();
-      const serverId = state.message.split('-')[1];
+
+      const serverId = state.message.split(':')[1];
+
       redirect(`/${username}/server/${serverId}`);
     }
   }, [state, closeDialog, username]);

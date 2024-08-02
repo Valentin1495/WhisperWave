@@ -10,7 +10,7 @@ import { AvatarPhoto } from './avatar-photo';
 import { useFormState } from 'react-dom';
 import AddServerButton from './buttons/add-server-button';
 import { useImagePreview } from '@/lib/hooks/use-image-preview';
-import { useParams } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 const initialState = {
@@ -19,18 +19,26 @@ const initialState = {
 
 export default function AddServerForm() {
   const params = useParams();
+  const username = params.username;
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [state, addServerAction] = useFormState(addServer, initialState);
+
   useImagePreview(file, setPreview);
 
   useEffect(() => {
-    if (state.message && !state.message.includes('Success')) {
+    if (state.message.includes('Failed')) {
       toast.error('Failed to create a server');
     }
-  }, [state]);
+
+    if (state.message.includes('Success')) {
+      const serverId = state.message.split(':')[1];
+
+      redirect(`/${username}/server/${serverId}`);
+    }
+  }, [state, username]);
 
   return (
     <div className='w-2/3 md:w-1/2 xl:w-1/4 bg-secondary p-5 rounded-lg space-y-5'>
@@ -92,7 +100,7 @@ export default function AddServerForm() {
         />
         <Input
           type='hidden'
-          value={params.username}
+          value={username}
           name='username'
           className='hidden'
           readOnly
