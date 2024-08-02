@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 
 type AddServerButtonProps = {
   serverName: string;
-  file: File | null;
+  file?: string | File | null;
 };
 
 export default function AddServerButton({
@@ -25,7 +25,7 @@ export default function AddServerButton({
             <span></span>
           </span>
         ) : (
-          'Save'
+          'Create'
         )}
       </Button>
     </div>

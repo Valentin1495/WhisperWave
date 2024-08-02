@@ -1,47 +1,48 @@
 'use server';
 
-import { User, currentUser } from '@clerk/nextjs/server';
 import { findProfile, getCurrentProfile } from './profile.action';
 import db from '@/lib/db';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberRole, Profile } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { utapi } from '@/app/api/uploadthing/core';
-// import {
-//   PutObjectCommand,
-//   PutObjectCommandInput,
-//   S3Client,
-// } from '@aws-sdk/client-s3';
+// // import {
+// //   PutObjectCommand,
+// //   PutObjectCommandInput,
+// //   S3Client,
+// // } from '@aws-sdk/client-s3';
 
-// const s3Client = new S3Client({
-//   region: process.env.AWS_REGION!,
-//   credentials: {
-//     accessKeyId: process.env.ACCESS_KEY_ID!,
-//     secretAccessKey: process.env.SECRET_ACCESS_KEY!,
-//   },
-// });
+// // const s3Client = new S3Client({
+// //   region: process.env.AWS_REGION!,
+// //   credentials: {
+// //     accessKeyId: process.env.ACCESS_KEY_ID!,
+// //     secretAccessKey: process.env.SECRET_ACCESS_KEY!,
+// //   },
+// // });
 
-// export async function uploadFileToS3(fileKey: string, fileContent: Buffer) {
-//   const params: PutObjectCommandInput = {
-//     Bucket: 'whisperwave',
-//     Key: fileKey,
-//     Body: fileContent,
-//   };
+// // export async function uploadFileToS3(fileKey: string, fileContent: Buffer) {
+// //   const params: PutObjectCommandInput = {
+// //     Bucket: 'whisperwave',
+// //     Key: fileKey,
+// //     Body: fileContent,
+// //   };
 
-//   try {
-//     await s3Client.send(new PutObjectCommand(params));
-//     console.log('File uploaded successfully:');
+// //   try {
+// //     await s3Client.send(new PutObjectCommand(params));
+// //     console.log('File uploaded successfully:');
 
-//     return `https://whisperwave.s3.ap-northeast-2.amazonaws.com/${fileKey}`;
-//   } catch (error: any) {
-//     throw new Error(error);
-//   }
-// }
+// //     return `https://whisperwave.s3.ap-northeast-2.amazonaws.com/${fileKey}`;
+// //   } catch (error: any) {
+// //     throw new Error(error);
+// //   }
+// // }
 
-export async function redirectToServer() {
-  const user = (await currentUser()) as User;
-  const profile = await findProfile(user.id);
+export async function redirectToServer(username: string) {
+  const profile = await findProfile(username);
+  if (!profile) {
+    notFound();
+  }
   let redirectPath;
 
   try {
@@ -55,11 +56,13 @@ export async function redirectToServer() {
       },
     });
 
-    redirectPath = server && `/server/${server.id}`;
+    redirectPath = server && `/${username}/server/${server.id}`;
   } catch (error: any) {
     throw new Error(error);
   } finally {
-    redirectPath && redirect(redirectPath);
+    if (redirectPath) {
+      redirect(redirectPath);
+    }
   }
 }
 
@@ -75,22 +78,26 @@ export async function uploadFile(file: File) {
 }
 
 export async function addServer(prevState: any, formdata: FormData) {
-  const user = (await currentUser()) as User;
-  const profile = (await findProfile(user.id)) as Profile;
+  const username = formdata.get('username') as string;
+  const profile = (await findProfile(username)) as Profile;
   const profileId = profile.id;
   const serverName = formdata.get('serverName') as string;
-  const serverIcon = formdata.get('serverIcon') as File;
-  const imageUrl = await uploadFile(serverIcon);
+  let serverIcon = formdata.get('serverIcon') as string | File;
+
+  if (serverIcon instanceof File) {
+    serverIcon = await uploadFile(serverIcon);
+  }
+
   // const fileKey = `serverIcons/${uuidv4()}-${serverIcon.name}`;
   // const fileContent = Buffer.from(await serverIcon.arrayBuffer());
   // const imageUrl = await uploadFileToS3(fileKey, fileContent);
 
   try {
-    await db.server.create({
+    const server = await db.server.create({
       data: {
         profileId,
         name: serverName.trim(),
-        imageUrl,
+        imageUrl: serverIcon,
         inviteCode: uuidv4(),
         channels: {
           create: [
@@ -111,38 +118,17 @@ export async function addServer(prevState: any, formdata: FormData) {
       },
     });
 
-    revalidatePath('/');
+    revalidatePath(`/${username}`);
 
     return {
-      message: 'Success!',
+      message: `Success-${server.id}`,
     };
-  } catch (error: any) {
+  } catch (error) {
+    console.error(error);
+
     return {
       message: 'Failed to add server',
     };
-  }
-}
-
-export async function findMyServers() {
-  const currentProfile = await getCurrentProfile();
-
-  try {
-    const myServers = await db.server.findMany({
-      where: {
-        members: {
-          some: {
-            profileId: currentProfile?.id,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return myServers;
-  } catch (error: any) {
-    throw new Error(error);
   }
 }
 
@@ -175,22 +161,46 @@ export async function findServer(serverId: string) {
   }
 }
 
-export async function findExistingServer(inviteCode: string) {
-  const currentProfile = await getCurrentProfile();
+export async function findMyServers(username: string, profileId: string) {
+  try {
+    const myServers = await db.server.findMany({
+      where: {
+        members: {
+          some: {
+            profileId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return myServers;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function findExistingServer(inviteCode: string, username: string) {
+  const currentProfile = await getCurrentProfile(username);
+  if (!currentProfile) {
+    throw new Error('Cannot find a current profile');
+  }
 
   try {
-    const existServer = await db.server.findUnique({
+    const existingServer = await db.server.findUnique({
       where: {
         inviteCode,
         members: {
           some: {
-            profileId: currentProfile?.id,
+            profileId: currentProfile.id,
           },
         },
       },
     });
 
-    return existServer;
+    return existingServer;
   } catch (error: any) {
     throw new Error(error);
   }
@@ -199,16 +209,8 @@ export async function findExistingServer(inviteCode: string) {
 export async function editServer(prevState: any, formdata: FormData) {
   const serverId = formdata.get('serverId') as string;
   const serverName = formdata.get('serverName') as string;
-  const serverIcon = formdata.get('serverIcon') as File;
-  const prevImageUrl = formdata.get('prevImageUrl') as string;
-  let isSameFile = serverIcon.size === 0;
-  let imageUrl;
-
-  if (isSameFile) {
-    imageUrl = prevImageUrl;
-  } else {
-    imageUrl = await uploadFile(serverIcon);
-  }
+  const serverIcon = formdata.get('serverIcon') as string;
+  const username = formdata.get('username') as string;
 
   try {
     await db.server.update({
@@ -217,27 +219,30 @@ export async function editServer(prevState: any, formdata: FormData) {
       },
       data: {
         name: serverName,
-        imageUrl,
+        imageUrl: serverIcon,
       },
     });
 
-    revalidatePath(`/server/${serverId}`);
+    revalidatePath(`/${username}/server/${serverId}`);
 
     return {
-      message: 'Success!',
+      message: 'Success',
     };
-  } catch (error: any) {
+  } catch (error) {
+    console.error(error);
     return {
       message: 'Failed to edit server',
     };
   }
 }
 
-export async function inviteToServer(inviteCode: string) {
-  const currentProfile = (await getCurrentProfile()) as Profile;
+export async function inviteToServer(inviteCode: string, username: string) {
+  const currentProfile = (await getCurrentProfile(username)) as Profile;
+  if (!currentProfile) {
+    throw new Error('Cannot find a current profile');
+  }
 
-  const existingServer = await findExistingServer(inviteCode);
-
+  const existingServer = await findExistingServer(inviteCode, username);
   if (existingServer) return existingServer.id;
 
   try {
@@ -265,7 +270,8 @@ export async function inviteToServer(inviteCode: string) {
 export async function changeRole(
   serverId: string,
   memberId: string,
-  newRole: MemberRole
+  newRole: MemberRole,
+  username: string
 ) {
   try {
     await db.server.update({
@@ -286,13 +292,17 @@ export async function changeRole(
       },
     });
 
-    revalidatePath(`/server/${serverId}/members`);
+    revalidatePath(`${username}/server/${serverId}/members`);
   } catch (error: any) {
     throw new Error(error);
   }
 }
 
-export async function kickMember(serverId?: string, memberId?: string) {
+export async function kickMember(
+  username: string,
+  serverId?: string,
+  memberId?: string
+) {
   try {
     await db.server.update({
       where: {
@@ -314,7 +324,11 @@ export async function kickMember(serverId?: string, memberId?: string) {
 }
 
 export async function createChannel(prevState: any, formData: FormData) {
-  const currentProfile = (await getCurrentProfile()) as Profile;
+  const username = formData.get('username') as string;
+  const currentProfile = (await getCurrentProfile(username)) as Profile;
+  if (!currentProfile) {
+    throw new Error('Cannot find a current profile');
+  }
 
   const profileId = currentProfile.id;
   const serverId = formData.get('serverId') as string;
@@ -343,20 +357,25 @@ export async function createChannel(prevState: any, formData: FormData) {
       },
     });
 
-    revalidatePath(`/server/${serverId}`);
+    revalidatePath(`/${username}/server/${serverId}`);
 
     return {
-      message: 'Success!',
+      message: `Success`,
     };
-  } catch (error: any) {
+  } catch (error) {
+    console.error(error);
     return {
       message: 'Failed to create channel',
     };
   }
 }
 
-export async function leaveServer(serverId?: string) {
-  const currentProfile = (await getCurrentProfile()) as Profile;
+export async function leaveServer(username: string, serverId?: string) {
+  const currentProfile = (await getCurrentProfile(username)) as Profile;
+  if (!currentProfile) {
+    throw new Error('Cannot find a current profile');
+  }
+
   const profileId = currentProfile.id;
   let redirectPath;
 
@@ -379,7 +398,7 @@ export async function leaveServer(serverId?: string) {
       },
     });
 
-    redirectPath = '/';
+    redirectPath = `/${username}`;
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -389,7 +408,7 @@ export async function leaveServer(serverId?: string) {
   }
 }
 
-export async function deleteServer(serverId?: string) {
+export async function deleteServer(username: string, serverId?: string) {
   let redirectPath;
 
   try {
@@ -399,7 +418,7 @@ export async function deleteServer(serverId?: string) {
       },
     });
 
-    redirectPath = '/';
+    redirectPath = `/${username}`;
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -409,7 +428,11 @@ export async function deleteServer(serverId?: string) {
   }
 }
 
-export async function deleteChannel(serverId?: string, channelId?: string) {
+export async function deleteChannel(
+  username: string,
+  serverId?: string,
+  channelId?: string
+) {
   let redirectPath;
 
   try {
@@ -426,7 +449,7 @@ export async function deleteChannel(serverId?: string, channelId?: string) {
       },
     });
 
-    redirectPath = `/server/${serverId}`;
+    redirectPath = `/${username}/server/${serverId}`;
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -461,9 +484,11 @@ export async function editChannel(prevState: any, formData: FormData) {
     revalidatePath(`/server/${serverId}/channel/${channelId}`);
 
     return {
-      message: 'Success!',
+      message: 'Success',
     };
-  } catch (error: any) {
+  } catch (error) {
+    console.error(error);
+
     return {
       message: 'Failed to edit channel',
     };

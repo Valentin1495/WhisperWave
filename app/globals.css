@@ -105,7 +105,7 @@
     }
   }
 
-  .upload-dropzone {
-    margin: 10px;
+  .sidebar {
+    @apply hidden md:block;
   }
 }

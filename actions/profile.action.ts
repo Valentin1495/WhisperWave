@@ -1,13 +1,13 @@
 'use server';
 
 import db from '@/lib/db';
-import { User, currentUser } from '@clerk/nextjs/server';
+import { uploadFile } from './server.action';
 
-export async function findProfile(userId: string) {
+export async function findProfile(username: string) {
   try {
     const profile = await db.profile.findUnique({
       where: {
-        userId,
+        username,
       },
     });
 
@@ -17,35 +17,51 @@ export async function findProfile(userId: string) {
   }
 }
 
-export async function getCurrentProfile() {
+export async function getCurrentProfile(username?: string) {
+  if (!username) return null;
+
   try {
-    const user = (await currentUser()) as User;
-    const profile = await findProfile(user.id);
+    const profile = await findProfile(username);
+
     return profile;
   } catch (error: any) {
     throw new Error(error);
   }
 }
 
-export async function createProfile() {
-  const user = (await currentUser()) as User;
-  const profile = await findProfile(user.id);
-
-  if (profile) return profile;
+export async function createProfile(prevState: any, formData: FormData) {
+  const username = formData.get('username') as string;
+  const profilePic = formData.get('profilePic') as File;
+  const imageUrl = await uploadFile(profilePic);
 
   try {
-    let lastName = user.lastName ? ' ' + user.lastName : '';
-    const newProfile = await db.profile.create({
+    const existingUser = await db.profile.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (existingUser) {
+      return {
+        message: 'User already exists',
+      };
+    }
+
+    await db.profile.create({
       data: {
-        userId: user.id,
-        name: user.firstName + lastName,
-        email: user.emailAddresses[0].emailAddress,
-        imageUrl: user.imageUrl,
+        username: username.trim(),
+        imageUrl,
       },
     });
 
-    return newProfile;
-  } catch (error: any) {
-    throw new Error(error);
+    return {
+      message: 'Success',
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      message: 'Failed to create a profile',
+    };
   }
 }

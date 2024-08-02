@@ -11,6 +11,7 @@ export default function OpenCreateChannelDialog({
   server,
 }: OpenCreateChannelDialogProps) {
   const { openDialog } = useDialog();
+
   return (
     <DropdownMenuItem
       onClick={() =>

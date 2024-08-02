@@ -1,19 +1,10 @@
-import { ServerWithMembers } from '@/types';
-import { Member, Profile } from '@prisma/client';
 import db from '@/lib/db';
-import { findServer, uploadFile } from '@/actions/server.action';
-import { getCurrentProfile } from '@/actions/profile.action';
 import { NextRequest } from 'next/server';
 
 export async function POST(request: Request) {
   const res = await request.json();
 
   const { newMessage, channelId, currentMemberId, fileUrl } = res;
-  // const server = (await findServer(serverId)) as ServerWithMembers;
-  // const currentProfile = (await getCurrentProfile()) as Profile;
-  // const currentMember = server.members.find(
-  //   (member) => member.profileId === currentProfile.id
-  // ) as Member;
 
   try {
     const message = await db.message.create({
@@ -37,7 +28,7 @@ export async function POST(request: Request) {
     console.error(error);
 
     return Response.json(
-      { message: 'An error occurred while processing the form submission' },
+      { message: 'An error occurred while sending a message' },
       { status: 500 }
     );
   }
@@ -67,8 +58,9 @@ export async function GET(request: NextRequest) {
     return Response.json(messages);
   } catch (error) {
     console.error(error);
+
     return Response.json(
-      { message: 'An error occured while fetching messages.' },
+      { message: 'An error occured while fetching messages' },
       { status: 500 }
     );
   }
@@ -89,10 +81,11 @@ export async function PATCH(request: Request) {
     });
 
     return Response.json(editedMessage);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
+
     return Response.json(
-      { message: 'An error occurred while editing message' },
+      { message: 'An error occurred while editing a message' },
       { status: 500 }
     );
   }
@@ -109,11 +102,12 @@ export async function DELETE(request: Request) {
       },
     });
 
-    return Response.json('Success!');
+    return Response.json('Success');
   } catch (error) {
     console.error(error);
+
     return Response.json(
-      { message: 'An error occurred while deleting message' },
+      { message: 'An error occurred while deleting a message' },
       { status: 500 }
     );
   }

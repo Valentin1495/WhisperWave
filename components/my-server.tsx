@@ -12,22 +12,28 @@ type MyServerProps = {
 };
 
 export default function MyServer({ id, name, imageUrl }: MyServerProps) {
-  const { serverId } = useParams();
-
+  const { serverId, username } = useParams();
   const isCurrentServer = serverId === id;
 
   return (
     <div className='flex'>
-      <Link href={`/server/${id}`} className='mx-auto' prefetch={false}>
-        <AvatarPhoto
+      <Link
+        href={`/${username}/server/${id}`}
+        className='mx-auto'
+        prefetch={false}
+      >
+        <div
           className={cn(
-            'size-[52px] hover:opacity-75 transition',
             isCurrentServer &&
-              'border-blue-600 dark:border-blue-300 border-[3px]'
+              'border-blue-600 dark:border-blue-300 border-[3px] p-0.5 rounded-full'
           )}
-          src={imageUrl}
-          alt={name}
-        />
+        >
+          <AvatarPhoto
+            className='size-[52px] hover:opacity-75 transition'
+            src={imageUrl}
+            alt={name}
+          />
+        </div>
       </Link>
     </div>
   );

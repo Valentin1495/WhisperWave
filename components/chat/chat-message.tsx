@@ -26,7 +26,7 @@ type ChatMessageProps = {
     id: string;
     role: MemberRole;
     profile: {
-      name: string;
+      username: string;
       imageUrl: string;
     };
   };
@@ -81,6 +81,7 @@ export default function ChatMessage({
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       editMessage(event as any); // TypeScript workaround for FormEvent
+      setIsEditing(false);
     }
   };
 
@@ -109,7 +110,6 @@ export default function ChatMessage({
             msg.id === message.id ? { ...msg, content: message.content } : msg
           )
       );
-      setIsEditing(false);
     });
 
     socket.on('deletedMessage', (message: MessageWithMember) => {
@@ -123,7 +123,7 @@ export default function ChatMessage({
       socket.off('editedMessage');
       socket.off('deletedMessage');
     };
-  }, [id, channelId]);
+  }, [id, channelId, queryClient]);
 
   return (
     <div className='hover:bg-zinc-100 dark:hover:bg-zinc-800 px-4 py-1 group'>
@@ -136,7 +136,7 @@ export default function ChatMessage({
 
         <div className='w-full'>
           <div className='space-x-1.5 relative'>
-            <span className='font-medium'>{member?.profile?.name}</span>
+            <span className='font-medium'>{member?.profile?.username}</span>
             <span className='text-xs text-zinc-500 dark:text-zinc-400 mr-auto'>
               {timestamp}
             </span>

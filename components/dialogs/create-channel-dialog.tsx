@@ -13,6 +13,8 @@ import CreateChannelButton from '../buttons/create-channel-button';
 import { Hash } from 'lucide-react';
 import { useFormState } from 'react-dom';
 import { createChannel } from '@/actions/server.action';
+import { Input } from '../ui/input';
+import { useParams } from 'next/navigation';
 
 const initialState = {
   message: '',
@@ -20,6 +22,7 @@ const initialState = {
 
 export default function CreateChannelDialog() {
   const { closeDialog, data, open, type } = useDialog();
+  const params = useParams();
   const [channelName, setChannelName] = useState('');
   const [state, createChannelAction] = useFormState(
     createChannel,
@@ -27,7 +30,7 @@ export default function CreateChannelDialog() {
   );
 
   useEffect(() => {
-    if (state.message === 'Success!') {
+    if (state.message === 'Success') {
       closeDialog();
     }
   }, [state, closeDialog]);
@@ -44,16 +47,23 @@ export default function CreateChannelDialog() {
           </Label>
           <section className='flex items-center bg-primary/10 dark:bg-primary/20 px-2 gap-1.5 rounded-sm mt-1.5 mb-3'>
             <Hash size={20} />
-            <input
+            <Input
               id='channelName'
               name='channelName'
               className='border-none my-2.5 bg-transparent w-full outline-0'
               value={channelName}
               onChange={(e) => setChannelName(e.target.value)}
             />
-            <input
+            <Input
               name='serverId'
               value={data?.server?.id}
+              className='hidden'
+              type='hidden'
+              readOnly
+            />
+            <Input
+              name='username'
+              value={params.username}
               className='hidden'
               type='hidden'
               readOnly

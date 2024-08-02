@@ -12,11 +12,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
 import LeaveServerButton from '../buttons/leave-server-button';
+import { useParams } from 'next/navigation';
 
 export default function LeaveServerDialog() {
   const { open, closeDialog, type, data } = useDialog();
+  const params = useParams();
+
   const leaveServerAction = async () => {
-    await leaveServer(data?.server?.id);
+    await leaveServer(params.username as string, data?.server?.id);
     closeDialog();
   };
 
@@ -26,18 +29,18 @@ export default function LeaveServerDialog() {
       onOpenChange={closeDialog}
     >
       <AlertDialogContent>
-        <form action={leaveServerAction}>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <form action={leaveServerAction} className='space-x-1.5'>
+            <AlertDialogCancel className='w-[93px]'>Cancel</AlertDialogCancel>
             <LeaveServerButton />
-          </AlertDialogFooter>
-        </form>
+          </form>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );

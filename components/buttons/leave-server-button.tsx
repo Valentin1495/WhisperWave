@@ -7,7 +7,7 @@ export default function LeaveServerButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button variant='destructive' disabled={pending} className='w-28'>
+    <Button variant='destructive' disabled={pending} className='w-[93px]'>
       {pending ? (
         <span className='pending'>
           <span></span>
@@ -15,7 +15,7 @@ export default function LeaveServerButton() {
           <span></span>
         </span>
       ) : (
-        'Leave Server'
+        'Continue'
       )}
     </Button>
   );

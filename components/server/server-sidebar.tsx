@@ -7,13 +7,21 @@ import Channel from '../channel/channel';
 
 type ServerSidebarProps = {
   serverId: string;
+  user: string;
 };
 
-export default async function ServerSidebar({ serverId }: ServerSidebarProps) {
-  const currentProfile = await getCurrentProfile();
+export default async function ServerSidebar({
+  serverId,
+  user,
+}: ServerSidebarProps) {
+  const currentProfile = await getCurrentProfile(user);
   const server = (await findServer(serverId)) as ServerWithMembers;
+  if (!currentProfile || !server) {
+    return null;
+  }
+
   const role = server.members.find(
-    (member) => member.profileId === currentProfile?.id
+    (member) => member.profileId === currentProfile.id
   )?.role;
 
   return (

@@ -12,7 +12,7 @@ export default function UploadFileDialog() {
     <Dialog open={open && type === 'uploadFile'} onOpenChange={closeDialog}>
       <DialogContent>
         <UploadDropzone
-          className='upload-dropzone'
+          className='m-3'
           endpoint='imageUploader'
           onClientUploadComplete={(res) => {
             const { name, url } = res[0];

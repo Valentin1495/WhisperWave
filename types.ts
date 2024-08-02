@@ -28,7 +28,7 @@ export type MessageWithMember = Message & {
     id: string;
     role: MemberRole;
     profile: {
-      name: string;
+      username: string;
       imageUrl: string;
     };
   };
@@ -39,4 +39,9 @@ export type PostRequestType = {
   channelId: string;
   currentMemberId: string;
   fileUrl: string | null;
+};
+
+export type FileType = {
+  url: string;
+  name: string;
 };

@@ -9,17 +9,17 @@ import { useMessagesQuery } from '@/lib/hooks/use-messages-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { socket } from '@/lib/socket';
 
-type ChatMessagesListProps = {
+type ChatMessageListProps = {
   currentMember: MemberWithProfile;
   name: string;
   type: string;
   channel: Channel;
 };
 
-export default function ChatMessagesList({
+export default function ChatMessageList({
   channel,
   currentMember,
-}: ChatMessagesListProps) {
+}: ChatMessageListProps) {
   const [isNewMessageAdded, setIsNewMessageAdded] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { data: messages, isLoading, error } = useMessagesQuery(channel.id);
@@ -29,7 +29,7 @@ export default function ChatMessagesList({
     socket.on('newMessage', (message: MessageWithMember) => {
       queryClient.setQueryData(
         ['messages', channel.id],
-        (old: MessageWithMember[]) => [...old, message]
+        (old: MessageWithMember[] = []) => [...old, message]
       );
       setIsNewMessageAdded(true);
     });
@@ -37,7 +37,7 @@ export default function ChatMessagesList({
     return () => {
       socket.off('newMessage');
     };
-  }, [queryClient]);
+  }, [queryClient, channel.id]);
 
   useEffect(() => {
     if (isNewMessageAdded && messages) {
@@ -53,6 +53,7 @@ export default function ChatMessagesList({
         <p>Loading messages...</p>
       </div>
     );
+
   if (error)
     return (
       <div className='flex flex-col items-center h-full justify-center gap-2 text-destructive'>
@@ -60,6 +61,7 @@ export default function ChatMessagesList({
         <p>Something went wrong.</p>
       </div>
     );
+
   if (messages)
     return (
       <div className='space-y-3'>
@@ -73,8 +75,8 @@ export default function ChatMessagesList({
                   content={content}
                   fileUrl={fileUrl}
                   member={member}
-                  currentMemberId={currentMember.id}
-                  currentMemberRole={currentMember.role}
+                  currentMemberId={currentMember?.id}
+                  currentMemberRole={currentMember?.role}
                   updatedAt={updatedAt}
                   queryClient={queryClient}
                 />

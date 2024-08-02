@@ -11,11 +11,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
 import DeleteButton from '../buttons/delete-button';
+import { useParams } from 'next/navigation';
 
 export default function DeleteServerDialog() {
   const { open, closeDialog, type, data } = useDialog();
+  const params = useParams();
+  const username = params.username as string;
   const deleteServerAction = async () => {
-    await deleteServer(data?.server?.id);
+    await deleteServer(username, data?.server?.id);
     closeDialog();
   };
 

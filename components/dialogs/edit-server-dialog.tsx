@@ -6,45 +6,44 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { AvatarPhoto } from '../avatar-photo';
-import { cn } from '@/lib/utils';
 import { editServer } from '@/actions/server.action';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
 import EditServerButton from '../buttons/edit-server-button';
-import { useImagePreview } from '@/lib/hooks/use-image-preview';
+import Upload from '../upload';
+import { FileType } from '@/types';
+import { useParams } from 'next/navigation';
 
 const initialState = {
   message: '',
 };
 
 export default function EditServerDialog() {
+  const params = useParams();
   const { open, closeDialog, type, data } = useDialog();
   const [serverName, setServerName] = useState<string>();
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [file, setFile] = useState<FileType | null>(null);
   const [mouseEnter, setMouseEnter] = useState(false);
-  const fileRef = useRef<HTMLInputElement | null>(null);
   const [state, editServerAction] = useFormState(editServer, initialState);
   let prevServerName = data?.server?.name;
   let prevImageUrl = data?.server?.imageUrl;
-  const isSameServer = serverName === prevServerName && !file;
+  const isSameServer =
+    serverName === prevServerName && prevImageUrl === file?.url;
 
   useEffect(() => {
     setServerName(prevServerName);
-    setPreview(prevImageUrl || null);
+    setFile({ url: prevImageUrl || '', name: 'previous server icon' });
   }, [data, prevImageUrl, prevServerName]);
 
   useEffect(() => {
-    if (state.message === 'Success!') {
+    if (state.message === 'Success') {
       closeDialog();
     }
   }, [state, closeDialog]);
-
-  useImagePreview(file, setPreview);
 
   return (
     <Dialog open={open && type === 'editServer'} onOpenChange={closeDialog}>
@@ -56,47 +55,36 @@ export default function EditServerDialog() {
         </DialogHeader>
 
         <form action={editServerAction}>
-          <Input
-            name='serverIcon'
-            type='file'
-            className='hidden'
-            ref={fileRef}
-            accept='image/*'
-            onChange={(e) => {
-              const file = e.target.files && e.target.files[0];
-              if (file && file.type.slice(0, 5) === 'image') {
-                setFile(file);
-              }
-            }}
-          />
+          {file ? (
+            <div
+              className='relative rounded-full size-32 flex items-center justify-center cursor-pointer mx-auto'
+              onMouseEnter={() => setMouseEnter(true)}
+              onMouseLeave={() => setMouseEnter(false)}
+              onClick={() => {
+                setFile(null);
+              }}
+            >
+              <AvatarPhoto
+                src={file.url}
+                alt={file.name}
+                className='size-full'
+              />
+              {mouseEnter && (
+                <section className='absolute inset-0 bg-black/50 rounded-full flex items-center justify-center'>
+                  <h3 className='text-xs text-center font-bold text-primary-foreground dark:text-foreground'>
+                    CHANGE <br /> ICON
+                  </h3>
+                </section>
+              )}
+            </div>
+          ) : (
+            <Upload handleFile={setFile} handleMouseEnter={setMouseEnter} />
+          )}
 
-          <div
-            className={cn(
-              'rounded-full size-[88px] flex items-center justify-center cursor-pointer mx-auto mb-5',
-              !preview && 'border-2 border-foreground border-dashed'
-            )}
-            onClick={() => fileRef.current?.click()}
-            onMouseEnter={() => setMouseEnter(true)}
-            onMouseLeave={() => setMouseEnter(false)}
+          <Label
+            htmlFor='serverName'
+            className='text-sm font-semibold mt-5 inline-block'
           >
-            {preview && (
-              <div className='relative'>
-                <AvatarPhoto
-                  src={preview}
-                  alt={file ? file.name : 'server icon'}
-                  className='size-full'
-                />
-                {mouseEnter && (
-                  <section className='absolute inset-0 bg-black/50 rounded-full flex items-center justify-center'>
-                    <h3 className='text-xs text-center font-bold text-primary-foreground dark:text-foreground'>
-                      CHANGE <br /> ICON
-                    </h3>
-                  </section>
-                )}
-              </div>
-            )}
-          </div>
-          <Label htmlFor='serverName' className='text-sm font-semibold'>
             SERVER NAME
           </Label>
           <Input
@@ -116,10 +104,18 @@ export default function EditServerDialog() {
           <Input
             type='hidden'
             className='hidden'
-            value={prevImageUrl}
+            value={file?.url}
             readOnly
-            name='prevImageUrl'
+            name='serverIcon'
           />
+          <Input
+            type='hidden'
+            className='hidden'
+            value={params.username}
+            readOnly
+            name='username'
+          />
+
           <EditServerButton
             serverName={serverName || ''}
             isSameServer={isSameServer}

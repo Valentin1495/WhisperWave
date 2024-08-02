@@ -30,7 +30,7 @@ export default function EditChannelDialog() {
   }, [data, prevChannelName]);
 
   useEffect(() => {
-    if (state.message === 'Success!') {
+    if (state.message === 'Success') {
       closeDialog();
     }
   }, [state, closeDialog]);

@@ -27,7 +27,6 @@ export default function ChatInput({
 }: ChatInputProps) {
   const [newMessage, setNewMessage] = useState('');
   const { openDialog, fileName, fileUrl, removeAttachment } = useDialog();
-  const { id } = currentMember;
 
   const handleSend = async (event: FormEvent) => {
     event.preventDefault();
@@ -36,7 +35,7 @@ export default function ChatInput({
       newMessage: newMessage.trim(),
       fileUrl,
       channelId,
-      currentMemberId: id,
+      currentMemberId: currentMember?.id,
     });
 
     setNewMessage('');

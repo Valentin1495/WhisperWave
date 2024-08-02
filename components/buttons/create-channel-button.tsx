@@ -16,7 +16,7 @@ export default function CreateChannelButton({
     <div className='text-end'>
       <Button
         disabled={!channelName.trim() || pending}
-        className='dark:text-secondary-foreground w-40'
+        className='dark:text-secondary-foreground w-20'
       >
         {pending ? (
           <span className='pending'>
@@ -25,7 +25,7 @@ export default function CreateChannelButton({
             <span></span>
           </span>
         ) : (
-          '  Create Channel'
+          '  Create'
         )}
       </Button>
     </div>

@@ -1,5 +1,4 @@
-import { inviteToServer } from '@/actions/server.action';
-import { redirect } from 'next/navigation';
+import RedirectToInvitedServer from '@/components/redirect-to-invited-server';
 
 type InvitedServerProps = {
   params: {
@@ -8,7 +7,5 @@ type InvitedServerProps = {
 };
 
 export default async function InvitedServer({ params }: InvitedServerProps) {
-  const serverId = await inviteToServer(params.inviteCode);
-
-  redirect(`/server/${serverId}`);
+  return <RedirectToInvitedServer inviteCode={params.inviteCode} />;
 }

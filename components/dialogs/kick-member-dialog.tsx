@@ -12,13 +12,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
 import KickMemberButton from '../buttons/kick-member-button';
+import { useParams } from 'next/navigation';
 
 export default function KickMemberDialog() {
   const { open, closeDialog, type, data } = useDialog();
   const serverId = data?.server?.id;
   const memberId = data?.memberId;
+  const params = useParams();
+
   const kickMemberAction = async () => {
-    await kickMember(serverId, memberId);
+    await kickMember(params.username as string, serverId, memberId);
     closeDialog();
   };
 
@@ -28,19 +31,20 @@ export default function KickMemberDialog() {
       onOpenChange={closeDialog}
     >
       <AlertDialogContent>
-        <form action={kickMemberAction}>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently kick this
-              member out of the server.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently kick this member
+            out of the server.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <form action={kickMemberAction} className='space-x-1.5'>
+            <AlertDialogCancel className='w-[93px]'>Cancel</AlertDialogCancel>
             <KickMemberButton />
-          </AlertDialogFooter>
-        </form>
+          </form>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );

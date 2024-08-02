@@ -2,12 +2,16 @@
 
 import { Member, Profile } from '@prisma/client';
 import { AvatarPhoto } from '../avatar-photo';
-import { MessageCirclePlus, ShieldAlert, ShieldCheck } from 'lucide-react';
+import {
+  // MessageCirclePlus,
+  ShieldAlert,
+  ShieldCheck,
+} from 'lucide-react';
 import RoleDropdownMenu from './role-dropdown-menu';
 import { useChangeRole } from '@/lib/hooks/use-change-role';
 import OpenKickMemberDialog from './open-kick-member-dialog';
 import { ServerWithMembers } from '@/types';
-import Link from 'next/link';
+// import Link from 'next/link';
 
 type MemberWithProfile = Member & {
   profile: Profile;
@@ -30,25 +34,23 @@ export default function MemberRow({
   server,
   currentProfileId,
 }: MemberWithProfile) {
-  const { name, email, imageUrl, id } = profile;
+  const { username, imageUrl, id } = profile;
   const { optimisticRole, changeOptimisticRole } = useChangeRole(role);
   const serverId = server.id;
 
-  const isCurrentMember = id === currentProfileId;
+  // const isCurrentMember = id === currentProfileId;
 
   return (
     <div className='flex p-3 justify-between items-center'>
       <div className='flex items-center gap-2'>
-        <AvatarPhoto src={imageUrl} alt={name} className='size-10' />
-        <section>
-          <p className='text-sm font-medium flex items-center gap-1'>
-            {name}
-            {roleIcons[optimisticRole]}
-          </p>
-          <p className='text-sm'>{email}</p>
-        </section>
+        <AvatarPhoto src={imageUrl} alt={username} className='size-10' />
+
+        <p className='text-sm font-medium flex items-center gap-1'>
+          {username}
+          {roleIcons[optimisticRole]}
+        </p>
       </div>
-      {!isCurrentMember && (
+      {/* {!isCurrentMember && (
         <Link
           href={`/server/${serverId}/conversation/${memberId}`}
           className='ml-auto bg-zinc-100 hover:bg-zinc-200 transition p-1 rounded-sm text-sm dark:bg-zinc-700 dark:hover:bg-zinc-800 w-10'
@@ -57,7 +59,7 @@ export default function MemberRow({
           <MessageCirclePlus size={16} className='mx-auto' />
           Chat
         </Link>
-      )}
+      )} */}
       {!isGuest && (
         <div className='ml-1.5'>
           {role !== 'ADMIN' && (

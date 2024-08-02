@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MemberRole } from '@prisma/client';
 import { Check, ShieldQuestion } from 'lucide-react';
+import { useParams } from 'next/navigation';
 
 type RoleDropdownMenuProps = {
   serverId: string;
@@ -29,8 +30,9 @@ export default function RoleDropdownMenu({
     newRole: MemberRole
   ) => {
     changeOptimisticRole(newRole);
-    await changeRole(serverId, memberId, newRole);
+    await changeRole(serverId, memberId, newRole, params.username as string);
   };
+  const params = useParams();
   const isGuest = role === 'GUEST';
   const isMod = role === 'MODERATOR';
 
