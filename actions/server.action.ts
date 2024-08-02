@@ -2,7 +2,7 @@
 
 import { findProfile, getCurrentProfile } from './profile.action';
 import db from '@/lib/db';
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberRole, Profile } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
@@ -38,11 +38,7 @@ import { utapi } from '@/app/api/uploadthing/core';
 // //   }
 // // }
 
-export async function redirectToServer(username: string) {
-  const profile = await findProfile(username);
-  if (!profile) {
-    notFound();
-  }
+export async function redirectToServer(username: string, profileId: string) {
   let redirectPath;
 
   try {
@@ -50,7 +46,7 @@ export async function redirectToServer(username: string) {
       where: {
         members: {
           some: {
-            profileId: profile?.id,
+            profileId,
           },
         },
       },
@@ -185,7 +181,7 @@ export async function findMyServers(username: string, profileId: string) {
 export async function findExistingServer(inviteCode: string, username: string) {
   const currentProfile = await getCurrentProfile(username);
   if (!currentProfile) {
-    throw new Error('Cannot find a current profile');
+    return;
   }
 
   try {
@@ -239,7 +235,7 @@ export async function editServer(prevState: any, formdata: FormData) {
 export async function inviteToServer(inviteCode: string, username: string) {
   const currentProfile = (await getCurrentProfile(username)) as Profile;
   if (!currentProfile) {
-    throw new Error('Cannot find a current profile');
+    return;
   }
 
   const existingServer = await findExistingServer(inviteCode, username);
@@ -327,7 +323,9 @@ export async function createChannel(prevState: any, formData: FormData) {
   const username = formData.get('username') as string;
   const currentProfile = (await getCurrentProfile(username)) as Profile;
   if (!currentProfile) {
-    throw new Error('Cannot find a current profile');
+    return {
+      message: 'Cannot find a current profile',
+    };
   }
 
   const profileId = currentProfile.id;
@@ -360,7 +358,7 @@ export async function createChannel(prevState: any, formData: FormData) {
     revalidatePath(`/${username}/server/${serverId}`);
 
     return {
-      message: `Success`,
+      message: 'Success',
     };
   } catch (error) {
     console.error(error);
@@ -372,9 +370,7 @@ export async function createChannel(prevState: any, formData: FormData) {
 
 export async function leaveServer(username: string, serverId?: string) {
   const currentProfile = (await getCurrentProfile(username)) as Profile;
-  if (!currentProfile) {
-    throw new Error('Cannot find a current profile');
-  }
+  if (!currentProfile) return;
 
   const profileId = currentProfile.id;
   let redirectPath;

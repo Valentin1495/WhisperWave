@@ -22,11 +22,12 @@ const initialState = {
 export default function OnboardingForm() {
   const [state, onboardUser] = useFormState(createProfile, initialState);
   const [file, setFile] = useState<File | null>(null);
-  const [username, setUsername] = useState<string>('');
+  const [username, setUsername] = useState('');
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const onboarded = state.message === 'Success';
   const onboardingFailed = state.message && !onboarded;
+
   useImagePreview(file, setPreview);
 
   useEffect(() => {
@@ -86,7 +87,9 @@ export default function OnboardingForm() {
         </section>
 
         <section className='space-y-2'>
-          <Label htmlFor='username'>Username</Label>
+          <Label htmlFor='username' className='font-semibold'>
+            Username
+          </Label>
           <Input
             id='username'
             name='username'
