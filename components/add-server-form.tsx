@@ -10,7 +10,7 @@ import { AvatarPhoto } from './avatar-photo';
 import { useFormState } from 'react-dom';
 import AddServerButton from './buttons/add-server-button';
 import { useImagePreview } from '@/lib/hooks/use-image-preview';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 const initialState = {
@@ -19,7 +19,6 @@ const initialState = {
 
 export default function AddServerForm() {
   const params = useParams();
-  const router = useRouter();
   const username = params.username;
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -30,14 +29,10 @@ export default function AddServerForm() {
   useImagePreview(file, setPreview);
 
   useEffect(() => {
-    if (state.message.includes('Success')) {
-      const serverId = state.message.split(':')[1];
-
-      router.push(`/${username}/server/${serverId}`);
-    } else if (state.message) {
+    if (state.message && state.message !== 'Success') {
       toast.error(state.message);
     }
-  }, [state, username, router]);
+  }, [state]);
 
   return (
     <div className='w-2/3 md:w-1/2 xl:w-1/4 bg-secondary p-5 rounded-lg space-y-5'>
@@ -101,6 +96,13 @@ export default function AddServerForm() {
           type='hidden'
           value={username}
           name='username'
+          className='hidden'
+          readOnly
+        />
+        <Input
+          type='hidden'
+          value='false'
+          name='isDialog'
           className='hidden'
           readOnly
         />

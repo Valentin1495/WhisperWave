@@ -2,6 +2,7 @@
 
 import db from '@/lib/db';
 import { uploadFile } from './server.action';
+import { redirect } from 'next/navigation';
 
 export async function findProfile(username: string) {
   try {
@@ -18,6 +19,7 @@ export async function findProfile(username: string) {
 }
 
 export async function signIn(prevState: any, formData: FormData) {
+  let redirectPath;
   const username = formData.get('username') as string;
 
   try {
@@ -32,6 +34,8 @@ export async function signIn(prevState: any, formData: FormData) {
         message: "User doesn't exist",
       };
 
+    redirectPath = `/${username}`;
+
     return {
       message: 'Success',
     };
@@ -41,6 +45,10 @@ export async function signIn(prevState: any, formData: FormData) {
     return {
       message: 'Failed to sign in',
     };
+  } finally {
+    if (redirectPath) {
+      redirect(redirectPath);
+    }
   }
 }
 
@@ -57,6 +65,8 @@ export async function getCurrentProfile(username?: string) {
 }
 
 export async function createProfile(prevState: any, formData: FormData) {
+  let redirectPath;
+
   const username = formData.get('username') as string;
 
   const regex = /^[a-zA-Z0-9_]+$/;
@@ -90,6 +100,8 @@ export async function createProfile(prevState: any, formData: FormData) {
       },
     });
 
+    redirectPath = `/${username}`;
+
     return {
       message: 'Success',
     };
@@ -99,5 +111,9 @@ export async function createProfile(prevState: any, formData: FormData) {
     return {
       message: 'Failed to create a profile',
     };
+  } finally {
+    if (redirectPath) {
+      redirect(redirectPath);
+    }
   }
 }

@@ -76,10 +76,12 @@ export async function uploadFile(file: File) {
 }
 
 export async function addServer(prevState: any, formdata: FormData) {
+  let redirectPath;
   const username = formdata.get('username') as string;
   const profile = (await findProfile(username)) as Profile;
   const profileId = profile.id;
   const serverName = formdata.get('serverName') as string;
+  const isDialog = formdata.get('isDialog') as string;
   let serverIcon = formdata.get('serverIcon') as string | File;
 
   if (serverIcon instanceof File) {
@@ -116,8 +118,10 @@ export async function addServer(prevState: any, formdata: FormData) {
       },
     });
 
+    redirectPath = `/${username}/server/${server.id}`;
+
     return {
-      message: `Success:${server.id}`,
+      message: 'Success',
     };
   } catch (error) {
     console.error(error);
@@ -125,6 +129,10 @@ export async function addServer(prevState: any, formdata: FormData) {
     return {
       message: 'Failed to create a server',
     };
+  } finally {
+    if (redirectPath && isDialog === 'false') {
+      redirect(redirectPath);
+    }
   }
 }
 
