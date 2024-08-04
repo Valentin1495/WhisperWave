@@ -1,14 +1,13 @@
 'use server';
 
 import db from '@/lib/db';
-import { uploadFile } from './server.action';
-import { redirect } from 'next/navigation';
+import { auth, currentUser } from '@clerk/nextjs/server';
 
-export async function findProfile(username: string) {
+export async function findProfile(userId: string) {
   try {
     const profile = await db.profile.findUnique({
       where: {
-        username,
+        userId,
       },
     });
 
@@ -18,45 +17,15 @@ export async function findProfile(username: string) {
   }
 }
 
-export async function signIn(prevState: any, formData: FormData) {
-  let redirectPath;
-  const username = formData.get('username') as string;
+export async function getCurrentProfile() {
+  const { userId } = auth();
 
-  try {
-    const existingUser = await db.profile.findUnique({
-      where: {
-        username,
-      },
-    });
-
-    if (!existingUser)
-      return {
-        message: "User doesn't exist",
-      };
-
-    redirectPath = `/${username}`;
-
-    return {
-      message: 'Success',
-    };
-  } catch (error) {
-    console.error(error);
-
-    return {
-      message: 'Failed to sign in',
-    };
-  } finally {
-    if (redirectPath) {
-      redirect(redirectPath);
-    }
+  if (!userId) {
+    return null;
   }
-}
-
-export async function getCurrentProfile(username?: string) {
-  if (!username) return null;
 
   try {
-    const profile = await findProfile(username);
+    const profile = await findProfile(userId);
 
     return profile;
   } catch (error: any) {
@@ -64,56 +33,27 @@ export async function getCurrentProfile(username?: string) {
   }
 }
 
-export async function createProfile(prevState: any, formData: FormData) {
-  let redirectPath;
+export async function createProfile() {
+  const user = await currentUser();
 
-  const username = formData.get('username') as string;
+  if (!user) return;
 
-  const regex = /^[a-zA-Z0-9_]+$/;
-  if (!regex.test(username)) {
-    return {
-      message:
-        "Your username can only contain English letters, numbers and '_'",
-    };
-  }
+  const { id, username, imageUrl } = user;
+  const profile = await findProfile(id);
 
-  const profilePic = formData.get('profilePic') as File;
-  const imageUrl = await uploadFile(profilePic);
+  if (profile) return profile;
 
   try {
-    const existingUser = await db.profile.findUnique({
-      where: {
-        username,
-      },
-    });
-
-    if (existingUser) {
-      return {
-        message: 'User already exists',
-      };
-    }
-
-    await db.profile.create({
+    const newProfile = await db.profile.create({
       data: {
-        username: username.trim(),
+        userId: id,
+        username: username ?? '',
         imageUrl,
       },
     });
 
-    redirectPath = `/${username}`;
-
-    return {
-      message: 'Success',
-    };
-  } catch (error) {
-    console.error(error);
-
-    return {
-      message: 'Failed to create a profile',
-    };
-  } finally {
-    if (redirectPath) {
-      redirect(redirectPath);
-    }
+    return newProfile;
+  } catch (error: any) {
+    throw new Error(error);
   }
 }

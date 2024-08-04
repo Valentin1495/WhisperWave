@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { UsersRound } from 'lucide-react';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 type MembersLinkProps = {
   serverId: string;
@@ -11,13 +11,12 @@ type MembersLinkProps = {
 
 export default function MembersLink({ serverId }: MembersLinkProps) {
   const pathname = usePathname();
-  const params = useParams();
   const isActive = pathname.includes('members');
 
   return (
     <section className='p-3 space-y-3'>
       <Link
-        href={`/${params.username}/server/${serverId}/members`}
+        href={`/server/${serverId}/members`}
         prefetch={false}
         className={cn(
           'flex gap-x-2 text-sm p-1.5 rounded-sm hover:bg-blue-100 dark:hover:bg-blue-800 transition',

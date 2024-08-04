@@ -2,23 +2,25 @@ import { getCurrentProfile } from '@/actions/profile.action';
 import { findServer } from '@/actions/server.action';
 import MemberRow from '@/components/server/member-row';
 import ServerHeader from '@/components/server/server-header';
-import { ServerWithMembers } from '@/types';
-import { Profile } from '@prisma/client';
 
 type MembersProps = {
   params: {
-    username: string;
     serverId: string;
   };
 };
 
 export default async function Members({ params }: MembersProps) {
-  const server = (await findServer(params.serverId)) as ServerWithMembers;
+  const server = await findServer(params.serverId);
+
+  if (!server) {
+    throw new Error('Server not found');
+  }
+
   const members = server.members;
-  const username = params.username;
-  const currentProfile = (await getCurrentProfile(username)) as Profile;
+  const currentProfile = await getCurrentProfile();
+
   if (!currentProfile) {
-    return null;
+    throw new Error('Profile not found');
   }
 
   const myRole = members.find(
@@ -28,12 +30,7 @@ export default async function Members({ params }: MembersProps) {
 
   return (
     <main>
-      <ServerHeader
-        name='Members'
-        type='members'
-        serverId={params.serverId}
-        username={username}
-      />
+      <ServerHeader name='Members' type='members' serverId={params.serverId} />
       <section className='bg-blue-100 dark:bg-secondary h-[2px] w-screen md:w-full' />
       <div className='border rounded-lg divide-y mx-3 mt-3 w-[calc(100vw-24px)] md:w-auto'>
         <h2 className='text-sm font-medium p-3'>

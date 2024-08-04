@@ -14,14 +14,15 @@ datasource db {
 }
 
 model Profile {
-  id        String    @id @default(uuid())
-  username  String    @unique
-  imageUrl  String    @db.Text
-  createdAt DateTime  @default(now())
-  channels  Channel[]
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  username  String
+  imageUrl  String   @db.Text
+  createdAt DateTime @default(now())
 
-  servers Server[]
-  members Member[]
+  channels Channel[]
+  servers  Server[]
+  members  Member[]
 }
 
 model Server {

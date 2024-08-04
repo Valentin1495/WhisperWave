@@ -23,7 +23,6 @@ const initialState = {
 };
 
 export default function EditServerDialog() {
-  const params = useParams();
   const { open, closeDialog, type, data } = useDialog();
   const [serverName, setServerName] = useState<string>();
   const [file, setFile] = useState<FileType | null>(null);
@@ -107,13 +106,6 @@ export default function EditServerDialog() {
             value={file?.url}
             readOnly
             name='serverIcon'
-          />
-          <Input
-            type='hidden'
-            className='hidden'
-            value={params.username}
-            readOnly
-            name='username'
           />
 
           <EditServerButton

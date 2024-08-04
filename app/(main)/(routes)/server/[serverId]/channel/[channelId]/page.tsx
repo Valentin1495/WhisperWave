@@ -6,22 +6,27 @@ import { MemberWithProfile } from '@/types';
 import { Channel, Profile } from '@prisma/client';
 import ChatInput from '@/components/chat/chat-input';
 import ChatMessageList from '@/components/chat/chat-message-list';
-import SetUsernameInLocalStorage from '@/components/set-username-in-local-storage';
+import { notFound } from 'next/navigation';
 
 type ChannelPageProps = {
   params: {
     serverId: string;
     channelId: string;
-    username: string;
   };
 };
 
 export default async function ChannelPage({ params }: ChannelPageProps) {
-  const { serverId, channelId, username } = params;
-  const channel = (await findChannel(channelId)) as Channel;
-  const currentProfile = (await getCurrentProfile(username)) as Profile;
+  const { serverId, channelId } = params;
+  const channel = await findChannel(channelId);
+
+  if (!channel) {
+    notFound();
+  }
+
+  const currentProfile = await getCurrentProfile();
+
   if (!currentProfile) {
-    return null;
+    throw new Error('Profile not found');
   }
 
   const currentMember = (await findMember(
@@ -31,12 +36,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
 
   return (
     <main>
-      <ServerHeader
-        serverId={serverId}
-        name={channel.name}
-        type='channel'
-        username={username}
-      />
+      <ServerHeader serverId={serverId} name={channel.name} type='channel' />
       <div className='flex flex-col h-[calc(100vh-52px)] md:h-[calc(100vh-45px)]'>
         <div className='flex-1 py-4 overflow-y-auto space-y-4'>
           <p className='font-bold text-xl text-center'>
@@ -56,8 +56,6 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
           channelId={channelId}
         />
       </div>
-
-      <SetUsernameInLocalStorage username={username} />
     </main>
   );
 }

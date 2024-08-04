@@ -75,8 +75,8 @@ export default function ChatMessageList({
                   content={content}
                   fileUrl={fileUrl}
                   member={member}
-                  currentMemberId={currentMember?.id}
-                  currentMemberRole={currentMember?.role}
+                  currentMemberId={currentMember.id}
+                  currentMemberRole={currentMember.role}
                   updatedAt={updatedAt}
                   queryClient={queryClient}
                 />

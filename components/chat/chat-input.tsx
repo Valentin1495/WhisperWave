@@ -35,7 +35,7 @@ export default function ChatInput({
       newMessage: newMessage.trim(),
       fileUrl,
       channelId,
-      currentMemberId: currentMember?.id,
+      currentMemberId: currentMember.id,
     });
 
     setNewMessage('');

@@ -14,7 +14,6 @@ import { Hash } from 'lucide-react';
 import { useFormState } from 'react-dom';
 import { createChannel } from '@/actions/server.action';
 import { Input } from '../ui/input';
-import { useParams } from 'next/navigation';
 
 const initialState = {
   message: '',
@@ -22,7 +21,6 @@ const initialState = {
 
 export default function CreateChannelDialog() {
   const { closeDialog, data, open, type } = useDialog();
-  const params = useParams();
   const [channelName, setChannelName] = useState('');
   const [state, createChannelAction] = useFormState(
     createChannel,
@@ -61,14 +59,8 @@ export default function CreateChannelDialog() {
               type='hidden'
               readOnly
             />
-            <Input
-              name='username'
-              value={params.username}
-              className='hidden'
-              type='hidden'
-              readOnly
-            />
           </section>
+
           <CreateChannelButton channelName={channelName} />
         </form>
       </DialogContent>

@@ -8,16 +8,15 @@ export default async function ServerLayout({
   children: React.ReactNode;
   params: {
     serverId: string;
-    username: string;
   };
 }>) {
   return (
     <div className='flex items-start'>
       <div className='sidebar'>
-        <NavSidebar user={params.username} />
+        <NavSidebar />
       </div>
       <div className='sidebar'>
-        <ServerSidebar serverId={params.serverId} user={params.username} />
+        <ServerSidebar serverId={params.serverId} />
       </div>
       <div className='w-screen md:w-[calc(100vw-316px)]'>{children}</div>
     </div>

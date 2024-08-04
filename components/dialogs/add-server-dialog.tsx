@@ -14,7 +14,6 @@ import { addServer } from '@/actions/server.action';
 import AddServerButton from '../buttons/add-server-button';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
-import { useParams } from 'next/navigation';
 import { AvatarPhoto } from '../avatar-photo';
 import Upload from '../upload';
 import { FileType } from '@/types';
@@ -25,8 +24,6 @@ const initialState = {
 };
 
 export default function AddServerDialog() {
-  const params = useParams();
-  const username = params.username;
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<FileType | null>(null);
   const [mouseEnter, setMouseEnter] = useState(false);
@@ -34,9 +31,11 @@ export default function AddServerDialog() {
   const { open, closeDialog, type } = useDialog();
 
   useEffect(() => {
-    if (state.message === 'Success') {
+    if (state && state.message === 'Success') {
       closeDialog();
-    } else if (state.message && state.message !== 'Success') {
+    }
+
+    if (state && state.message && state.message !== 'Success') {
       toast.error(state.message);
     }
   }, [state, closeDialog]);
@@ -98,12 +97,6 @@ export default function AddServerDialog() {
           <Input
             name='serverIcon'
             value={file?.url}
-            type='hidden'
-            className='hidden'
-          />
-          <Input
-            name='username'
-            value={username}
             type='hidden'
             className='hidden'
           />

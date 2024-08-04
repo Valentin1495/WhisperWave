@@ -6,6 +6,7 @@ import DialogProvider from '@/components/providers/dialog-provider';
 import { SocketProvider } from '@/components/providers/socket-provider';
 import { Toaster } from '@/components/ui/sonner';
 import QueryProvider from '@/components/providers/query-provider';
+import { ClerkProvider } from '@clerk/nextjs';
 
 const openSans = Open_Sans({ subsets: ['latin'] });
 
@@ -21,23 +22,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body className={openSans.className}>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SocketProvider>
-            <QueryProvider>
-              {children}
-              <DialogProvider />
-              <Toaster position='top-center' />
-            </QueryProvider>
-          </SocketProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang='en' suppressHydrationWarning>
+        <body className={openSans.className}>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SocketProvider>
+              <QueryProvider>
+                {children}
+                <DialogProvider />
+                <Toaster position='top-center' />
+              </QueryProvider>
+            </SocketProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

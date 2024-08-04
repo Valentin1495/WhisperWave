@@ -12,16 +12,12 @@ type MyServerProps = {
 };
 
 export default function MyServer({ id, name, imageUrl }: MyServerProps) {
-  const { serverId, username } = useParams();
+  const { serverId } = useParams();
   const isCurrentServer = serverId === id;
 
   return (
     <div className='flex'>
-      <Link
-        href={`/${username}/server/${id}`}
-        className='mx-auto'
-        prefetch={false}
-      >
+      <Link href={`/server/${id}`} className='mx-auto' prefetch={false}>
         <div
           className={cn(
             isCurrentServer &&

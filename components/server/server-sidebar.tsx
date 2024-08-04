@@ -1,23 +1,19 @@
 import { getCurrentProfile } from '@/actions/profile.action';
 import { findServer } from '@/actions/server.action';
-import { ServerWithMembers } from '@/types';
 import ServerSidebarHeader from './server-sidebar-header';
 import MembersLink from './members-link';
 import Channel from '../channel/channel';
 
 type ServerSidebarProps = {
   serverId: string;
-  user: string;
 };
 
-export default async function ServerSidebar({
-  serverId,
-  user,
-}: ServerSidebarProps) {
-  const currentProfile = await getCurrentProfile(user);
-  const server = (await findServer(serverId)) as ServerWithMembers;
+export default async function ServerSidebar({ serverId }: ServerSidebarProps) {
+  const currentProfile = await getCurrentProfile();
+  const server = await findServer(serverId);
+
   if (!currentProfile || !server) {
-    return null;
+    throw new Error('Something went wrong.');
   }
 
   const role = server.members.find(

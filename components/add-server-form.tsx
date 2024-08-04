@@ -10,7 +10,6 @@ import { AvatarPhoto } from './avatar-photo';
 import { useFormState } from 'react-dom';
 import AddServerButton from './buttons/add-server-button';
 import { useImagePreview } from '@/lib/hooks/use-image-preview';
-import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 const initialState = {
@@ -18,8 +17,6 @@ const initialState = {
 };
 
 export default function AddServerForm() {
-  const params = useParams();
-  const username = params.username;
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -29,7 +26,7 @@ export default function AddServerForm() {
   useImagePreview(file, setPreview);
 
   useEffect(() => {
-    if (state.message && state.message !== 'Success') {
+    if (state && state.message && state.message !== 'Success') {
       toast.error(state.message);
     }
   }, [state]);
@@ -91,20 +88,6 @@ export default function AddServerForm() {
           className='border-none my-2.5'
           value={serverName}
           onChange={(e) => setServerName(e.target.value)}
-        />
-        <Input
-          type='hidden'
-          value={username}
-          name='username'
-          className='hidden'
-          readOnly
-        />
-        <Input
-          type='hidden'
-          value='false'
-          name='isDialog'
-          className='hidden'
-          readOnly
         />
 
         <AddServerButton serverName={serverName} file={file} />

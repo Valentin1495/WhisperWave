@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MemberRole, Profile } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { utapi } from '@/app/api/uploadthing/core';
+import { auth } from '@clerk/nextjs/server';
 // // import {
 // //   PutObjectCommand,
 // //   PutObjectCommandInput,
@@ -38,7 +39,7 @@ import { utapi } from '@/app/api/uploadthing/core';
 // //   }
 // // }
 
-export async function redirectToServer(username: string, profileId: string) {
+export async function redirectToServer(profileId: string) {
   let redirectPath;
 
   try {
@@ -54,7 +55,7 @@ export async function redirectToServer(username: string, profileId: string) {
 
     if (!server) return;
 
-    redirectPath = `/${username}/server/${server.id}`;
+    redirectPath = `/server/${server.id}`;
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -77,11 +78,17 @@ export async function uploadFile(file: File) {
 
 export async function addServer(prevState: any, formdata: FormData) {
   let redirectPath;
-  const username = formdata.get('username') as string;
-  const profile = (await findProfile(username)) as Profile;
+
+  const { userId } = auth();
+
+  if (!userId) return;
+
+  const profile = await findProfile(userId);
+
+  if (!profile) return;
+
   const profileId = profile.id;
   const serverName = formdata.get('serverName') as string;
-  const isDialog = formdata.get('isDialog') as string;
   let serverIcon = formdata.get('serverIcon') as string | File;
 
   if (serverIcon instanceof File) {
@@ -93,7 +100,7 @@ export async function addServer(prevState: any, formdata: FormData) {
   // const imageUrl = await uploadFileToS3(fileKey, fileContent);
 
   try {
-    const server = await db.server.create({
+    const newServer = await db.server.create({
       data: {
         profileId,
         name: serverName.trim(),
@@ -118,7 +125,7 @@ export async function addServer(prevState: any, formdata: FormData) {
       },
     });
 
-    redirectPath = `/${username}/server/${server.id}`;
+    redirectPath = `/server/${newServer.id}`;
 
     return {
       message: 'Success',
@@ -130,7 +137,7 @@ export async function addServer(prevState: any, formdata: FormData) {
       message: 'Failed to create a server',
     };
   } finally {
-    if (redirectPath && isDialog === 'false') {
+    if (redirectPath) {
       redirect(redirectPath);
     }
   }
@@ -165,7 +172,7 @@ export async function findServer(serverId: string) {
   }
 }
 
-export async function findMyServers(username: string, profileId: string) {
+export async function findMyServers(profileId: string) {
   try {
     const myServers = await db.server.findMany({
       where: {
@@ -186,10 +193,11 @@ export async function findMyServers(username: string, profileId: string) {
   }
 }
 
-export async function findExistingServer(inviteCode: string, username: string) {
-  const currentProfile = await getCurrentProfile(username);
+export async function findExistingServer(inviteCode: string) {
+  const currentProfile = await getCurrentProfile();
+
   if (!currentProfile) {
-    return;
+    return null;
   }
 
   try {
@@ -214,7 +222,6 @@ export async function editServer(prevState: any, formdata: FormData) {
   const serverId = formdata.get('serverId') as string;
   const serverName = formdata.get('serverName') as string;
   const serverIcon = formdata.get('serverIcon') as string;
-  const username = formdata.get('username') as string;
 
   try {
     await db.server.update({
@@ -227,7 +234,7 @@ export async function editServer(prevState: any, formdata: FormData) {
       },
     });
 
-    revalidatePath(`/${username}/server/${serverId}`);
+    revalidatePath(`/server/${serverId}`);
 
     return {
       message: 'Success',
@@ -241,13 +248,15 @@ export async function editServer(prevState: any, formdata: FormData) {
   }
 }
 
-export async function inviteToServer(inviteCode: string, username: string) {
-  const currentProfile = (await getCurrentProfile(username)) as Profile;
+export async function inviteToServer(inviteCode: string) {
+  const currentProfile = (await getCurrentProfile()) as Profile;
+
   if (!currentProfile) {
     return;
   }
 
-  const existingServer = await findExistingServer(inviteCode, username);
+  const existingServer = await findExistingServer(inviteCode);
+
   if (existingServer) return existingServer.id;
 
   try {
@@ -275,8 +284,7 @@ export async function inviteToServer(inviteCode: string, username: string) {
 export async function changeRole(
   serverId: string,
   memberId: string,
-  newRole: MemberRole,
-  username: string
+  newRole: MemberRole
 ) {
   try {
     await db.server.update({
@@ -297,17 +305,13 @@ export async function changeRole(
       },
     });
 
-    revalidatePath(`${username}/server/${serverId}/members`);
+    revalidatePath(`/server/${serverId}/members`);
   } catch (error: any) {
     throw new Error(error);
   }
 }
 
-export async function kickMember(
-  username: string,
-  serverId?: string,
-  memberId?: string
-) {
+export async function kickMember(serverId?: string, memberId?: string) {
   try {
     await db.server.update({
       where: {
@@ -329,8 +333,8 @@ export async function kickMember(
 }
 
 export async function createChannel(prevState: any, formData: FormData) {
-  const username = formData.get('username') as string;
-  const currentProfile = (await getCurrentProfile(username)) as Profile;
+  const currentProfile = await getCurrentProfile();
+
   if (!currentProfile) {
     return {
       message: 'Cannot find a current profile',
@@ -364,21 +368,23 @@ export async function createChannel(prevState: any, formData: FormData) {
       },
     });
 
-    revalidatePath(`/${username}/server/${serverId}`);
+    revalidatePath(`/server/${serverId}`);
 
     return {
       message: 'Success',
     };
   } catch (error) {
     console.error(error);
+
     return {
       message: 'Failed to create channel',
     };
   }
 }
 
-export async function leaveServer(username: string, serverId?: string) {
-  const currentProfile = (await getCurrentProfile(username)) as Profile;
+export async function leaveServer(serverId?: string) {
+  const currentProfile = await getCurrentProfile();
+
   if (!currentProfile) return;
 
   const profileId = currentProfile.id;
@@ -403,7 +409,7 @@ export async function leaveServer(username: string, serverId?: string) {
       },
     });
 
-    redirectPath = `/${username}`;
+    redirectPath = '/';
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -413,7 +419,7 @@ export async function leaveServer(username: string, serverId?: string) {
   }
 }
 
-export async function deleteServer(username: string, serverId?: string) {
+export async function deleteServer(serverId?: string) {
   let redirectPath;
 
   try {
@@ -423,7 +429,7 @@ export async function deleteServer(username: string, serverId?: string) {
       },
     });
 
-    redirectPath = `/${username}`;
+    redirectPath = '/';
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -433,11 +439,7 @@ export async function deleteServer(username: string, serverId?: string) {
   }
 }
 
-export async function deleteChannel(
-  username: string,
-  serverId?: string,
-  channelId?: string
-) {
+export async function deleteChannel(serverId?: string, channelId?: string) {
   let redirectPath;
 
   try {
@@ -454,7 +456,7 @@ export async function deleteChannel(
       },
     });
 
-    redirectPath = `/${username}/server/${serverId}`;
+    redirectPath = `/server/${serverId}`;
   } catch (error: any) {
     throw new Error(error);
   } finally {

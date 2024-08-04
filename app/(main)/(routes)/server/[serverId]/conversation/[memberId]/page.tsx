@@ -15,8 +15,9 @@ type ConversationProps = {
 
 export default async function Conversation({ params }: ConversationProps) {
   const currentProfile = (await getCurrentProfile()) as Profile;
+
   if (!currentProfile) {
-    return null;
+    throw new Error('Profile not found');
   }
 
   const member = (await findMember(
@@ -39,7 +40,6 @@ export default async function Conversation({ params }: ConversationProps) {
         serverId={params.serverId}
         type='conversation'
         imageUrl={otherMember.profile.imageUrl}
-        username={params.username}
       />
     </main>
   );

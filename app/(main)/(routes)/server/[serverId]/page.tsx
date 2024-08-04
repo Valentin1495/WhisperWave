@@ -1,11 +1,9 @@
 import { findServer } from '@/actions/server.action';
-import SetUsernameInLocalStorage from '@/components/set-username-in-local-storage';
 import { Frown } from 'lucide-react';
 import { notFound, redirect } from 'next/navigation';
 
 type ServerProps = {
   params: {
-    username: string;
     serverId: string;
   };
 };
@@ -18,7 +16,6 @@ export default async function Server({ params }: ServerProps) {
   }
 
   const channels = server.channels;
-  const username = params.username;
 
   if (channels.length === 0)
     return (
@@ -29,10 +26,8 @@ export default async function Server({ params }: ServerProps) {
           You find yourself in a strange place. You don&apos;t have access to
           any channels, or there are none in this server.
         </p>
-
-        <SetUsernameInLocalStorage username={username} />
       </main>
     );
 
-  redirect(`/${username}/server/${server.id}/channel/${channels[0].id}`);
+  redirect(`/server/${server.id}/channel/${channels[0].id}`);
 }

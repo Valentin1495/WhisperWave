@@ -32,8 +32,8 @@ export default function MemberRow({
   id: memberId,
   isGuest,
   server,
-  currentProfileId,
-}: MemberWithProfile) {
+}: // currentProfileId,
+MemberWithProfile) {
   const { username, imageUrl, id } = profile;
   const { optimisticRole, changeOptimisticRole } = useChangeRole(role);
   const serverId = server.id;
