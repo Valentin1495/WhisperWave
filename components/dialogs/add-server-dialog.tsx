@@ -99,13 +99,6 @@ export default function AddServerDialog() {
             className='hidden'
             readOnly
           />
-          <Input
-            name='isDialog'
-            value='true'
-            type='hidden'
-            className='hidden'
-            readOnly
-          />
 
           <AddServerButton serverName={serverName} file={file?.url} />
         </form>

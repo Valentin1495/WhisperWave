@@ -70,7 +70,7 @@ export default function EditProfileDialog() {
               {mouseEnter && (
                 <section className='absolute inset-0 bg-black/50 rounded-full flex items-center justify-center'>
                   <h3 className='text-xs text-center font-bold text-primary-foreground dark:text-foreground'>
-                    CHANGE <br /> Photo
+                    CHANGE <br /> PHOTO
                   </h3>
                 </section>
               )}

@@ -76,18 +76,64 @@ export async function uploadFile(file: File) {
   }
 }
 
-export async function addServer(prevState: any, formdata: FormData) {
-  let redirectPath;
+export async function createServer(prevState: any, formdata: FormData) {
   const { userId } = auth();
   const profile = (await findProfile(userId as string)) as Profile;
   const profileId = profile.id;
   const serverName = formdata.get('serverName') as string;
-  const isDialog = formdata.get('isDialog') as string;
-  let serverIcon = formdata.get('serverIcon') as string | File;
+  const serverIcon = formdata.get('serverIcon') as File;
+  const imageUrl = await uploadFile(serverIcon);
 
-  if (serverIcon instanceof File) {
-    serverIcon = await uploadFile(serverIcon);
+  // const fileKey = `serverIcons/${uuidv4()}-${serverIcon.name}`;
+  // const fileContent = Buffer.from(await serverIcon.arrayBuffer());
+  // const imageUrl = await uploadFileToS3(fileKey, fileContent);
+
+  try {
+    await db.server.create({
+      data: {
+        profileId,
+        name: serverName,
+        imageUrl,
+        inviteCode: uuidv4(),
+        channels: {
+          create: [
+            {
+              name: 'general',
+              profileId,
+            },
+          ],
+        },
+        members: {
+          create: [
+            {
+              profileId,
+              role: MemberRole.ADMIN,
+            },
+          ],
+        },
+      },
+    });
+
+    revalidatePath('/');
+
+    return {
+      message: 'Success',
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      message: 'Failed to create a server',
+    };
   }
+}
+
+export async function addServer(prevState: any, formdata: FormData) {
+  const { userId } = auth();
+  const profile = (await findProfile(userId as string)) as Profile;
+  const profileId = profile.id;
+  const serverName = formdata.get('serverName') as string;
+  const serverIcon = formdata.get('serverIcon') as string;
 
   // const fileKey = `serverIcons/${uuidv4()}-${serverIcon.name}`;
   // const fileContent = Buffer.from(await serverIcon.arrayBuffer());
@@ -119,9 +165,7 @@ export async function addServer(prevState: any, formdata: FormData) {
       },
     });
 
-    if (isDialog) {
-      revalidatePath('/', 'layout');
-    }
+    revalidatePath('/', 'layout');
 
     return {
       message: 'Success',

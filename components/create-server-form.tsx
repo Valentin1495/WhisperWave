@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Label } from './ui/label';
 import { ImagePlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { addServer } from '@/actions/server.action';
+import { createServer } from '@/actions/server.action';
 import { Input } from './ui/input';
 import { AvatarPhoto } from './avatar-photo';
 import { useFormState } from 'react-dom';
@@ -16,12 +16,12 @@ const initialState = {
   message: '',
 };
 
-export default function AddServerForm() {
+export default function CreateServerForm() {
   const [serverName, setServerName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const [state, addServerAction] = useFormState(addServer, initialState);
+  const [state, createServerAction] = useFormState(createServer, initialState);
 
   useImagePreview(file, setPreview);
 
@@ -40,7 +40,7 @@ export default function AddServerForm() {
           start talking.
         </p>
       </div>
-      <form action={addServerAction}>
+      <form action={createServerAction}>
         <Input
           name='serverIcon'
           type='file'
