@@ -11,6 +11,8 @@ https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-b
 
 ## Features
 
+- 사용자 이름 & 비밀번호 로그인 - Clerk
+
 - 서버 생성/수정/삭제
 
 - 채널 생성/수정/삭제

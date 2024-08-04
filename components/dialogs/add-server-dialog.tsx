@@ -31,14 +31,10 @@ export default function AddServerDialog() {
   const { open, closeDialog, type } = useDialog();
 
   useEffect(() => {
-    if (state && state.message === 'Success') {
-      closeDialog();
-    }
-
     if (state && state.message && state.message !== 'Success') {
       toast.error(state.message);
     }
-  }, [state, closeDialog]);
+  }, [state]);
 
   return (
     <Dialog open={open && type === 'addServer'} onOpenChange={closeDialog}>

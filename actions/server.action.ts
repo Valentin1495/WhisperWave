@@ -78,7 +78,6 @@ export async function uploadFile(file: File) {
 
 export async function addServer(prevState: any, formdata: FormData) {
   let redirectPath;
-
   const { userId } = auth();
 
   if (!userId) return;

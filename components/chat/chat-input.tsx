@@ -2,7 +2,7 @@
 
 import { FileUp, Send, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { FormEvent, KeyboardEvent, useState } from 'react';
+import { FormEvent, KeyboardEvent, useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { Separator } from '../ui/separator';
 import EmojiPicker from './emoji-picker';
@@ -26,7 +26,12 @@ export default function ChatInput({
   currentMember,
 }: ChatInputProps) {
   const [newMessage, setNewMessage] = useState('');
-  const { openDialog, fileName, fileUrl, removeAttachment } = useDialog();
+  const { closeDialog, openDialog, fileName, fileUrl, removeAttachment } =
+    useDialog();
+
+  useEffect(() => {
+    closeDialog();
+  }, [closeDialog]);
 
   const handleSend = async (event: FormEvent) => {
     event.preventDefault();

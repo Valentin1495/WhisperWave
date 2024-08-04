@@ -3,7 +3,6 @@ import { findMember } from '@/actions/member.action';
 import { getCurrentProfile } from '@/actions/profile.action';
 import ServerHeader from '@/components/server/server-header';
 import { MemberWithProfile } from '@/types';
-import { Channel, Profile } from '@prisma/client';
 import ChatInput from '@/components/chat/chat-input';
 import ChatMessageList from '@/components/chat/chat-message-list';
 import { notFound } from 'next/navigation';
@@ -33,6 +32,10 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
     serverId,
     currentProfile.id
   )) as MemberWithProfile;
+
+  if (!currentMember) {
+    notFound();
+  }
 
   return (
     <main>
