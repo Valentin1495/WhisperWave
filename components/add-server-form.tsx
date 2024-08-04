@@ -26,7 +26,7 @@ export default function AddServerForm() {
   useImagePreview(file, setPreview);
 
   useEffect(() => {
-    if (state && state.message && state.message !== 'Success') {
+    if (state.message && state.message !== 'Success') {
       toast.error(state.message);
     }
   }, [state]);
@@ -86,7 +86,7 @@ export default function AddServerForm() {
           id='serverName'
           name='serverName'
           className='border-none my-2.5'
-          value={serverName}
+          value={serverName.trim()}
           onChange={(e) => setServerName(e.target.value)}
         />
 

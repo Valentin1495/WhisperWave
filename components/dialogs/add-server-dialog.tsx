@@ -31,9 +31,9 @@ export default function AddServerDialog() {
   const { open, closeDialog, type } = useDialog();
 
   useEffect(() => {
-    if (state?.message === 'Success') {
+    if (state.message === 'Success') {
       closeDialog();
-    } else if (state?.message) {
+    } else if (state.message) {
       toast.error(state.message);
     }
   }, [state, closeDialog]);
@@ -88,7 +88,7 @@ export default function AddServerDialog() {
             id='serverName'
             name='serverName'
             className='border-none my-2.5 bg-primary/10 dark:bg-primary/20'
-            value={serverName}
+            value={serverName.trim()}
             onChange={(e) => setServerName(e.target.value)}
           />
 
@@ -97,6 +97,14 @@ export default function AddServerDialog() {
             value={file?.url}
             type='hidden'
             className='hidden'
+            readOnly
+          />
+          <Input
+            name='isDialog'
+            value='true'
+            type='hidden'
+            className='hidden'
+            readOnly
           />
 
           <AddServerButton serverName={serverName} file={file?.url} />

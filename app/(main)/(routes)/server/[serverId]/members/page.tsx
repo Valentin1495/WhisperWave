@@ -2,6 +2,7 @@ import { getCurrentProfile } from '@/actions/profile.action';
 import { findServer } from '@/actions/server.action';
 import MemberRow from '@/components/server/member-row';
 import ServerHeader from '@/components/server/server-header';
+import { notFound } from 'next/navigation';
 
 type MembersProps = {
   params: {
@@ -23,9 +24,15 @@ export default async function Members({ params }: MembersProps) {
     throw new Error('Profile not found');
   }
 
-  const myRole = members.find(
+  const isMember = members.find(
     (member) => member.profileId === currentProfile.id
-  )?.role;
+  );
+
+  if (!isMember) {
+    notFound();
+  }
+
+  const myRole = isMember.role;
   const isGuest = myRole === 'GUEST';
 
   return (

@@ -77,16 +77,12 @@ export async function uploadFile(file: File) {
 }
 
 export async function addServer(prevState: any, formdata: FormData) {
+  let redirectPath;
   const { userId } = auth();
-
-  if (!userId) return;
-
-  const profile = await findProfile(userId);
-
-  if (!profile) return;
-
+  const profile = (await findProfile(userId as string)) as Profile;
   const profileId = profile.id;
   const serverName = formdata.get('serverName') as string;
+  const isDialog = formdata.get('isDialog') as string;
   let serverIcon = formdata.get('serverIcon') as string | File;
 
   if (serverIcon instanceof File) {
@@ -101,7 +97,7 @@ export async function addServer(prevState: any, formdata: FormData) {
     await db.server.create({
       data: {
         profileId,
-        name: serverName.trim(),
+        name: serverName,
         imageUrl: serverIcon,
         inviteCode: uuidv4(),
         channels: {
@@ -122,6 +118,10 @@ export async function addServer(prevState: any, formdata: FormData) {
         },
       },
     });
+
+    if (isDialog) {
+      revalidatePath('/', 'layout');
+    }
 
     return {
       message: 'Success',
