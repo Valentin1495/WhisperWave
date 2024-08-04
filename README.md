@@ -33,6 +33,8 @@ https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-b
 - 상태 관리: React Query, Zustand
 - 스타일링: Tailwind CSS
 - UI 컴포넌트: shadcn/ui
+- 사용자 인증: Clerk
+- 파일 업로드: UploadThing
 - ORM: Prisma
 - 데이터베이스: Neon (PostgreSQL)
 - 패키지 매니저: NPM
