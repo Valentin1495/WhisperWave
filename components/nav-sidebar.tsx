@@ -5,9 +5,15 @@ import { getCurrentProfile } from '@/actions/profile.action';
 import { Profile, Server } from '@prisma/client';
 import { findMyServers } from '@/actions/server.action';
 import UserButton from './buttons/user-button';
+import { auth } from '@clerk/nextjs/server';
 
 export default async function NavSidebar() {
   const currentProfile = (await getCurrentProfile()) as Profile;
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error('Something went wrong');
+  }
 
   if (!currentProfile) {
     throw new Error('Profile not found');

@@ -10,53 +10,50 @@ import { useEffect, useState } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { AvatarPhoto } from '../avatar-photo';
-import { editServer } from '@/actions/server.action';
 import { useFormState } from 'react-dom';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
-import EditServerButton from '../buttons/edit-server-button';
 import Upload from '../upload';
 import { FileType } from '@/types';
 import { toast } from 'sonner';
+import EditProfileButton from '../buttons/edit-profile-button';
+import { editProfile } from '@/actions/profile.action';
 
 const initialState = {
   message: '',
 };
 
-export default function EditServerDialog() {
+export default function EditProfileDialog() {
   const { open, closeDialog, type, data } = useDialog();
-  const [serverName, setServerName] = useState<string>();
   const [file, setFile] = useState<FileType | null>(null);
   const [mouseEnter, setMouseEnter] = useState(false);
-  const [state, editServerAction] = useFormState(editServer, initialState);
+  const [state, editProfileAction] = useFormState(editProfile, initialState);
 
-  let prevServerName = data?.server?.name;
-  let prevImageUrl = data?.server?.imageUrl;
-  const isSameServer =
-    serverName === prevServerName && prevImageUrl === file?.url;
+  let prevProfilePic = data?.userInfo?.profilePic;
+  const username = data?.userInfo?.username;
+  const isSameProfile = prevProfilePic === file?.url;
 
   useEffect(() => {
-    setServerName(prevServerName);
-    setFile({ url: prevImageUrl || '', name: 'previous server icon' });
-  }, [data, prevImageUrl, prevServerName]);
+    setFile({ url: prevProfilePic || '', name: 'previous profile picture' });
+  }, [data, prevProfilePic]);
 
   useEffect(() => {
     if (state.message === 'Success') {
       closeDialog();
     } else if (state.message) {
-      toast.error('Failed to edit the server');
+      toast.error('Failed to edit the profile');
     }
   }, [state, closeDialog]);
 
   return (
-    <Dialog open={open && type === 'editServer'} onOpenChange={closeDialog}>
+    <Dialog open={open && type === 'editProfile'} onOpenChange={closeDialog}>
       <DialogContent className='px-3 pb-3 pt-6'>
         <DialogHeader>
           <DialogTitle className='font-bold text-xl text-center'>
-            Server Overview
+            Profile Overview
           </DialogTitle>
         </DialogHeader>
 
-        <form action={editServerAction}>
+        <form action={editProfileAction}>
           {file ? (
             <div
               className='relative rounded-full size-32 flex items-center justify-center cursor-pointer mx-auto'
@@ -74,7 +71,7 @@ export default function EditServerDialog() {
               {mouseEnter && (
                 <section className='absolute inset-0 bg-black/50 rounded-full flex items-center justify-center'>
                   <h3 className='text-xs text-center font-bold text-primary-foreground dark:text-foreground'>
-                    CHANGE <br /> ICON
+                    CHANGE <br /> Photo
                   </h3>
                 </section>
               )}
@@ -83,37 +80,20 @@ export default function EditServerDialog() {
             <Upload handleFile={setFile} handleMouseEnter={setMouseEnter} />
           )}
 
-          <Label
-            htmlFor='serverName'
-            className='text-sm font-semibold mt-5 inline-block'
-          >
-            SERVER NAME
-          </Label>
-          <Input
-            id='serverName'
-            name='serverName'
-            className='border-none my-2.5 bg-primary/10 dark:bg-primary/20'
-            value={serverName}
-            onChange={(e) => setServerName(e.target.value)}
-          />
-          <Input
-            type='hidden'
-            className='hidden'
-            value={data?.server?.id}
-            readOnly
-            name='serverId'
-          />
+          <h3 className='text-center mt-1.5'>{username}</h3>
+
           <Input
             type='hidden'
             className='hidden'
             value={file?.url}
             readOnly
-            name='serverIcon'
+            name='profilePic'
           />
 
-          <EditServerButton
-            serverName={serverName || ''}
-            isSameServer={isSameServer}
+          <EditProfileButton
+            username={username || ''}
+            file={file}
+            isSameProfile={isSameProfile}
           />
         </form>
       </DialogContent>

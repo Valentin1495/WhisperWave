@@ -12,7 +12,8 @@ export type DialogType =
   | 'deleteChannel'
   | 'editChannel'
   | 'deleteMessage'
-  | 'uploadFile';
+  | 'uploadFile'
+  | 'editProfile';
 
 export type DialogData = {
   server?: ServerWithMembers;
@@ -21,6 +22,10 @@ export type DialogData = {
     name: string;
   };
   memberId?: string;
+  userInfo?: {
+    username: string;
+    profilePic: string;
+  };
 };
 
 type DialogStore = {

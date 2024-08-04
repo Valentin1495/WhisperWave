@@ -2,6 +2,7 @@
 
 import db from '@/lib/db';
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
 
 export async function findProfile(userId: string) {
   try {
@@ -55,5 +56,40 @@ export async function createProfile() {
     return newProfile;
   } catch (error: any) {
     throw new Error(error);
+  }
+}
+
+export async function editProfile(prevState: any, formData: FormData) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error('Somthing went wrong');
+  }
+
+  const username = formData.get('username') as string;
+  const profilePic = formData.get('profilePic') as string;
+
+  try {
+    await db.profile.update({
+      where: {
+        userId,
+      },
+      data: {
+        username,
+        imageUrl: profilePic,
+      },
+    });
+
+    revalidatePath('/', 'layout');
+
+    return {
+      message: 'Success',
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      message: 'Failed to edit the profile',
+    };
   }
 }

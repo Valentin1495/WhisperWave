@@ -8,8 +8,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { AvatarPhoto } from '../avatar-photo';
 import { Separator } from '../ui/separator';
-import { LogOut } from 'lucide-react';
+import { LogOut, UserRoundCog } from 'lucide-react';
 import { useClerk } from '@clerk/nextjs';
+import { useDialog } from '@/lib/hooks/use-dialog-store';
 
 type UserButtonProps = {
   imageUrl: string;
@@ -18,6 +19,7 @@ type UserButtonProps = {
 
 export default function UserButton({ imageUrl, username }: UserButtonProps) {
   const { signOut } = useClerk();
+  const { openDialog } = useDialog();
 
   return (
     <DropdownMenu>
@@ -32,6 +34,21 @@ export default function UserButton({ imageUrl, username }: UserButtonProps) {
         <h1 className='text-sm font-medium p-2'>{username}</h1>
 
         <Separator className='my-1' />
+
+        <DropdownMenuItem
+          onClick={() => {
+            openDialog('editProfile', {
+              userInfo: {
+                username: username ?? '',
+                profilePic: imageUrl,
+              },
+            });
+          }}
+        >
+          <UserRoundCog className='mr-3' size={18} />
+          <span className='text-sm'>Edit profile</span>
+        </DropdownMenuItem>
+
         <DropdownMenuItem
           onClick={() => {
             signOut({ redirectUrl: '/' });
