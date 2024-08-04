@@ -86,7 +86,7 @@ export default function CreateServerForm() {
           id='serverName'
           name='serverName'
           className='border-none my-2.5'
-          value={serverName.trim()}
+          value={serverName}
           onChange={(e) => setServerName(e.target.value)}
         />
 

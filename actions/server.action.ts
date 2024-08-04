@@ -92,7 +92,7 @@ export async function createServer(prevState: any, formdata: FormData) {
     await db.server.create({
       data: {
         profileId,
-        name: serverName,
+        name: serverName.trim(),
         imageUrl,
         inviteCode: uuidv4(),
         channels: {
@@ -143,7 +143,7 @@ export async function addServer(prevState: any, formdata: FormData) {
     await db.server.create({
       data: {
         profileId,
-        name: serverName,
+        name: serverName.trim(),
         imageUrl: serverIcon,
         inviteCode: uuidv4(),
         channels: {

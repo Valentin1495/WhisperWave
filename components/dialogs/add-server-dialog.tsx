@@ -88,7 +88,7 @@ export default function AddServerDialog() {
             id='serverName'
             name='serverName'
             className='border-none my-2.5 bg-primary/10 dark:bg-primary/20'
-            value={serverName.trim()}
+            value={serverName}
             onChange={(e) => setServerName(e.target.value)}
           />
 
