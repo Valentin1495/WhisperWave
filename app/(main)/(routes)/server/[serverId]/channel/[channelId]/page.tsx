@@ -2,7 +2,6 @@ import { findChannel } from '@/actions/channel.action';
 import { findMember } from '@/actions/member.action';
 import { getCurrentProfile } from '@/actions/profile.action';
 import ServerHeader from '@/components/server/server-header';
-import { MemberWithProfile } from '@/types';
 import ChatInput from '@/components/chat/chat-input';
 import ChatMessageList from '@/components/chat/chat-message-list';
 import { notFound } from 'next/navigation';
@@ -28,10 +27,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
     throw new Error('Profile not found');
   }
 
-  const currentMember = (await findMember(
-    serverId,
-    currentProfile.id
-  )) as MemberWithProfile;
+  const currentMember = await findMember(serverId, currentProfile.id);
 
   if (!currentMember) {
     notFound();

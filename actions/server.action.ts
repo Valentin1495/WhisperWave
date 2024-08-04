@@ -77,7 +77,6 @@ export async function uploadFile(file: File) {
 }
 
 export async function addServer(prevState: any, formdata: FormData) {
-  let redirectPath;
   const { userId } = auth();
 
   if (!userId) return;
@@ -99,7 +98,7 @@ export async function addServer(prevState: any, formdata: FormData) {
   // const imageUrl = await uploadFileToS3(fileKey, fileContent);
 
   try {
-    const newServer = await db.server.create({
+    await db.server.create({
       data: {
         profileId,
         name: serverName.trim(),
@@ -124,8 +123,6 @@ export async function addServer(prevState: any, formdata: FormData) {
       },
     });
 
-    redirectPath = `/server/${newServer.id}`;
-
     return {
       message: 'Success',
     };
@@ -135,10 +132,6 @@ export async function addServer(prevState: any, formdata: FormData) {
     return {
       message: 'Failed to create a server',
     };
-  } finally {
-    if (redirectPath) {
-      redirect(redirectPath);
-    }
   }
 }
 

@@ -66,7 +66,6 @@ export async function editProfile(prevState: any, formData: FormData) {
     throw new Error('Somthing went wrong');
   }
 
-  const username = formData.get('username') as string;
   const profilePic = formData.get('profilePic') as string;
 
   try {
@@ -75,7 +74,6 @@ export async function editProfile(prevState: any, formData: FormData) {
         userId,
       },
       data: {
-        username,
         imageUrl: profilePic,
       },
     });

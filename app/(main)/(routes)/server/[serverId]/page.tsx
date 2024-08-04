@@ -1,3 +1,5 @@
+import { findMember } from '@/actions/member.action';
+import { getCurrentProfile } from '@/actions/profile.action';
 import { findServer } from '@/actions/server.action';
 import { Frown } from 'lucide-react';
 import { notFound, redirect } from 'next/navigation';
@@ -16,10 +18,21 @@ export default async function Server({ params }: ServerProps) {
   }
 
   const channels = server.channels;
+  const currentProfile = await getCurrentProfile();
+
+  if (!currentProfile) {
+    throw new Error('Profile not found');
+  }
+
+  const currentMember = await findMember(server.id, currentProfile.id);
+
+  if (!currentMember) {
+    notFound();
+  }
 
   if (channels.length === 0)
     return (
-      <main className='flex flex-col justify-center items-center min-h-screen gap-2'>
+      <main className='flex flex-col justify-center items-center min-h-screen gap-2 p-3'>
         <Frown size={48} />
         <h1 className='font-semibold'>NO CHANNELS</h1>
         <p className='text-center'>
