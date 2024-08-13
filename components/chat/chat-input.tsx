@@ -50,9 +50,13 @@ export default function ChatInput({
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !isEmpty) {
       event.preventDefault();
       handleSend(event as any); // TypeScript workaround for FormEvent
+    }
+
+    if (event.key === 'Enter' && !event.shiftKey && isEmpty) {
+      event.preventDefault();
     }
   };
 
@@ -121,7 +125,6 @@ export default function ChatInput({
                 'disabled:pointer-events-none hover:scale-110 transition ml-2',
                 isEmpty && 'opacity-50'
               )}
-              type='submit'
               disabled={isEmpty}
             >
               <Send className='text-primary' />

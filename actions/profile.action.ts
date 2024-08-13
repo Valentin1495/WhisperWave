@@ -140,6 +140,11 @@ export async function createRandomProfile() {
   const username = generateRandomUsername();
   const randomColor = generateRandomColor();
   const session = await getSession();
+
+  if (!session) {
+    redirect('/');
+  }
+
   const userId = session.user.userId;
   const profile = await findProfile(userId);
 

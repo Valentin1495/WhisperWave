@@ -1,6 +1,7 @@
 import { findMember } from '@/actions/member.action';
 import { getCurrentProfile } from '@/actions/profile.action';
 import { findServer } from '@/actions/server.action';
+import MobileToggle from '@/components/mobile-toggle';
 import { Frown } from 'lucide-react';
 import { notFound, redirect } from 'next/navigation';
 
@@ -11,7 +12,8 @@ type ServerProps = {
 };
 
 export default async function Server({ params }: ServerProps) {
-  const server = await findServer(params.serverId);
+  const serverId = params.serverId;
+  const server = await findServer(serverId);
 
   if (!server) {
     notFound();
@@ -32,7 +34,10 @@ export default async function Server({ params }: ServerProps) {
 
   if (channels.length === 0)
     return (
-      <main className='flex flex-col justify-center items-center min-h-screen gap-2 p-3'>
+      <main className='flex flex-col justify-center items-center min-h-screen gap-2 p-3 relative'>
+        <div className='absolute top-5 left-5'>
+          <MobileToggle serverId={serverId} />
+        </div>
         <Frown size={48} />
         <h1 className='font-semibold'>NO CHANNELS</h1>
         <p className='text-center'>
