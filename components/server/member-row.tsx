@@ -34,7 +34,7 @@ export default function MemberRow({
   server,
 }: // currentProfileId,
 MemberWithProfile) {
-  const { username, imageUrl, id } = profile;
+  const { username, imageUrl } = profile;
   const { optimisticRole, changeOptimisticRole } = useChangeRole(role);
   const serverId = server.id;
 
@@ -43,7 +43,16 @@ MemberWithProfile) {
   return (
     <div className='flex p-3 justify-between items-center'>
       <div className='flex items-center gap-2'>
-        <AvatarPhoto src={imageUrl} alt={username} className='size-10' />
+        {imageUrl.includes('#') ? (
+          <section
+            className='size-10 rounded-full'
+            style={{
+              backgroundColor: imageUrl,
+            }}
+          ></section>
+        ) : (
+          <AvatarPhoto src={imageUrl} alt={username} className='size-10' />
+        )}
 
         <p className='text-sm font-medium flex items-center gap-1'>
           {username}

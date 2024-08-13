@@ -1,3 +1,4 @@
+import { fetchUserId, getSession } from '@/actions/profile.action';
 import { auth } from '@clerk/nextjs/server';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
@@ -12,12 +13,13 @@ export const ourFileRouter = {
     // Set permissions and file types for this FileRoute
     .middleware(async () => {
       // This code runs on your server before upload
-      const { userId } = auth();
+      const userId = await fetchUserId();
 
       // If you throw, the user will not be able to upload
       if (!userId) throw new UploadThingError('Unauthorized');
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
+
       return { userId };
     })
     .onUploadComplete(async ({ metadata, file }) => {

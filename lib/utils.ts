@@ -42,3 +42,47 @@ export const sendMessage = async (
   const message = await res.json();
   return message;
 };
+
+export const generateRandomUsername = () => {
+  const prefix = 'guest-';
+  const length = 8;
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters[randomIndex];
+  }
+
+  return prefix + randomString; // 예: user-vg7ry8io8y
+};
+
+export const generateRandomColor = () => {
+  const arr = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+  ];
+
+  let hexNum = '';
+
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    hexNum += arr[randomIndex];
+  }
+
+  return `#${hexNum}`;
+};

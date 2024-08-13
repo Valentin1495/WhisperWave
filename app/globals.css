@@ -108,4 +108,8 @@
   .sidebar {
     @apply hidden md:block;
   }
+
+  .center {
+    @apply flex justify-center items-center min-h-screen;
+  }
 }

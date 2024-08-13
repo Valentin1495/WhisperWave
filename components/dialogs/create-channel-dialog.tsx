@@ -10,10 +10,12 @@ import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { Label } from '../ui/label';
 import { useEffect, useState } from 'react';
 import CreateChannelButton from '../buttons/create-channel-button';
-import { Hash } from 'lucide-react';
+import { Hash, Router } from 'lucide-react';
 import { useFormState } from 'react-dom';
 import { createChannel } from '@/actions/server.action';
 import { Input } from '../ui/input';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const initialState = {
   message: '',
@@ -26,12 +28,16 @@ export default function CreateChannelDialog() {
     createChannel,
     initialState
   );
+  const router = useRouter();
 
   useEffect(() => {
-    if (state.message === 'Success') {
+    if (state.message.includes('Success')) {
       closeDialog();
+      router.push(state.message.split(':')[1]);
+    } else if (state.message) {
+      toast.error(state.message);
     }
-  }, [state, closeDialog]);
+  }, [state, closeDialog, router]);
 
   return (
     <Dialog open={open && type === 'createChannel'} onOpenChange={closeDialog}>

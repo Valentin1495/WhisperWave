@@ -36,8 +36,8 @@ export default function CreateServerForm() {
       <div className='space-y-2'>
         <h1 className='font-bold text-xl text-center'>Create Your Server</h1>
         <p className='text-sm text-center'>
-          Your server is where you and your friends hang out. Make yours and
-          start talking.
+          Your server is where you and your friends hang out. <br /> Make yours
+          and start talking.
         </p>
       </div>
       <form action={createServerAction}>

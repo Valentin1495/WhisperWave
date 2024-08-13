@@ -11,6 +11,7 @@ import { Separator } from '../ui/separator';
 import { LogOut, UserRoundCog } from 'lucide-react';
 import { useClerk } from '@clerk/nextjs';
 import { useDialog } from '@/lib/hooks/use-dialog-store';
+import { logout } from '@/actions/profile.action';
 
 type UserButtonProps = {
   imageUrl: string;
@@ -20,15 +21,35 @@ type UserButtonProps = {
 export default function UserButton({ imageUrl, username }: UserButtonProps) {
   const { signOut } = useClerk();
   const { openDialog } = useDialog();
+  let destroySession;
+
+  if (username?.includes('guest')) {
+    destroySession = async () => {
+      await logout();
+    };
+  } else {
+    destroySession = () => {
+      signOut({ redirectUrl: '/' });
+    };
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <AvatarPhoto
-          src={imageUrl}
-          alt={username ?? 'Profile picture'}
-          className='size-[52px]'
-        />
+        {imageUrl.includes('#') ? (
+          <section
+            className='size-[52px] rounded-full'
+            style={{
+              backgroundColor: imageUrl,
+            }}
+          ></section>
+        ) : (
+          <AvatarPhoto
+            src={imageUrl}
+            alt={username ?? 'Profile picture'}
+            className='size-[52px]'
+          />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent side='right' align='end'>
         <h1 className='text-sm font-medium p-2'>{username}</h1>
@@ -49,11 +70,7 @@ export default function UserButton({ imageUrl, username }: UserButtonProps) {
           <span className='text-sm'>Edit profile</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          onClick={() => {
-            signOut({ redirectUrl: '/' });
-          }}
-        >
+        <DropdownMenuItem onClick={destroySession}>
           <LogOut className='mr-3' size={18} />
           <span className='text-sm'>Sign out</span>
         </DropdownMenuItem>

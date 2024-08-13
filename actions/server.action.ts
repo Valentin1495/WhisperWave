@@ -1,13 +1,12 @@
 'use server';
 
-import { findProfile, getCurrentProfile } from './profile.action';
+import { fetchUserId, findProfile, getCurrentProfile } from './profile.action';
 import db from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberRole, Profile } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { utapi } from '@/app/api/uploadthing/core';
-import { auth } from '@clerk/nextjs/server';
 // // import {
 // //   PutObjectCommand,
 // //   PutObjectCommandInput,
@@ -77,8 +76,8 @@ export async function uploadFile(file: File) {
 }
 
 export async function createServer(prevState: any, formdata: FormData) {
-  const { userId } = auth();
-  const profile = (await findProfile(userId as string)) as Profile;
+  const userId = await fetchUserId();
+  const profile = (await findProfile(userId)) as Profile;
   const profileId = profile.id;
   const serverName = formdata.get('serverName') as string;
   const serverIcon = formdata.get('serverIcon') as File;
@@ -114,7 +113,7 @@ export async function createServer(prevState: any, formdata: FormData) {
       },
     });
 
-    revalidatePath('/');
+    revalidatePath('/setup');
 
     return {
       message: 'Success',
@@ -129,8 +128,8 @@ export async function createServer(prevState: any, formdata: FormData) {
 }
 
 export async function addServer(prevState: any, formdata: FormData) {
-  const { userId } = auth();
-  const profile = (await findProfile(userId as string)) as Profile;
+  const userId = await fetchUserId();
+  const profile = (await findProfile(userId)) as Profile;
   const profileId = profile.id;
   const serverName = formdata.get('serverName') as string;
   const serverIcon = formdata.get('serverIcon') as string;
@@ -140,7 +139,7 @@ export async function addServer(prevState: any, formdata: FormData) {
   // const imageUrl = await uploadFileToS3(fileKey, fileContent);
 
   try {
-    await db.server.create({
+    const newServer = await db.server.create({
       data: {
         profileId,
         name: serverName.trim(),
@@ -168,7 +167,7 @@ export async function addServer(prevState: any, formdata: FormData) {
     revalidatePath('/', 'layout');
 
     return {
-      message: 'Success',
+      message: `Success:${newServer.id}`,
     };
   } catch (error) {
     console.error(error);
@@ -219,7 +218,7 @@ export async function findMyServers(profileId: string) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
     });
 
@@ -368,56 +367,6 @@ export async function kickMember(serverId?: string, memberId?: string) {
   }
 }
 
-export async function createChannel(prevState: any, formData: FormData) {
-  const currentProfile = await getCurrentProfile();
-
-  if (!currentProfile) {
-    return {
-      message: 'Cannot find a current profile',
-    };
-  }
-
-  const profileId = currentProfile.id;
-  const serverId = formData.get('serverId') as string;
-  const channelName = formData.get('channelName') as string;
-
-  try {
-    await db.server.update({
-      where: {
-        id: serverId,
-        members: {
-          some: {
-            profileId,
-            role: {
-              in: [MemberRole.ADMIN, MemberRole.MODERATOR],
-            },
-          },
-        },
-      },
-      data: {
-        channels: {
-          create: {
-            profileId,
-            name: channelName,
-          },
-        },
-      },
-    });
-
-    revalidatePath(`/server/${serverId}`);
-
-    return {
-      message: 'Success',
-    };
-  } catch (error) {
-    console.error(error);
-
-    return {
-      message: 'Failed to create channel',
-    };
-  }
-}
-
 export async function leaveServer(serverId?: string) {
   const currentProfile = await getCurrentProfile();
 
@@ -457,6 +406,7 @@ export async function leaveServer(serverId?: string) {
 
 export async function deleteServer(serverId?: string) {
   let redirectPath;
+  const currentProfile = (await getCurrentProfile()) as Profile;
 
   try {
     await db.server.delete({
@@ -465,13 +415,92 @@ export async function deleteServer(serverId?: string) {
       },
     });
 
-    redirectPath = '/';
+    const myFirstServer = await db.server.findFirst({
+      where: {
+        members: {
+          some: {
+            profileId: currentProfile.id,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    if (!myFirstServer) {
+      redirectPath = '/setup';
+    } else {
+      redirectPath = `/server/${myFirstServer.id}`;
+    }
   } catch (error: any) {
     throw new Error(error);
   } finally {
     if (redirectPath) {
       redirect(redirectPath);
     }
+  }
+}
+
+export async function createChannel(prevState: any, formData: FormData) {
+  const currentProfile = await getCurrentProfile();
+
+  if (!currentProfile) {
+    return {
+      message: 'Cannot find a current profile',
+    };
+  }
+
+  const profileId = currentProfile.id;
+  const serverId = formData.get('serverId') as string;
+  const channelName = formData.get('channelName') as string;
+
+  try {
+    const updatedServer = await db.server.update({
+      where: {
+        id: serverId,
+        members: {
+          some: {
+            profileId,
+            role: {
+              in: [MemberRole.ADMIN, MemberRole.MODERATOR],
+            },
+          },
+        },
+      },
+      data: {
+        channels: {
+          create: {
+            profileId,
+            name: channelName,
+          },
+        },
+      },
+      select: {
+        channels: {
+          orderBy: { id: 'desc' }, // Ordering to get the last created channel
+          take: 1, // Limit to the last created channel
+          select: {
+            id: true, // Select the ID of the new channel
+          },
+        },
+      },
+    });
+
+    // Extract the new channel's ID
+    const newChannelId = updatedServer.channels[0].id;
+
+    revalidatePath(`/server/${serverId}`);
+
+    return {
+      message: `Success:/server/${serverId}/channel/${newChannelId}`,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      message: 'Failed to create channel',
+    };
   }
 }
 

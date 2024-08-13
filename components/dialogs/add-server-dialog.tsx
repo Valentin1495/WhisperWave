@@ -18,6 +18,7 @@ import { AvatarPhoto } from '../avatar-photo';
 import Upload from '../upload';
 import { FileType } from '@/types';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const initialState = {
   message: '',
@@ -29,14 +30,17 @@ export default function AddServerDialog() {
   const [mouseEnter, setMouseEnter] = useState(false);
   const [state, addServerAction] = useFormState(addServer, initialState);
   const { open, closeDialog, type } = useDialog();
+  const router = useRouter();
 
   useEffect(() => {
-    if (state.message === 'Success') {
+    if (state.message.includes('Success')) {
       closeDialog();
+      const newServerId = state.message.split(':')[1];
+      router.push(`/server/${newServerId}`);
     } else if (state.message) {
       toast.error(state.message);
     }
-  }, [state, closeDialog]);
+  }, [state, closeDialog, router]);
 
   return (
     <Dialog open={open && type === 'addServer'} onOpenChange={closeDialog}>

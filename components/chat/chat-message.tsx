@@ -51,6 +51,7 @@ export default function ChatMessage({
   const [editedMessage, setEditedMessage] = useState(content);
   const [isEdited, setIsEdited] = useState(!isEqual(createdAt, updatedAt));
   const { channelId } = useParams();
+  const profilePic = member?.profile?.imageUrl;
 
   const editMessage = async (event: FormEvent) => {
     event.preventDefault();
@@ -128,11 +129,20 @@ export default function ChatMessage({
   return (
     <div className='hover:bg-zinc-100 dark:hover:bg-zinc-800 px-4 py-1 group'>
       <div className='flex gap-3'>
-        <AvatarPhoto
-          src={member?.profile?.imageUrl}
-          alt='Profile picture'
-          className='size-10'
-        />
+        {profilePic.includes('#') ? (
+          <section
+            className='size-10 rounded-full'
+            style={{
+              backgroundColor: profilePic,
+            }}
+          ></section>
+        ) : (
+          <AvatarPhoto
+            src={profilePic}
+            alt='Profile picture'
+            className='size-10'
+          />
+        )}
 
         <div className='w-full'>
           <div className='space-x-1.5 relative'>
