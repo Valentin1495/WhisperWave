@@ -57,7 +57,7 @@ export default function CreateServerForm() {
 
         <div
           className={cn(
-            'rounded-full size-[88px] flex items-center justify-center cursor-pointer mx-auto mb-5',
+            'rounded-full size-32 flex items-center justify-center cursor-pointer mx-auto mb-5',
             !preview && 'border-2 border-foreground border-dashed'
           )}
           onClick={() => fileRef.current?.click()}

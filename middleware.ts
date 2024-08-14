@@ -11,10 +11,10 @@ export default clerkMiddleware(async (auth, req) => {
   return await updateSession(req);
 });
 
-// export async function middleware(request: NextRequest) {
-//   return await updateSession(request);
-// }
-
 export const config = {
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 };
+
+// export async function middleware(request: NextRequest) {
+//   return await updateSession(request);
+// }

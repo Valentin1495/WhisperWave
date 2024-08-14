@@ -18,9 +18,8 @@ type ChatRoomProps = {
 export default function ChatRoom({ channel, currentMember }: ChatRoomProps) {
   const [newMessageCount, setNewMessageCount] = useState(0);
   const [isAtBottom, setIsAtBottom] = useState(true);
-  const [isNewMessageAdded, setIsNewMessageAdded] = useState(false);
-  const [isMyMsg, setIsMyMsg] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [isNewMessageAdded, setIsNewMessageAdded] = useState(true);
+  const [isMyMsg, setIsMyMsg] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { data: messages, isLoading, error } = useMessagesQuery(channel.id);
@@ -48,30 +47,22 @@ export default function ChatRoom({ channel, currentMember }: ChatRoomProps) {
   };
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const wasAtBottom = isAtBottom;
-
-    if (isMounted || isMyMsg || (!isMyMsg && wasAtBottom)) {
+    if (
+      (isNewMessageAdded && messages && messages.length && isMyMsg) ||
+      (isNewMessageAdded && isAtBottom)
+    ) {
       scrollToBottom();
-      setIsMounted(false);
-      setIsMyMsg(false);
     }
 
-    if (isNewMessageAdded && !wasAtBottom && !isMyMsg) {
+    if (!isAtBottom && !isMyMsg) {
       setNewMessageCount((prev) => prev + 1);
     }
-  }, [messages, isNewMessageAdded, isMyMsg, isAtBottom]);
+  }, [messages, isMyMsg, isNewMessageAdded]);
 
   useEffect(() => {
     socket.on('newMessage', (message: MessageWithMember) => {
       setIsNewMessageAdded(true);
-
-      if (message.memberId === currentMemberId) {
-        setIsMyMsg(true);
-      }
+      setIsMyMsg(message.memberId === currentMemberId);
 
       queryClient.setQueryData(
         ['messages', channel.id],
