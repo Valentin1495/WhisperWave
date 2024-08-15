@@ -1,20 +1,10 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 import { updateSession } from './actions/profile.action';
 
-// const isProtectedRoute = createRouteMatcher(['/server(.*)', '/invite(.*)']);
-
-export default clerkMiddleware(async (auth, req) => {
-  // if (isProtectedRoute(req)) {
-  //   auth().protect();
-  // }
-
+export default clerkMiddleware(async (_, req) => {
   return await updateSession(req);
 });
 
 export const config = {
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 };
-
-// export async function middleware(request: NextRequest) {
-//   return await updateSession(request);
-// }

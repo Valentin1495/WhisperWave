@@ -54,7 +54,7 @@ export const generateRandomUsername = () => {
     randomString += characters[randomIndex];
   }
 
-  return prefix + randomString; // 예: user-vg7ry8io8y
+  return prefix + randomString;
 };
 
 export const generateRandomColor = () => {

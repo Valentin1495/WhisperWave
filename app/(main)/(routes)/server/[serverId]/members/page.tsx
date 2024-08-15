@@ -2,7 +2,6 @@ import { getCurrentProfile } from '@/actions/profile.action';
 import { findServer, redirectToServer } from '@/actions/server.action';
 import MemberRow from '@/components/server/member-row';
 import ServerHeader from '@/components/server/server-header';
-import { notFound } from 'next/navigation';
 
 type MembersProps = {
   params: {

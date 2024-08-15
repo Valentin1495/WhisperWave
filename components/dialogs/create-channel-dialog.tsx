@@ -10,7 +10,7 @@ import { useDialog } from '@/lib/hooks/use-dialog-store';
 import { Label } from '../ui/label';
 import { useEffect, useState } from 'react';
 import CreateChannelButton from '../buttons/create-channel-button';
-import { Hash, Router } from 'lucide-react';
+import { Hash } from 'lucide-react';
 import { useFormState } from 'react-dom';
 import { createChannel } from '@/actions/server.action';
 import { Input } from '../ui/input';
