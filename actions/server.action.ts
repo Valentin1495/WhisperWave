@@ -394,7 +394,24 @@ export async function leaveServer(serverId?: string) {
       },
     });
 
-    redirectPath = '/';
+    const myLastestServer = await db.server.findFirst({
+      where: {
+        members: {
+          some: {
+            profileId: currentProfile.id,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    if (!myLastestServer) {
+      redirectPath = '/setup';
+    } else {
+      redirectPath = `/server/${myLastestServer.id}`;
+    }
   } catch (error: any) {
     throw new Error(error);
   } finally {
@@ -415,7 +432,7 @@ export async function deleteServer(serverId?: string) {
       },
     });
 
-    const myFirstServer = await db.server.findFirst({
+    const myLastestServer = await db.server.findFirst({
       where: {
         members: {
           some: {
@@ -424,14 +441,14 @@ export async function deleteServer(serverId?: string) {
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     });
 
-    if (!myFirstServer) {
+    if (!myLastestServer) {
       redirectPath = '/setup';
     } else {
-      redirectPath = `/server/${myFirstServer.id}`;
+      redirectPath = `/server/${myLastestServer.id}`;
     }
   } catch (error: any) {
     throw new Error(error);
