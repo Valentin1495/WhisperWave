@@ -54,7 +54,7 @@ export default function ChatRoom({ channel, currentMember }: ChatRoomProps) {
       scrollToBottom();
     }
 
-    if (!isAtBottom && !isMyMsg) {
+    if (!isAtBottom && !isMyMsg && isNewMessageAdded) {
       setNewMessageCount((prev) => prev + 1);
     }
   }, [messages, isMyMsg, isNewMessageAdded]);
