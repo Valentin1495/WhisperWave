@@ -16,22 +16,27 @@ import { logout } from '@/actions/profile.action';
 type UserButtonProps = {
   imageUrl: string;
   username: string | null;
+  session: {
+    user: {
+      userId: string;
+    };
+  };
 };
 
-export default function UserButton({ imageUrl, username }: UserButtonProps) {
+export default function UserButton({
+  imageUrl,
+  username,
+  session,
+}: UserButtonProps) {
   const { signOut } = useClerk();
   const { openDialog } = useDialog();
-  let destroySession;
-
-  if (username?.includes('guest')) {
-    destroySession = async () => {
+  const destroySession = async () => {
+    if (session) {
       await logout();
-    };
-  } else {
-    destroySession = () => {
+    } else {
       signOut({ redirectUrl: '/' });
-    };
-  }
+    }
+  };
 
   return (
     <DropdownMenu>

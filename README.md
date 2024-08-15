@@ -7,11 +7,13 @@
 
 ## Demo
 
-https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-bc7b-0475f098b9da
+https://github.com/user-attachments/assets/db6fd15a-94a0-4978-a516-e2fd257ca243
 
 ## Features
 
-- 사용자 이름 & 비밀번호 로그인 - Clerk
+- 사용자 이름 & 비밀번호 기반 사용자 인증 - Clerk
+
+- 쿠키를 통한 세션(JWT) 기반 사용자 인증 - jose
 
 - 서버 생성/수정/삭제
 
@@ -33,7 +35,7 @@ https://github.com/Valentin1495/WhisperWave/assets/69514169/9f12c1f6-4178-4334-b
 - 상태 관리: React Query, Zustand
 - 스타일링: Tailwind CSS
 - UI 컴포넌트: shadcn/ui
-- 사용자 인증: Clerk
+- 사용자 인증: Clerk, jose
 - 파일 업로드: UploadThing
 - ORM: Prisma
 - 데이터베이스: Neon (PostgreSQL)

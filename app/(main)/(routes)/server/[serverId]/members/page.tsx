@@ -1,5 +1,5 @@
 import { getCurrentProfile } from '@/actions/profile.action';
-import { findServer } from '@/actions/server.action';
+import { findServer, redirectToServer } from '@/actions/server.action';
 import MemberRow from '@/components/server/member-row';
 import ServerHeader from '@/components/server/server-header';
 import { notFound } from 'next/navigation';
@@ -29,7 +29,8 @@ export default async function Members({ params }: MembersProps) {
   );
 
   if (!isMember) {
-    notFound();
+    await redirectToServer(currentProfile.id);
+    return;
   }
 
   const myRole = isMember.role;

@@ -9,6 +9,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import ChatMessage from './chat-message';
 import { socket } from '@/lib/socket';
 import { ServerCrash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type ChatRoomProps = {
   channel: Channel;
@@ -22,14 +23,17 @@ export default function ChatRoom({ channel, currentMember }: ChatRoomProps) {
   const [isMyMsg, setIsMyMsg] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  // const router = useRouter();
   const { data: messages, isLoading, error } = useMessagesQuery(channel.id);
   const queryClient = useQueryClient();
   const currentMemberId = currentMember.id;
 
   const scrollToBottom = () => {
-    if (!messagesEndRef.current) return;
+    setTimeout(() => {
+      if (!messagesEndRef.current) return;
 
-    messagesEndRef.current.scrollIntoView();
+      messagesEndRef.current.scrollIntoView();
+    }, 10); // Adjust the delay as needed
   };
 
   const handleScroll = () => {
@@ -60,7 +64,12 @@ export default function ChatRoom({ channel, currentMember }: ChatRoomProps) {
   }, [messages, isMyMsg, isNewMessageAdded]);
 
   useEffect(() => {
-    socket.on('newMessage', (message: MessageWithMember) => {
+    socket.on('newMessage', (message: MessageWithMember | null) => {
+      if (!message) {
+        alert('Channel doest not exist');
+        return;
+      }
+
       setIsNewMessageAdded(true);
       setIsMyMsg(message.memberId === currentMemberId);
 

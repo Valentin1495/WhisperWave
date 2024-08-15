@@ -22,6 +22,21 @@ app.prepare().then(() => {
       const { newMessage, fileUrl, channelId, currentMemberId } = data;
 
       try {
+        const channel = await db.channel.findUnique({
+          where: {
+            id: channelId,
+          },
+        });
+
+        if (!channel) {
+          io.emit('newMessage', null);
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
         const message = await db.message.create({
           data: {
             content: newMessage,
@@ -46,6 +61,12 @@ app.prepare().then(() => {
 
     socket.on('editMessage', async (data) => {
       const { messageId, channelId, editedMessage } = data;
+      const channel = await findChannel(channelId);
+
+      if (!channel) {
+        io.emit('newMessage', 'Channel doest not exist');
+        return;
+      }
 
       try {
         const message = await db.message.update({
@@ -73,6 +94,12 @@ app.prepare().then(() => {
 
     socket.on('deleteMessage', async (data) => {
       const { messageId, channelId } = data;
+      const channel = await findChannel(channelId);
+
+      if (!channel) {
+        io.emit('newMessage', 'Channel doest not exist');
+        return;
+      }
 
       try {
         const message = await db.message.delete({

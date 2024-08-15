@@ -44,7 +44,7 @@ export const sendMessage = async (
 };
 
 export const generateRandomUsername = () => {
-  const prefix = 'guest-';
+  const prefix = 'user-';
   const length = 8;
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let randomString = '';

@@ -1,13 +1,14 @@
 import MyServer from './my-server';
 import { ModeToggle } from './mode-toggle';
 import OpenAddServerDialog from './open-add-server-dialog';
-import { getCurrentProfile } from '@/actions/profile.action';
+import { getCurrentProfile, getSession } from '@/actions/profile.action';
 import { Profile, Server } from '@prisma/client';
 import { findMyServers } from '@/actions/server.action';
 import UserButton from './buttons/user-button';
 
 export default async function NavSidebar() {
   const currentProfile = (await getCurrentProfile()) as Profile;
+  const session = await getSession();
 
   if (!currentProfile) {
     throw new Error('Profile not found');
@@ -27,7 +28,7 @@ export default async function NavSidebar() {
       <div className='flex flex-col items-center gap-2'>
         <OpenAddServerDialog />
 
-        <UserButton username={username} imageUrl={imageUrl} />
+        <UserButton username={username} imageUrl={imageUrl} session={session} />
 
         <ModeToggle />
       </div>

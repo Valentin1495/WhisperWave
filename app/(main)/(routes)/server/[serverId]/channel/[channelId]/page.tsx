@@ -2,8 +2,9 @@ import { findChannel } from '@/actions/channel.action';
 import { findMember } from '@/actions/member.action';
 import { getCurrentProfile } from '@/actions/profile.action';
 import ServerHeader from '@/components/server/server-header';
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import ChatRoom from '@/components/chat/chat-room';
+import { redirectToServer } from '@/actions/server.action';
 
 type ChannelPageProps = {
   params: {
@@ -17,7 +18,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
   const channel = await findChannel(channelId);
 
   if (!channel) {
-    notFound();
+    redirect(`/server/${serverId}`);
   }
 
   const currentProfile = await getCurrentProfile();
@@ -29,7 +30,8 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
   const currentMember = await findMember(serverId, currentProfile.id);
 
   if (!currentMember) {
-    notFound();
+    await redirectToServer(currentProfile.id);
+    return;
   }
 
   return (
