@@ -32,6 +32,7 @@ https://github.com/user-attachments/assets/db6fd15a-94a0-4978-a516-e2fd257ca243
 ## Tech Stack
 
 - 코어: React, TypeScript, Next.js
+- 실시간 통신: Socket.IO
 - 상태 관리: React Query, Zustand
 - 스타일링: Tailwind CSS
 - UI 컴포넌트: shadcn/ui
