@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/db6fd15a-94a0-4978-a516-e2fd257ca243
 
 - 초대 링크 접속 - 서버 참가
 
-- 실시간 메시지 송수신/수정/삭제 - Socket.io
+- 실시간 메시지 송수신/수정/삭제 - Socket.IO
 
 - Websocket 연결 실패 시: 경고 메시지 표시 & 1초 지연 통신 - React Query
 
