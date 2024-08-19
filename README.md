@@ -11,9 +11,10 @@ https://github.com/user-attachments/assets/db6fd15a-94a0-4978-a516-e2fd257ca243
 
 ## Features
 
-- 사용자 이름 & 비밀번호 기반 사용자 인증 - Clerk
+- 사용자 인증
 
-- 쿠키를 통한 세션(JWT) 기반 사용자 인증 - jose
+  - 사용자 이름 & 비밀번호 기반 로그인 - Clerk
+  - 쿠키를 통한 세션(JWT) 기반 로그인 - jose
 
 - 서버 생성/수정/삭제
 

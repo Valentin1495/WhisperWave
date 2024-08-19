@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   title: 'WhisperWave - Group Chat',
   description:
     'WhisperWave is great for chilling with friends, or even building a worldwide community. Customize your own space to talk, play, and hang out.',
+  icons: [
+    {
+      url: '/logo.svg',
+      href: '/logo.svg',
+    },
+  ],
 };
 
 export default function RootLayout({
